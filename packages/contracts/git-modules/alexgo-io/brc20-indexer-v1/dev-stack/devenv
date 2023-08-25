@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+PROFILE=${DOCKER_COMPOSE_PROFILE:-'dev'}
+export NODE_NO_WARNINGS=1
+
+pushd "$DIR" > /dev/null 2>&1 || exit
+if [ ! -e "./wait" ]; then
+  wget -qO ./wait https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.0/wait
+  chmod +x ./wait
+fi
+popd > /dev/null 2>&1 || exit
+
+_docker_compose() {
+  pushd "$DIR" >/dev/null 2>&1 || exit
+  docker-compose --profile $PROFILE --project-name brc20-indexer -f stacks-blockchain/docker-compose.yml $@
+  popd >/dev/null 2>&1 || exit
+}
+
+read_docker_compose() {
+  yq e "$@" dev-stack/stacks-blockchain/docker-compose.yml
+}
+
+echo_ports() {
+  echo postgres: "$(read_docker_compose .services.postgres.ports[0] | cut -d: -f1)"
+  echo stacks-blockchain-api: "$(read_docker_compose .services.stacks-blockchain-api.ports[0] | cut -d: -f1)"
+  echo stacks-blockchain: "$(read_docker_compose .services.stacks-blockchain.ports[0] | cut -d: -f1)"
+  echo stacks-blockchain-explorer: "$(read_docker_compose .services.stacks-blockchain-explorer.ports[0] | cut -d: -f1)"
+}
+
+main() {
+  local cmd=$1
+  case $cmd in
+  up)
+    shift
+    _docker_compose up $@
+    echo_ports
+    ;;
+  upd)
+    _docker_compose up -d
+    echo_ports
+    ;;
+  down)
+    _docker_compose down $@
+    ;;
+  logs)
+    _docker_compose logs -f --tail=100
+    ;;
+  clean)
+    _docker_compose down -v -t 0
+    ;;
+  reset)
+    _docker_compose down -v -t 0
+    _docker_compose up -d
+    echo_ports
+    echo -n "Waiting for stacks blockchain node"
+    for _ in $(seq 1 999); do
+      echo -n .
+      if curl -so /dev/null http://localhost:$(read_docker_compose .services.stacks-blockchain.ports[0] | cut -d: -f1); then
+        echo
+        echo 'stacks blockchain node started'
+        exit 0
+      fi
+      sleep 0.5
+    done
+    ;;
+  echo)
+    echo_ports
+    ;;
+  *)
+    echo "Usage: $0 {up|down|logs|clean|reset}"
+    exit 1
+    ;;
+  esac
+}
+
+main $@

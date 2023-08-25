@@ -1,0 +1,48 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": [
+      "es2022",
+      "dom"
+    ],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@alex-b20/bitcoin": [
+        "packages/libs/bitcoin/src/index.ts"
+      ],
+      "@alex-b20/brc20-indexer": [
+        "packages/contracts/brc20-indexer/src/index.ts"
+      ],
+      "@alex-b20/env": [
+        "packages/libs/env/src/index.ts"
+      ],
+      "@alex-b20/validator": [
+        "packages/libs/validator/src/index.ts"
+      ],
+      "nx-stacks": [
+        "packages/plugins/nx-stacks/src/index.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ],
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  }
+}

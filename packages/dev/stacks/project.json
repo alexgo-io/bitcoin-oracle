@@ -1,0 +1,34 @@
+{
+  "name": "dev-stacks",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/dev/stacks/src",
+  "implicitDependencies": [
+    "dev-network"
+  ],
+  "projectType": "application",
+  "targets": {
+    "up": {
+      "command": "dev-stacks up"
+    },
+    "sync": {
+      "command": "dev-stacks sync"
+    },
+    "logs": {
+      "command": "dev-stacks logs"
+    },
+    "recreate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "dev-stacks reset",
+          "nx deploy-contracts contracts-bridge-stacks"
+        ],
+        "parallel": false
+      }
+    },
+    "down": {
+      "command": "dev-stacks clean"
+    }
+  },
+  "tags": []
+}

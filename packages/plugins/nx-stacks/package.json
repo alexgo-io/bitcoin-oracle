@@ -1,0 +1,7 @@
+{
+  "name": "nx-stacks",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "generators": "./generators.json",
+  "executors": "./executors.json"
+}

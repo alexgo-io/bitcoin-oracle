@@ -1,0 +1,21 @@
+{
+  "name": "dev-network",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/network/src",
+  "projectType": "application",
+  "targets": {
+    "up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dev-network up"
+      }
+    },
+    "down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dev-network down"
+      }
+    }
+  },
+  "tags": []
+}

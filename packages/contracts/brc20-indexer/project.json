@@ -1,0 +1,111 @@
+{
+  "name": "contracts-brc20-indexer",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/contracts/brc20-indexer/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/contracts/brc20-indexer"
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{workspaceRoot}/coverage/packages/contracts/brc20-indexer"
+      ],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../../coverage/packages/contracts/brc20-indexer"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "packages/contracts/brc20-indexer/**/*.ts",
+          "packages/contracts/brc20-indexer/package.json"
+        ]
+      }
+    },
+    "contract-deploy": {
+      "executor": "nx-stacks:deploy",
+      "options": {
+        "clarinetPath": "packages/contracts/brc20-indexer/brc20-indexer-v1",
+        "contracts": [
+          "clarity-bitcoin",
+          "indexer",
+          "utils"
+        ],
+        "deployerSecretKey": "${STACKS_DEPLOYER_ACCOUNT_SECRET}",
+        "puppetURL": "${STACKS_PUPPET_URL}",
+        "stacksAPIURL": "${STACKS_API_URL}"
+      }
+    },
+    "contract-setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node --project tsconfig.lib.json src/setup/setupIndexer.ts",
+        "cwd": "packages/contracts/brc20-indexer"
+      },
+      "dependsOn": [
+        {
+          "target": "build"
+        },
+        {
+          "target": "contract-deploy"
+        }
+      ]
+    },
+    "setup": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        {
+          "target": "contract-deploy"
+        },
+        {
+          "target": "contract-setup"
+        }
+      ]
+    },
+    "contract-generate": {
+      "executor": "nx-stacks:contract-generate",
+      "options": {
+        "stacksAPIURL": "${STACKS_API_URL}",
+        "outputPath": "packages/contracts/brc20-indexer/src/generated",
+        "targets": [
+          {
+            "name": "indexer",
+            "principal": "${STACKS_DEPLOYER_ACCOUNT_ADDRESS}",
+            "contracts": [
+              "clarity-bitcoin",
+              "indexer",
+              "utils"
+            ],
+            "packageName": "../codegenImport"
+          }
+        ]
+      }
+    },
+    "contract-list-generate": {
+      "executor": "nx-stacks:contract-list-generate",
+      "options": {
+        "outputPath": "packages/contracts/brc20-indexer/src/generated",
+        "clarinetDirectoryGenerateTargets": [
+          {
+            "clarinetConfigPath": "packages/contracts/brc20-indexer/brc20-indexer-v1/Clarinet.toml",
+            "outputPath": "packages/contracts/brc20-indexer/src/generated/brc20-indexer-v1.json"
+          }
+        ]
+      }
+    }
+  },
+  "tags": []
+}

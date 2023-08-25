@@ -1,0 +1,33 @@
+[node]
+working_dir = "/root/stacks-node/data"
+rpc_bind = "0.0.0.0:20443"
+p2p_bind = "0.0.0.0:20444"
+wait_time_for_microblocks = 1000
+use_test_genesis_chainstate = true
+enable_puppet_mode = true
+
+[[events_observer]]
+endpoint = "stacks-blockchain-api:3700"
+retry_count = 255
+events_keys = ["*"]
+
+[burnchain]
+chain = "bitcoin"
+mode = "mocknet"
+commit_anchor_block_within = 0
+
+[[mstx_balance]]
+address = "ST19BH99Z7P8FSJ58EYPZ13CJJNYHC6GVMMM2T1B3"
+amount = 100_000_000_000_000
+
+[[mstx_balance]]
+address = "STP7HH9H64RQH870ZB9JJWE212QB0HJ1FN5GSGTQ"
+amount = 100_000_000_000_000
+
+[connection_options]
+public_ip_address = "127.0.0.1:20444"
+read_only_call_limit_write_length = 15000000
+read_only_call_limit_read_length = 100000000
+read_only_call_limit_write_count = 15500
+read_only_call_limit_read_count = 15500
+read_only_call_limit_runtime = 5000000000

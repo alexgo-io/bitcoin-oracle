@@ -1,0 +1,40 @@
+{
+  "name": "libs-validator",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/validator/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/libs/validator"
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{workspaceRoot}/coverage/packages/libs/validator"
+      ],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../../coverage/packages/libs/validator"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "packages/libs/validator/**/*.ts",
+          "packages/libs/validator/package.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
