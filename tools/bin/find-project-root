@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+const { createProjectGraphAsync } = require('@nx/devkit');
+async function run() {
+  const graph = await createProjectGraphAsync();
+
+  const [, , name] = process.argv;
+
+  const project = graph.nodes[name];
+  if (project == null) {
+    throw new Error(`Project ${name} not found`);
+  } else {
+    console.log(project.data.root);
+  }
+}
+
+run()
+  .then(() => {
+    process.exit(0);
+  })
+  .catch(e => {
+    console.error(e);
+    process.exit(1);
+  });

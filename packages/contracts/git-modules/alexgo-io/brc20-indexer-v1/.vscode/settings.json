@@ -1,0 +1,13 @@
+{
+  "deno.enablePaths": ["./tests"],
+  "editor.formatOnSave": true,
+  "files.insertFinalNewline": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[clarity]": {
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.autoIndent": "full",
+    "editor.insertSpaces": false
+  },
+  "cSpell.words": ["keccak", "parens", "xbtc", "xusd"]
+}

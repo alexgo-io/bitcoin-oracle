@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# shellcheck source=./_common_utils
+source "$NX_WORKSPACE_ROOT"/tools/bin/_common_utils
+
+# this file is used to be sourced by other scripts
+# expects variables:
+# - PROJECT_NAME: the name of the project
+if [ -z "$PROJECT_NAME" ]; then
+  echo "PROJECT_NAME is not set"
+  exit 1
+fi
+export PROFILE=${CURRENT_PROFILE:-'local'}
+export PROJECT_PATH=$(find-project-root "$PROJECT_NAME")
+export PROJECT_ROOT="$NX_WORKSPACE_ROOT/$PROJECT_PATH"
+export DOCKER_COMPOSE_FILE_PATH=${DOCKER_COMPOSE_FILE_PATH:-"$PROJECT_ROOT/docker-compose.yaml"}
+
+grey() { echo -e "\033[1;30m$1\033[0m"; }
+
+echo_welcome() {
+  grey "run - project: $PROJECT_NAME, profile: [$PROFILE]"
+}
+
+_docker_compose() {
+  pushd "$PROJECT_ROOT" >/dev/null 2>&1 || exit 1
+  docker-compose --profile "$PROFILE" --project-name "$PROJECT_NAME" "$@"
+  popd >/dev/null 2>&1 || exit 1
+}
+
+check_remote_artifact_config() {
+  if [ ! -f "$DOCKER_COMPOSE_FILE_PATH" ]; then
+    echo "File $DOCKER_COMPOSE_FILE_PATH does not exist, building it with your environment"
+  fi
+
+  echo "\$PROFILE is set to local, skipping remote artifact check"
+  exit 1
+}
+
+read_docker_compose() {
+  yq e "$@" $DOCKER_COMPOSE_FILE_PATH
+}

@@ -1,0 +1,4 @@
+.cache
+node_modules
+pnpm-lock.yaml
+/bootstrap/config.json

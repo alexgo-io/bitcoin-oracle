@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "version": 2,
+  "title": "Deploy executor",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "clarinetPath": {
+      "type": "string",
+      "default": "",
+      "title": "The clarinetPath Schema",
+      "examples": [""]
+    },
+    "deployerSecretKey": {
+      "type": "string",
+      "default": "",
+      "title": "The deployerSecretKey Schema",
+      "examples": [""]
+    },
+    "puppetURL": {
+      "type": "string",
+      "default": "",
+      "title": "The puppetURL Schema",
+      "examples": [""]
+    },
+    "stacksAPIURL": {
+      "type": "string",
+      "default": "",
+      "title": "The stacksAPIURL Schema",
+      "examples": [""]
+    },
+    "contracts": {
+      "type": "array",
+      "default": [],
+      "title": "The contracts Schema",
+      "items": {
+        "type": "string",
+        "default": "",
+        "title": "A Schema",
+        "examples": [""]
+      },
+      "examples": [[""]]
+    }
+  },
+  "required": [
+    "clarinetPath",
+    "deployerSecretKey",
+    "puppetURL",
+    "stacksAPIURL",
+    "contracts"
+  ]
+}

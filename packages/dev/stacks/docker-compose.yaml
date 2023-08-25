@@ -1,0 +1,98 @@
+version: '3.8'
+services:
+  stacks_postgres:
+    restart: always
+    image: postgres:15.1-alpine
+    shm_size: 1gb
+    ports:
+      - '61895:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: alexgo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - default
+  stacks-blockchain-api:
+    image: bestmike007/stacks-blockchain-api:7.2.0
+    platform: linux/amd64
+    command: sh -c "/wait && node ./lib/index.js"
+    restart: always
+    ports:
+      - '61899:3999'
+    environment:
+      WAIT_HOSTS: 'stacks_postgres:5432'
+      PG_HOST: stacks_postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_DATABASE: alexgo
+      STACKS_CORE_EVENT_PORT: '3700'
+      STACKS_CORE_EVENT_HOST: http://0.0.0.0
+      STACKS_BLOCKCHAIN_API_PORT: '3999'
+      STACKS_BLOCKCHAIN_API_HOST: 0.0.0.0
+      STACKS_BLOCKCHAIN_API_DB: pg
+      STACKS_CORE_RPC_HOST: stacks-blockchain
+      STACKS_CORE_RPC_PORT: '20443'
+      STACKS_CHAIN_ID: '0x80000000'
+      NODE_ENV: development
+      STACKS_API_ENABLE_FT_METADATA: 1
+      STACKS_API_ENABLE_NFT_METADATA: 1
+    volumes:
+      - ${NX_WORKSPACE_ROOT}/tools/bin/wait:/wait
+    networks:
+      - default
+  stacks-blockchain:
+    image: bestmike007/stacks-blockchain:alex-v20230808
+    platform: linux/amd64
+    command: sh -c "/wait && stacks-node start --config=/app/config/Stacks.toml"
+    ports:
+      - '61897:20443'
+      - '61898:20445'
+    environment:
+      WAIT_BEFORE: 3
+      WAIT_AFTER: 3
+      WAIT_HOSTS: 'stacks-blockchain-api:3700'
+      NOP_BLOCKSTACK_DEBUG: 1
+      XBLOCKSTACK_DEBUG: 1
+      RUST_BACKTRACE: 1
+      STACKS_CHAIN_ID: '0x80000000'
+      PG_HOST: stacks_postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_DATABASE: alexgo
+      V2_POX_MIN_AMOUNT_USTX: 90000000260
+      STACKS_CORE_RPC_HOST: stacks-blockchain
+      STACKS_CORE_RPC_PORT: 20443
+      STACKS_API_ENABLE_FT_METADATA: 1
+      STACKS_API_ENABLE_NFT_METADATA: 1
+      STACKS_NODE_PUPPET_MODE: 'true'
+    networks:
+      - default
+    volumes:
+      - stacks_blockchain_chaindata:/root/stacks-node/data
+      - $PWD/stacks-blockchain/config:/app/config
+      - ${NX_WORKSPACE_ROOT}/tools/bin/wait:/wait
+  stacks-blockchain-explorer:
+    image: hirosystems/explorer:1.91
+    platform: linux/amd64
+    ports:
+      - '61896:3000'
+    extra_hosts:
+      - 'gateway.docker.internal:host-gateway'
+    environment:
+      MAINNET_API_SERVER: http://gateway.docker.internal:61899
+      NEXT_PUBLIC_MAINNET_API_SERVER: http://gateway.docker.internal:61899
+      NEXT_PUBLIC_MAINNET_ENABLED: 'true'
+      NODE_ENV: development
+    networks:
+      - default
+volumes:
+  pgdata: {}
+  stacks_blockchain_chaindata: {}
+#networks:
+#  default:
+#    name: alex_b20_network
+#    external: true

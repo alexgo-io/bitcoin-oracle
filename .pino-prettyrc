@@ -1,0 +1,4 @@
+{
+  "ignore": "pid,hostname",
+   "singleLine": true
+}

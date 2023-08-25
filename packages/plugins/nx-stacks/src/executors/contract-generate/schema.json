@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "version": 2,
+  "definitions": {
+    "ContractGenerateTarget": {
+      "properties": {
+        "contracts": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "principal": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "title": "ContractGenerate executor",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "outputPath": {
+      "type": "string"
+    },
+    "stacksAPIURL": {
+      "type": "string"
+    },
+    "packageName": {
+      "type": "string"
+    },
+    "targets": {
+      "items": {
+        "$ref": "#/definitions/ContractGenerateTarget"
+      },
+      "type": "array"
+    }
+  },
+  "required": ["targets", "outputPath", "stacksAPIURL"]
+}

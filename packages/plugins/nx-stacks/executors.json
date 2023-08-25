@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "executors": {
+    "build": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/schema.json",
+      "description": "build executor"
+    },
+    "deploy": {
+      "implementation": "./src/executors/deploy/executor",
+      "schema": "./src/executors/deploy/schema.json",
+      "description": "deploy executor"
+    },
+    "contract-generate": {
+      "implementation": "./src/executors/contract-generate/executor",
+      "schema": "./src/executors/contract-generate/schema.json",
+      "description": "generate stacks contract"
+    },
+    "contract-list-generate": {
+      "implementation": "./src/executors/contract-list-generate/executor",
+      "schema": "./src/executors/contract-list-generate/schema.json",
+      "description": "generate stacks contract list"
+    }
+  }
+}

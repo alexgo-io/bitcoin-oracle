@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+const dotenv = require('dotenv');
+const [prevEnv, afterEnv] = process.argv.slice(2);
+
+const prev = dotenv.parse(prevEnv);
+const after = dotenv.parse(afterEnv);
+
+// print direnv exported variables for dotenv to use in tests
+for (const [k, v] of Object.entries(after)) {
+  // only print changed vars
+  if (prev[k] !== after[k] && k !== "PATH" && k !== "DIRENV_WATCHES") {
+    console.log(`${k}=${v}`);
+  }
+}

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+get_host_name() {
+  echo "localhost"
+}
+
+export HOST_NAME=$(get_host_name)

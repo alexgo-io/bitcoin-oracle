@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "version": 2,
+  "title": "ContractListGenerate executor",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "outputPath": {
+      "type": "string",
+      "default": "",
+      "title": "The outputPath Schema",
+      "examples": [""]
+    },
+    "clarinetDirectoryGenerateTargets": {
+      "type": "array",
+      "default": [],
+      "title": "The clarinetDirectoryGenerateTargets Schema",
+      "items": {
+        "type": "object",
+        "default": {},
+        "title": "A Schema",
+        "required": ["clarinetConfigPath", "outputPath"],
+        "properties": {
+          "clarinetConfigPath": {
+            "type": "string",
+            "default": "",
+            "title": "The clarinetConfigPath Schema",
+            "examples": ["path"]
+          },
+          "outputPath": {
+            "type": "string",
+            "default": "",
+            "title": "The outputPath Schema",
+            "examples": ["output path"]
+          }
+        },
+        "examples": [
+          {
+            "clarinetConfigPath": "path",
+            "outputPath": "output path"
+          }
+        ]
+      },
+      "examples": [
+        [
+          {
+            "clarinetConfigPath": "path",
+            "outputPath": "output path"
+          }
+        ]
+      ]
+    }
+  },
+  "required": ["clarinetDirectoryGenerateTargets", "outputPath"]
+}
