@@ -16,9 +16,7 @@ export async function getActivityOnBlock(block: number) {
     },
   ).json();
 
-  const result = BISActivityOnBlockResponseSchema.parse(rawResult);
-
-  return result;
+  return BISActivityOnBlockResponseSchema.parse(rawResult);
 }
 
 export async function getBalanceOnBlock(address: string, block: number) {
@@ -31,6 +29,5 @@ export async function getBalanceOnBlock(address: string, block: number) {
     },
   ).json();
 
-  const result = BISBalanceOnBlockResponseSchema.parse(rawResult);
-  return result;
+  return BISBalanceOnBlockResponseSchema.parse(rawResult);
 }
