@@ -14,13 +14,19 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "{workspaceRoot}/coverage/packages/contracts/brc20-indexer"
+        "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "passWithNoTests": true,
-        "reportsDirectory": "../../../coverage/packages/contracts/brc20-indexer"
+        "jestConfig": "packages/contracts/brc20-indexer/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
       }
     },
     "lint": {
