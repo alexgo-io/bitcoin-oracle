@@ -15,7 +15,6 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "types": ["jest", "node"],
     "paths": {
       "@alex-b20/bitcoin": ["packages/libs/bitcoin/src/index.ts"],
       "@alex-b20/brc20-indexer": [
