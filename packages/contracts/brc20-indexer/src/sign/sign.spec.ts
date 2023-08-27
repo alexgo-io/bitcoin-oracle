@@ -1,13 +1,8 @@
 import { envDevelopment } from '@alex-b20/env';
-import { expect } from 'vitest';
 import { indexer } from '../generated/contract_indexer';
 import { getDomainHash, signTx, structuredDataHash } from './sign';
 
 describe('sign', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it('should get correct domain hash', () => {
     expect(getDomainHash().toString('hex')).toMatchInlineSnapshot(
       '"84deb9a3b41b870d85819000deefa999f43b1bf2c3d80c3ea19d4b83b7b10fbc"',
@@ -36,6 +31,7 @@ describe('sign', () => {
       encodeValue,
     );
     expect(signature.toString('hex')).toMatchInlineSnapshot(
-    '"36546f44561c861c51ad0f9f07fbdf144894f84ca362f6f462dcc3a6ab8705383c771a0f387b6ebbc235942e90e4d8f52e039c86d974ea7db1525f0afb18272400"');
+      '"36546f44561c861c51ad0f9f07fbdf144894f84ca362f6f462dcc3a6ab8705383c771a0f387b6ebbc235942e90e4d8f52e039c86d974ea7db1525f0afb18272400"',
+    );
   });
 });

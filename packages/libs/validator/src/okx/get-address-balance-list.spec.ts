@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import { getAddressBalanceList } from './get-address-balance-list';
 
 describe('get-address-balance-list', function () {

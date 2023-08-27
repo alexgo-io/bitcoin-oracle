@@ -14,13 +14,19 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "{workspaceRoot}/coverage/packages/libs/bitcoin"
+        "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "passWithNoTests": true,
-        "reportsDirectory": "../../../coverage/packages/libs/bitcoin"
+        "jestConfig": "packages/libs/bitcoin/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
       }
     },
     "lint": {

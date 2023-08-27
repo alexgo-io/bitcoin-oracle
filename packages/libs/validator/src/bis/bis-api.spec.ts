@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import { getActivityOnBlock, getBalanceOnBlock } from './bis-api';
 
 describe('BiS API', function () {

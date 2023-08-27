@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import { getTransactionList } from './get-transaction-list';
 
 describe('get-transaction-list', function () {
