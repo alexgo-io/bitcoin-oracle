@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'brc20-indexer',
+  displayName: 'contracts-brc20-indexer',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

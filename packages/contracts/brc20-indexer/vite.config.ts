@@ -4,7 +4,6 @@ import { defineConfig } from 'vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import * as path from 'path';
 import dts from 'vite-plugin-dts';
-// import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   cacheDir: '../../../node_modules/.vite/contracts-brc20-indexer',
@@ -16,9 +15,6 @@ export default defineConfig({
     }),
 
     nxViteTsPaths(),
-    // tsconfigPaths({
-    //   root: '../../../',
-    // }),
   ],
 
   // Uncomment this if you are using workers.
