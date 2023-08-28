@@ -191,40 +191,40 @@
     "code": "ERR-INVALID-SIGNATURE",
     "comment": "indexer.clar:127"
   },
-  "3842857280": {
+  "3842857284": {
     "code": "ERR-TX-NOT-INDEXED",
-    "comment": "indexer.clar:133"
+    "comment": "indexer.clar:137"
   },
-  "3842857312": {
+  "3842857316": {
     "code": "ERR-PAUSED",
-    "comment": "indexer.clar:144"
+    "comment": "indexer.clar:148"
   },
-  "3842857313": {
+  "3842857317": {
     "code": "ERR-UKNOWN-RELAYER",
-    "comment": "indexer.clar:145"
-  },
-  "3842857432": {
-    "code": "ERR-TX-ALREADY-INDEXED",
-    "comment": "indexer.clar:180"
-  },
-  "3842857433": {
-    "code": "ERR-REQUIRED-VALIDATORS",
-    "comment": "indexer.clar:181"
-  },
-  "3842857434": {
-    "code": "ERR-DOUBLE-SPEND",
-    "comment": "indexer.clar:182"
-  },
-  "3842857435": {
-    "code": "ERR-FROM-BAL-MISMATCH",
-    "comment": "indexer.clar:183"
+    "comment": "indexer.clar:149"
   },
   "3842857436": {
-    "code": "ERR-TO-BAL-MISMATCH",
+    "code": "ERR-TX-ALREADY-INDEXED",
     "comment": "indexer.clar:184"
   },
-  "3842857471": {
+  "3842857437": {
+    "code": "ERR-REQUIRED-VALIDATORS",
+    "comment": "indexer.clar:185"
+  },
+  "3842857438": {
+    "code": "ERR-DOUBLE-SPEND",
+    "comment": "indexer.clar:186"
+  },
+  "3842857439": {
+    "code": "ERR-FROM-BAL-MISMATCH",
+    "comment": "indexer.clar:187"
+  },
+  "3842857440": {
+    "code": "ERR-TO-BAL-MISMATCH",
+    "comment": "indexer.clar:188"
+  },
+  "3842858147": {
     "code": "ERR-NOT-AUTHORIZED",
-    "comment": "indexer.clar:198"
+    "comment": "indexer.clar:202"
   }
 }

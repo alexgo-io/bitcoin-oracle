@@ -26,6 +26,10 @@ export const env = createEnv({
     ELECTRUM_PROTOCOL: z.string().default('ssl'),
     STACKS_API_URL: z.string().min(1),
     STACKS_NETWORK_TYPE: z.enum(['mainnet', 'testnet']).default('testnet'),
+    STACKS_VALIDATOR_ACCOUNT_ADDRESS: z.string().min(1),
+    STACKS_VALIDATOR_ACCOUNT_SECRET: z.string().min(1),
+    STACKS_RELAYER_ACCOUNT_ADDRESS: z.string().min(1),
+    STACKS_RELAYER_ACCOUNT_SECRET: z.string().min(1),
   },
   runtimeEnv: process.env,
 });
