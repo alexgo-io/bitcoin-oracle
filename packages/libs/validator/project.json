@@ -5,10 +5,13 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/vite:build",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/libs/validator"
+        "outputPath": "dist/packages/libs/validator",
+        "main": "packages/libs/validator/src/index.ts",
+        "tsConfig": "packages/libs/validator/tsconfig.lib.json",
+        "assets": ["packages/libs/validator/*.md"]
       }
     },
     "test": {

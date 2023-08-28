@@ -5,19 +5,18 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/contracts/brc20-indexer"
+        "outputPath": "dist/packages/contracts/brc20-indexer",
+        "main": "packages/contracts/brc20-indexer/src/index.ts",
+        "tsConfig": "packages/contracts/brc20-indexer/tsconfig.lib.json",
+        "assets": ["packages/contracts/brc20-indexer/*.md"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "packages/contracts/brc20-indexer/jest.config.ts",
         "passWithNoTests": true
@@ -31,9 +30,7 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "packages/contracts/brc20-indexer/**/*.ts",
@@ -45,11 +42,7 @@
       "executor": "nx-stacks:deploy",
       "options": {
         "clarinetPath": "packages/contracts/brc20-indexer/brc20-indexer-v1",
-        "contracts": [
-          "clarity-bitcoin",
-          "indexer",
-          "utils"
-        ],
+        "contracts": ["clarity-bitcoin", "indexer", "utils"],
         "deployerSecretKey": "${STACKS_DEPLOYER_ACCOUNT_SECRET}",
         "puppetURL": "${STACKS_PUPPET_URL}",
         "stacksAPIURL": "${STACKS_API_URL}"
@@ -90,11 +83,7 @@
           {
             "name": "indexer",
             "principal": "${STACKS_DEPLOYER_ACCOUNT_ADDRESS}",
-            "contracts": [
-              "clarity-bitcoin",
-              "indexer",
-              "utils"
-            ],
+            "contracts": ["clarity-bitcoin", "indexer", "utils"],
             "packageName": "../codegenImport"
           }
         ]

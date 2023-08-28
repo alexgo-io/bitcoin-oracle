@@ -5,12 +5,13 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/libs/bitcoin"
+        "outputPath": "dist/packages/libs/bitcoin",
+        "main": "packages/libs/bitcoin/src/index.ts",
+        "tsConfig": "packages/libs/bitcoin/tsconfig.lib.json",
+        "assets": ["packages/libs/bitcoin/*.md"]
       }
     },
     "test": {
