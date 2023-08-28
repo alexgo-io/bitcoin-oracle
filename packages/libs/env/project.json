@@ -5,12 +5,13 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/libs/env"
+        "outputPath": "dist/packages/libs/env",
+        "main": "packages/libs/env/src/index.ts",
+        "tsConfig": "packages/libs/env/tsconfig.lib.json",
+        "assets": ["packages/libs/env/*.md"]
       }
     },
     "lint": {
