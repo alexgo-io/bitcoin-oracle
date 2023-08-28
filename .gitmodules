@@ -1,3 +1,0 @@
-[submodule "packages/contracts/git-modules/alexgo-io/brc20-indexer-v1"]
-	path = packages/contracts/git-modules/alexgo-io/brc20-indexer-v1
-	url = git@github.com:alexgo-io/brc20-indexer-v1.git
