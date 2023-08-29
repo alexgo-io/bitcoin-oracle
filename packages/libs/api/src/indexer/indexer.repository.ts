@@ -1,8 +1,7 @@
 import { sql } from '@alex-b20/commons';
 import { PersistentService } from '@alex-b20/persistent';
+import { IndexerTxWithProof } from '@alex-b20/types';
 import { Inject } from '@nestjs/common';
-import {IndexerTxWithProof} from "@alex-b20/types";
-
 
 /*
 create table indexer.txs
@@ -57,11 +56,12 @@ export class IndexerRepository {
       const existing = await conn.maybeOne(sql.typeAlias('indexer_txs')`
                 select *
                 from indexer.txs
-                where tx_id = ${tx.tx_id}
+                where tx_id = ${sql.binary(tx.tx_id)}
                   and header = ${sql.binary(tx.header)}
                   and output = ${tx.output.toString()}
                 ;
             `);
+
       if (existing != null) {
         same(existing.type, tx.type, `!type ${tx.tx_id}`);
         same(existing.height, tx.height, `!height ${tx.tx_id}`);
@@ -94,29 +94,30 @@ export class IndexerRepository {
                                         from_bal,
                                         to_bal)
                 VALUES (${tx.type},
-                        ${tx.header},
+                        ${sql.binary(tx.header)},
                         ${tx.height.toString()},
-                        ${tx.tx_id},
-                        ${tx.proof_hashes},
+                        ${sql.binary(tx.tx_id)},
+                        ${sql.array(tx.proof_hashes, 'bytea')},
                         ${tx.tx_index.toString()},
                         ${tx.tree_depth.toString()},
-                        ${tx.from},
-                        ${tx.to},
+                        ${sql.binary(tx.from)},
+                        ${sql.binary(tx.to)},
                         ${tx.output.toString()},
                         ${tx.tick},
                         ${tx.amt.toString()},
-                        ${tx.bitcoin_tx},
+                        ${sql.binary(tx.bitcoin_tx)},
                         ${tx.from_bal.toString()},
                         ${tx.to_bal.toString()});
             `);
+
       await conn.query(sql.typeAlias('void')`
                 INSERT INTO indexer.proofs(type,
                                            order_hash,
                                            signature,
                                            signer)
                 VALUES (${tx.type},
-                        ${tx.order_hash},
-                        ${tx.signature},
+                        ${sql.binary(tx.order_hash)},
+                        ${sql.binary(tx.signature)},
                         ${tx.signer})
                 on conflict do nothing;
                 ;
