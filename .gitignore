@@ -39,3 +39,5 @@ testem.log
 Thumbs.db
 .env
 .envrc.override
+
+packages/dev/database/bin/cli-hasura-*

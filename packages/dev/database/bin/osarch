@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+const os = require('os');
+
+function normalizeArch(arch) {
+  if (arch === 'x64') return 'amd64';
+  return arch;
+}
+
+function normalizePlatform(platform) {
+  if (platform === 'win32') return 'windows';
+  return platform;
+}
+
+console.log(normalizePlatform(os.platform()) + '-' + normalizeArch(os.arch()));
