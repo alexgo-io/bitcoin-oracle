@@ -1,5 +1,5 @@
 import { startHeartBeat } from '@alex-b20/commons';
-import { patchNestjsSwagger } from '@anatine/zod-nestjs';
+import { patchNestJsSwagger } from 'nestjs-zod'
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
@@ -50,7 +50,7 @@ async function bootstrap() {
     .setDescription('Alex B20 API service')
     .setVersion('0.0.1')
     .build();
-  patchNestjsSwagger();
+  patchNestJsSwagger();
   const document = SwaggerModule.createDocument(app, swaggerBuilder);
   amendActionPath(document);
   SwaggerModule.setup('swagger-ui', app, document, {
