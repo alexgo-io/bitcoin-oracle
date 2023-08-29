@@ -1,3 +1,5 @@
+import { sql } from '@alex-b20/commons';
+import { PersistentModule, PersistentService } from '@alex-b20/persistent';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
@@ -8,11 +10,12 @@ describe('IndexController (e2e)', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule, PersistentModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
   });
 
   it('/ (GET)', () => {
@@ -29,4 +32,3 @@ describe('IndexController (e2e)', () => {
       .expect('OK');
   });
 });
-
