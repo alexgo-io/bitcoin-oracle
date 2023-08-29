@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import {Simplify} from "@t3-oss/env-core";
 
 /*
     "height"     integer     not null,
@@ -33,23 +32,51 @@ export type IndexerBlock = z.infer<typeof IndexerBlockSchema>;
     "to_bal"       numeric     not null,
  */
 
-export const BufferSchema = z.instanceof(Buffer);
+export const BufferSchema = z.preprocess(val => {
+  if (typeof val === 'string') {
+    return Buffer.from(
+      val.length >= 2 && val[1] === 'x' ? val.slice(2) : val,
+      'hex',
+    );
+  }
+  if (val instanceof Buffer) {
+    return val;
+  }
+}, z.instanceof(Buffer));
+
+export const BigIntSchema = z.preprocess(val => {
+  if (typeof val === 'bigint') {
+    return val;
+  }
+  if (typeof val === 'string') {
+    if (val.endsWith('n')) {
+      return BigInt(val.slice(0, -1));
+    }
+    return BigInt(val);
+  }
+  if (typeof val === 'number') {
+    return BigInt(val);
+  }
+}, z.bigint());
+
+export const IndexerTypeSchema = z.enum(['bis', 'okx'])
+
 export const IndexerTxSchema = z.object({
-  type: z.string(),
+  type: IndexerTypeSchema,
   header: BufferSchema,
-  height: z.bigint(),
+  height: BigIntSchema,
   tx_id: BufferSchema,
   proof_hashes: z.array(BufferSchema),
-  tx_index: z.bigint(),
-  tree_depth: z.bigint(),
+  tx_index: BigIntSchema,
+  tree_depth: BigIntSchema,
   from: BufferSchema,
   to: BufferSchema,
-  output: z.bigint(),
+  output: BigIntSchema,
   tick: z.string(),
-  amt: z.bigint(),
+  amt: BigIntSchema,
   bitcoin_tx: BufferSchema,
-  from_bal: z.bigint(),
-  to_bal: z.bigint(),
+  from_bal: BigIntSchema,
+  to_bal: BigIntSchema,
 });
 export type IndexerTx = z.infer<typeof IndexerTxSchema>;
 
@@ -61,11 +88,13 @@ export type IndexerTx = z.infer<typeof IndexerTxSchema>;
  */
 
 export const IndexerProofSchema = z.object({
-  type: z.string(),
+  type: IndexerTypeSchema,
   order_hash: BufferSchema,
   signature: BufferSchema,
   signer: z.string(),
 });
 export type IndexerProof = z.infer<typeof IndexerProofSchema>;
 
-export type IndexerTxWithProof = Required<Simplify<IndexerTx & IndexerProof>>;
+export const IndexerTxWithProofSchema =
+  IndexerTxSchema.merge(IndexerProofSchema);
+export type IndexerTxWithProof = z.infer<typeof IndexerTxWithProofSchema>;
