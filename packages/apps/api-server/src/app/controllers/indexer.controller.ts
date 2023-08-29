@@ -1,5 +1,6 @@
+import { Indexer } from '@alex-b20/api';
 import { IndexerTxWithProofSchema } from '@alex-b20/types';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { createZodDto } from 'nestjs-zod';
 
 export class IndexerTxsCreateInput extends createZodDto(
@@ -8,8 +9,10 @@ export class IndexerTxsCreateInput extends createZodDto(
 
 @Controller('/api/v1')
 export class IndexerController {
+  constructor(@Inject(Indexer) private readonly indexer: Indexer) {}
   @Post('/txs')
-  async txs(@Body() body: IndexerTxsCreateInput) {
+  async txs(@Body() tx: IndexerTxsCreateInput) {
+    await this.indexer.upsertTxWithProof(tx); //?
     return 'ok';
   }
 }
