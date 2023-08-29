@@ -83,7 +83,8 @@ export const indexer = defineContract({
     input: [
       { name: 'user', type: bufferT },
       { name: 'tick', type: stringT },
-      { name: 'amt', type: numberT }
+      { name: 'amt', type: numberT },
+      { name: 'up-to-block', type: numberT }
     ],
     output: responseSimpleT(booleanT, ),
     mode: 'public'
@@ -104,7 +105,7 @@ export const indexer = defineContract({
       { name: 'user', type: bufferT },
       { name: 'tick', type: stringT }
     ],
-    output: numberT,
+    output: tupleT({ balance: numberT, 'up-to-block': numberT }, ),
     mode: 'readonly'
   },
   'get-validator-or-fail': {
@@ -178,7 +179,7 @@ export const indexer = defineContract({
   },
   'user-balance': {
     input: tupleT({ tick: stringT, user: bufferT }, ),
-    output: optionalT(numberT, ),
+    output: optionalT(tupleT({ balance: numberT, 'up-to-block': numberT }, ), ),
     mode: 'mapEntry'
   },
   validators: { input: principalT, output: optionalT(bufferT, ), mode: 'mapEntry' },

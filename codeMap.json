@@ -163,68 +163,56 @@
     "code": "ERR-OUT-OF-BOUNDS",
     "comment": "clarity-bitcoin.clar:85"
   },
-  "2894909939": {
+  "2894909934": {
     "code": "ERR-VALIDATOR-ALREADY-REGISTERED",
-    "comment": "indexer.clar:68"
+    "comment": "indexer.clar:63"
   },
-  "2894909968": {
+  "2894909963": {
     "code": "ERR-UNKNOWN-VALIDATOR",
-    "comment": "indexer.clar:76"
+    "comment": "indexer.clar:71"
   },
-  "2894910002": {
+  "2894909997": {
     "code": "ERR-REQUIRED-VALIDATORS",
-    "comment": "indexer.clar:89"
+    "comment": "indexer.clar:84"
   },
-  "3842857192": {
+  "3842857187": {
     "code": "ERR-UNKNOWN-VALIDATOR",
-    "comment": "indexer.clar:108"
+    "comment": "indexer.clar:103"
   },
-  "3842857251": {
+  "3842857246": {
     "code": "ERR-DUPLICATE-SIGNATURE",
-    "comment": "indexer.clar:125"
+    "comment": "indexer.clar:120"
   },
-  "3842857252": {
+  "3842857247": {
     "code": "ERR-ORDER-HASH-MISMATCH",
-    "comment": "indexer.clar:126"
+    "comment": "indexer.clar:121"
   },
-  "3842857253": {
+  "3842857248": {
     "code": "ERR-INVALID-SIGNATURE",
-    "comment": "indexer.clar:127"
+    "comment": "indexer.clar:122"
   },
-  "3842857284": {
+  "3842857279": {
     "code": "ERR-TX-NOT-INDEXED",
-    "comment": "indexer.clar:137"
+    "comment": "indexer.clar:132"
   },
-  "3842857316": {
+  "3842857311": {
     "code": "ERR-PAUSED",
-    "comment": "indexer.clar:148"
+    "comment": "indexer.clar:143"
   },
-  "3842857317": {
+  "3842857312": {
     "code": "ERR-UKNOWN-RELAYER",
-    "comment": "indexer.clar:149"
+    "comment": "indexer.clar:144"
   },
-  "3842857436": {
+  "3842857406": {
     "code": "ERR-TX-ALREADY-INDEXED",
-    "comment": "indexer.clar:184"
+    "comment": "indexer.clar:175"
   },
-  "3842857437": {
+  "3842857407": {
     "code": "ERR-REQUIRED-VALIDATORS",
-    "comment": "indexer.clar:185"
+    "comment": "indexer.clar:176"
   },
-  "3842857438": {
-    "code": "ERR-DOUBLE-SPEND",
-    "comment": "indexer.clar:186"
-  },
-  "3842857439": {
-    "code": "ERR-FROM-BAL-MISMATCH",
-    "comment": "indexer.clar:187"
-  },
-  "3842857440": {
-    "code": "ERR-TO-BAL-MISMATCH",
-    "comment": "indexer.clar:188"
-  },
-  "3842858147": {
+  "3842857463": {
     "code": "ERR-NOT-AUTHORIZED",
-    "comment": "indexer.clar:202"
+    "comment": "indexer.clar:190"
   }
 }
