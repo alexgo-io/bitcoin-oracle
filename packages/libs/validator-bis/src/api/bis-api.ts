@@ -1,5 +1,5 @@
-import { env } from '@alex-b20/env';
 import got from 'got-cjs';
+import { env } from '../env';
 import {
   BISActivityOnBlockResponseSchema,
   BISBalanceOnBlockResponseSchema,
@@ -11,7 +11,7 @@ export async function getActivityOnBlock(block: number) {
     `${kBiSBaseURL}/v3/brc20/activity_on_block?block_height=${block}`,
     {
       headers: {
-        'x-api-key': env.BIS_ACCESS_KEY,
+        'x-api-key': env().BIS_ACCESS_KEY,
       },
     },
   ).json();
@@ -24,7 +24,7 @@ export async function getBalanceOnBlock(address: string, block: number) {
     `${kBiSBaseURL}/v3/brc20/balance_on_block?pkscript=${address}&block_height=${block}`,
     {
       headers: {
-        'x-api-key': env.BIS_ACCESS_KEY,
+        'x-api-key': env().BIS_ACCESS_KEY,
       },
     },
   ).json();

@@ -83,7 +83,7 @@ export class ErrorDetailsHttpException extends HttpException {
   constructor(
     public readonly apiError: ApiError,
     public readonly debugInfos: DebugInfo[],
-    public readonly cause: Error,
+    public override readonly cause: Error,
   ) {
     super(apiError, apiError.error.code);
   }

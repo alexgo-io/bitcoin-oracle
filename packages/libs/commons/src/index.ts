@@ -2,6 +2,7 @@ export * from './api.model';
 export * from './errors/parse-error-detail';
 export * from './errors/to-http-error';
 export * from './logging/heart-beat';
+export * from './logging/rx.extentions';
 export * from './logging/status-tracker';
 export * from './sql';
 export * from './utils/bitint-json';

@@ -1,1 +1,2 @@
-export * from './lib/validator-bis';
+export * from './api/bis-api.rx';
+export * from './validator/validator';

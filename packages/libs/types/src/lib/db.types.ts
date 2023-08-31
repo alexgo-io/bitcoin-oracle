@@ -32,7 +32,7 @@ export type IndexerBlock = z.infer<typeof IndexerBlockSchema>;
     "to_bal"       numeric     not null,
  */
 
-export const BufferSchema = z.preprocess(val => {
+export const BufferSchema = z.preprocess((val, ctx) => {
   if (typeof val === 'string') {
     return Buffer.from(
       val.length >= 2 && val[1] === 'x' ? val.slice(2) : val,
@@ -42,9 +42,14 @@ export const BufferSchema = z.preprocess(val => {
   if (val instanceof Buffer) {
     return val;
   }
+  ctx.addIssue({
+    message: `val is not a buffer: ${val}`,
+    code: 'custom',
+  });
+  return z.NEVER;
 }, z.instanceof(Buffer));
 
-export const BigIntSchema = z.preprocess(val => {
+export const BigIntSchema = z.preprocess((val, ctx) => {
   if (typeof val === 'bigint') {
     return val;
   }
@@ -57,9 +62,14 @@ export const BigIntSchema = z.preprocess(val => {
   if (typeof val === 'number') {
     return BigInt(val);
   }
+  ctx.addIssue({
+    message: `val is not a bigint: ${val}`,
+    code: 'custom',
+  });
+  return z.NEVER;
 }, z.bigint());
 
-export const IndexerTypeSchema = z.enum(['bis', 'okx'])
+export const IndexerTypeSchema = z.enum(['bis', 'okx']);
 
 export const IndexerTxSchema = z.object({
   type: IndexerTypeSchema,
