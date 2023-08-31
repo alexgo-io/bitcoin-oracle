@@ -37,5 +37,6 @@ export const BISBalanceSchema = z.object({
   balance: z.string(),
   transferrable_balance: z.string(),
 });
+export type BISBalance = z.infer<typeof BISBalanceSchema>;
 export const BISBalanceOnBlockResponseSchema =
   withDataArraySchema(BISBalanceSchema);

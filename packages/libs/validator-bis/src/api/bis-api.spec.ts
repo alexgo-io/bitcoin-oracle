@@ -30264,17 +30264,17 @@ describe('BiS API', function () {
 
   it('should get balance', async function () {
     const data = await getBalanceOnBlock(
-      '0014870dba15d6b5a0563b6df472359a7ef75d21f26c',
-      802396,
+      '0014ad42179475826f3cae94c1c3bae2797c6933a53a',
+      802397,
     );
 
     expect(data).toBeDefined();
     expect(data.data).toMatchInlineSnapshot(`
       [
         {
-          "balance": "10878000000000000000000000",
+          "balance": "10000000000000000000000",
           "tick": "rdex",
-          "transferrable_balance": "40000000000000000000000",
+          "transferrable_balance": "0",
         },
       ]
     `);
