@@ -27,6 +27,10 @@ export async function setupIndexer() {
       approved: true,
       relayer: envDevelopment.STACKS_RELAYER_ACCOUNT_ADDRESS,
     }),
+    callPublic('indexer-registry', 'approve-operator', {
+      approved: true,
+      operator: envDevelopment.STACKS_RELAYER_ACCOUNT_ADDRESS,
+    }),
   ]);
 
   console.log(`setup indexer done`);
