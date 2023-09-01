@@ -19,7 +19,7 @@
     "electrum-client-sl": "^0.1.4",
     "got-cjs": "^12.5.4",
     "lodash": "^4.17.21",
-    "micro-btc-signer": "^0.4.2",
+    "scure-btc-signer-cjs": "^1.0.1",
     "micro-stacks": "^1.2.1",
     "nestjs-zod": "^3.0.0",
     "p-queue": "^6.6.2",
