@@ -12,7 +12,7 @@ export class IndexerController {
   constructor(@Inject(Indexer) private readonly indexer: Indexer) {}
   @Post('/txs')
   async txs(@Body() tx: IndexerTxsCreateInput) {
-    await this.indexer.upsertTxWithProof(tx); //?
+    await this.indexer.upsertTxWithProof(tx);
     return 'ok';
   }
 }

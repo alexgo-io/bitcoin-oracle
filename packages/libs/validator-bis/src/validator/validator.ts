@@ -21,7 +21,7 @@ function getBalanceOnBlockCached$({
     return of(val);
   }
   return getBalanceOnBlock$(address, block).pipe(
-    map(result => result.data /*?*/),
+    map(result => result.data),
     tap(result => cache.set(key, result)),
     log('---'),
   );
