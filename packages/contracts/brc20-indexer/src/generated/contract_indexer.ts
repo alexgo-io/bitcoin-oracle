@@ -79,22 +79,17 @@ export const indexer = defineContract({
     output: responseSimpleT(booleanT, ),
     mode: 'public'
   },
-  'set-user-balance': {
-    input: [
-      { name: 'user', type: bufferT },
-      { name: 'tick', type: stringT },
-      { name: 'amt', type: numberT },
-      { name: 'up-to-block', type: numberT }
-    ],
-    output: responseSimpleT(booleanT, ),
-    mode: 'public'
-  },
   'get-bitcoin-tx-indexed-or-fail': {
     input: [
       { name: 'bitcoin-tx', type: bufferT },
       { name: 'output', type: numberT }
     ],
     output: responseSimpleT(tupleT({ amt: numberT, from: bufferT, tick: stringT, to: bufferT }, ), ),
+    mode: 'readonly'
+  },
+  'get-bitcoin-tx-mined-or-default': {
+    input: [ { name: 'tx', type: bufferT } ],
+    output: booleanT,
     mode: 'readonly'
   },
   'get-contract-owner': { input: [], output: principalT, mode: 'readonly' },
@@ -167,19 +162,9 @@ export const indexer = defineContract({
     output: optionalT(booleanT, ),
     mode: 'mapEntry'
   },
-  'bitcoin-tx-indexed': {
-    input: tupleT({ output: numberT, 'tx-hash': bufferT }, ),
-    output: optionalT(tupleT({ amt: numberT, from: bufferT, tick: stringT, to: bufferT }, ), ),
-    mode: 'mapEntry'
-  },
   'tx-validated-by': {
     input: tupleT({ 'tx-hash': bufferT, validator: principalT }, ),
     output: optionalT(booleanT, ),
-    mode: 'mapEntry'
-  },
-  'user-balance': {
-    input: tupleT({ tick: stringT, user: bufferT }, ),
-    output: optionalT(tupleT({ balance: numberT, 'up-to-block': numberT }, ), ),
     mode: 'mapEntry'
   },
   validators: { input: principalT, output: optionalT(bufferT, ), mode: 'mapEntry' },
