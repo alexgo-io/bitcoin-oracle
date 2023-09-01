@@ -1,5 +1,21 @@
+import {
+  getBitcoinData$,
+  getBitcoinTxData,
+  withElectrumClient,
+} from '@alex-b20/bitcoin';
 import { log } from '@alex-b20/commons';
-import { combineLatest, map, mergeAll, mergeMap, of, retry, tap } from 'rxjs';
+import assert from 'assert';
+import {
+  Observable,
+  combineLatest,
+  from,
+  map,
+  mergeAll,
+  mergeMap,
+  of,
+  retry,
+  tap,
+} from 'rxjs';
 import { BISBalance } from '../api/base';
 import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
 
@@ -68,15 +84,58 @@ export function getBisTxOnBlock(block: number) {
         }),
       );
     }, 10),
-
   );
 }
 
-// export function getIndexerTxOnBlock(block: number) {
-//  return getBisTxOnBlock(block).pipe(
-//    mergeMap(tx => {
-//      tx.
-//    }),
-//  )
-// }
+function getSatpoint(tx: string) {
+  const data = tx.split(':');
+  assert(data.length === 3, `Invalid satpoint: ${tx}`);
+  const [txId, vout, satoshis] = data;
+  return {
+    txId,
+    vout,
+    satoshis,
+  };
+}
 
+export function getIndexerTxOnBlock(block: number) {
+  return getBisTxOnBlock(block).pipe(
+    mergeMap(tx => {
+      const { txId, vout } = getSatpoint(tx.old_satpoint);
+      return getBitcoinData$([txId]).pipe(
+        map(result => {
+          return {
+            ...tx,
+            ...result,
+            vout,
+          };
+        }),
+      );
+    }),
+  );
+}
+
+export function getIndexerTxOnBlock2(block: number) {
+  return new Observable(subscriber => {
+    withElectrumClient(async client => {
+      getBisTxOnBlock(block)
+        .pipe(
+          mergeMap(tx => {
+            const { txId, vout } = getSatpoint(tx.old_satpoint);
+            return from(getBitcoinTxData(txId, client)).pipe(
+              map(result => {
+                return {
+                  ...tx,
+                  ...result,
+                  vout,
+                };
+              }),
+            );
+          }),
+        )
+        .subscribe(subscriber);
+    }).catch(error => {
+      subscriber.error(error);
+    });
+  });
+}
