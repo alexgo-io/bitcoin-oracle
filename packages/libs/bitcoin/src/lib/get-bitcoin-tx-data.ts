@@ -11,7 +11,7 @@ interface StacksBlockByHeight {
 }
 
 export async function getCurrentStackNodeInfo() {
-  return got(`${env.STACKS_API_URL}/v2/info`).json<{
+  return got(`${env.STACKS_MAINNET_API_URL}/v2/info`).json<{
     burn_block_height: number;
   }>();
 }
@@ -22,7 +22,7 @@ export async function getCurrentBurnBlock() {
 
 export async function getStackNodeInfoByBurnHeight(burnHeight: number) {
   return got(
-    `${env.STACKS_API_URL}/extended/v1/block/by_burn_block_height/${burnHeight}`,
+    `${env.STACKS_MAINNET_API_URL}/extended/v1/block/by_burn_block_height/${burnHeight}`,
   ).json<{ height: number }>();
 }
 

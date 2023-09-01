@@ -163,56 +163,64 @@
     "code": "ERR-OUT-OF-BOUNDS",
     "comment": "clarity-bitcoin.clar:85"
   },
-  "2894909934": {
+  "2894909907": {
     "code": "ERR-VALIDATOR-ALREADY-REGISTERED",
-    "comment": "indexer.clar:63"
+    "comment": "indexer.clar:57"
   },
-  "2894909963": {
+  "2894909936": {
     "code": "ERR-UNKNOWN-VALIDATOR",
-    "comment": "indexer.clar:71"
+    "comment": "indexer.clar:65"
   },
-  "2894909997": {
+  "2894909970": {
     "code": "ERR-REQUIRED-VALIDATORS",
-    "comment": "indexer.clar:84"
+    "comment": "indexer.clar:78"
   },
-  "3842857187": {
+  "2894910026": {
     "code": "ERR-UNKNOWN-VALIDATOR",
-    "comment": "indexer.clar:103"
+    "comment": "indexer.clar:92"
   },
-  "3842857246": {
+  "3842857193": {
     "code": "ERR-DUPLICATE-SIGNATURE",
-    "comment": "indexer.clar:120"
+    "comment": "indexer.clar:109"
   },
-  "3842857247": {
+  "3842857215": {
     "code": "ERR-ORDER-HASH-MISMATCH",
-    "comment": "indexer.clar:121"
+    "comment": "indexer.clar:110"
   },
-  "3842857248": {
+  "3842857216": {
     "code": "ERR-INVALID-SIGNATURE",
-    "comment": "indexer.clar:122"
+    "comment": "indexer.clar:111"
   },
-  "3842857279": {
-    "code": "ERR-TX-NOT-INDEXED",
-    "comment": "indexer.clar:132"
-  },
-  "3842857311": {
+  "3842857284": {
     "code": "ERR-PAUSED",
-    "comment": "indexer.clar:143"
+    "comment": "indexer.clar:137"
   },
-  "3842857312": {
+  "3842857285": {
     "code": "ERR-UKNOWN-RELAYER",
-    "comment": "indexer.clar:144"
+    "comment": "indexer.clar:138"
   },
-  "3842857406": {
+  "3842857403": {
     "code": "ERR-TX-ALREADY-INDEXED",
-    "comment": "indexer.clar:175"
+    "comment": "indexer.clar:172"
   },
-  "3842857407": {
+  "3842857404": {
     "code": "ERR-REQUIRED-VALIDATORS",
-    "comment": "indexer.clar:176"
+    "comment": "indexer.clar:173"
   },
-  "3842857463": {
+  "3842857466": {
     "code": "ERR-NOT-AUTHORIZED",
-    "comment": "indexer.clar:190"
+    "comment": "indexer.clar:193"
+  },
+  "4072773152": {
+    "code": "ERR-TX-NOT-INDEXED",
+    "comment": "indexer-registry.clar:58"
+  },
+  "4072773241": {
+    "code": "ERR-NOT-AUTHORIZED",
+    "comment": "indexer-registry.clar:84"
+  },
+  "4072773245": {
+    "code": "ERR-NOT-AUTHORIZED",
+    "comment": "indexer-registry.clar:88"
   }
 }

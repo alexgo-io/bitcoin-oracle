@@ -32,7 +32,7 @@ function getBalance(balances: BISBalance[] | null, tick: string) {
   }
   return balances.find(balance => balance.tick === tick);
 }
-export function getIndexerTxOnBlock(block: number) {
+export function getBisTxOnBlock(block: number) {
   const cache = new Map<string, BISBalance[]>();
 
   return getActivityOnBlock$(block).pipe(
@@ -71,3 +71,12 @@ export function getIndexerTxOnBlock(block: number) {
 
   );
 }
+
+// export function getIndexerTxOnBlock(block: number) {
+//  return getBisTxOnBlock(block).pipe(
+//    mergeMap(tx => {
+//      tx.
+//    }),
+//  )
+// }
+
