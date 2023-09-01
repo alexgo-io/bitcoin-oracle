@@ -47,7 +47,7 @@ export const BufferSchema = z.preprocess((val, ctx) => {
     code: 'custom',
   });
   return z.NEVER;
-}, z.instanceof(Buffer));
+}, z.instanceof(Buffer)) as z.ZodType<Buffer, z.ZodTypeDef, Buffer>;
 
 export const BigIntSchema = z.preprocess((val, ctx) => {
   if (typeof val === 'bigint') {
