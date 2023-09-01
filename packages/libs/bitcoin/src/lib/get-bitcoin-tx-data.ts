@@ -55,10 +55,18 @@ export async function findStacksBlockAtHeight(
   return findStacksBlockAtHeight(height + 1, prevBlocks, electrumClient);
 }
 
+export type BitcoinTxDataType = {
+  burnHeight: number;
+  tx: string;
+  header: string;
+  proof: { "tx-index": number; "tree-depth": number; hashes: string[] };
+  height: number
+}
+
 export async function getBitcoinTxData(
   txId: string,
   electrumClient: ElectrumClient,
-) {
+): Promise<BitcoinTxDataType> {
   const tx = await electrumClient.blockchain_transaction_get(txId, true);
   if (typeof tx.confirmations === 'undefined' || tx.confirmations < 1) {
     throw new Error('Tx is not confirmed');
