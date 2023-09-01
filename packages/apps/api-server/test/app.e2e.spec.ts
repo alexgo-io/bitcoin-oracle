@@ -1,5 +1,4 @@
-import { sql } from '@alex-b20/commons';
-import { PersistentModule, PersistentService } from '@alex-b20/persistent';
+import { PersistentModule } from '@alex-b20/persistent';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
@@ -15,7 +14,6 @@ describe('IndexController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
-
   });
 
   it('/ (GET)', () => {

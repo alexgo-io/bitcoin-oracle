@@ -20,10 +20,12 @@ export function withDataArraySchema<T extends ZodRawShape>(
 export const BISActivitySchema = z.object({
   id: z.number(),
   inscription_id: z.string(),
+  old_satpoint: z.string(),
   old_pkscript: z.string().nullish(),
   old_wallet: z.string().nullish(),
   new_pkscript: z.string(),
   new_wallet: z.string().nullish(),
+  new_satpoint: z.string(),
   tick: z.string(),
   amount: z.string(),
   activity_type: BISActivityTypeSchema,

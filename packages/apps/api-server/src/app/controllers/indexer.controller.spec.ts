@@ -28,7 +28,7 @@ describe('Indexer Controller (e2e)', () => {
       .send({
         type: 'bis',
         header: '0x01',
-        height: '1000',
+        height: '1001',
         tx_id: randomBytes(32).toString('hex'),
         proof_hashes: [randomBytes(32).toString('hex')],
         tx_index: '0',
