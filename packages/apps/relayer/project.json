@@ -14,7 +14,6 @@
         "outputPath": "dist/packages/apps/relayer",
         "main": "packages/apps/relayer/src/main.ts",
         "tsConfig": "packages/apps/relayer/tsconfig.app.json",
-        "assets": ["packages/apps/relayer/src/assets"],
         "isolatedConfig": true,
         "webpackConfig": "packages/apps/relayer/webpack.config.js"
       },
