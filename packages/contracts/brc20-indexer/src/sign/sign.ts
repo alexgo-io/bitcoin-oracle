@@ -13,6 +13,7 @@ import {
   createStacksPrivateKey,
   signWithKey,
 } from 'micro-stacks/transactions';
+import { indexer } from '../generated/contract_indexer';
 
 function toBuffer(input: string) {
   return Buffer.from(
@@ -50,9 +51,13 @@ export const kStructuredDataPrefix = Buffer.from([
   0x53, 0x49, 0x50, 0x30, 0x31, 0x38,
 ]);
 
-export async function signTx(
+const encodeOrder = indexer['indexer']['hash-tx'].input[0].type.encode;
+export const generateOrderHash = (order: Parameters<typeof encodeOrder>[0]) =>
+  structuredDataHash(encodeOrder(order));
+
+export async function signOrderHash(
   privateKey: StacksPrivateKey | string,
-  structuredData: ClarityValue,
+  orderHash: Buffer,
 ) {
   let key: StacksPrivateKey;
   if (typeof privateKey === 'string') {
@@ -61,11 +66,18 @@ export async function signTx(
     key = privateKey;
   }
 
-  const messageHash = structuredDataHash(structuredData);
   const input = sha256(
-    Buffer.concat([kStructuredDataPrefix, getDomainHash(), messageHash]),
+    Buffer.concat([kStructuredDataPrefix, getDomainHash(), orderHash]),
   );
 
   const data = (await signWithKey(key, input.toString('hex'))).data;
   return Buffer.from(data.slice(2) + data.slice(0, 2), 'hex');
+}
+
+export async function signTx(
+  privateKey: StacksPrivateKey | string,
+  structuredData: ClarityValue,
+) {
+  const messageHash = structuredDataHash(structuredData);
+  return signOrderHash(privateKey, messageHash);
 }
