@@ -22,9 +22,9 @@ describe('Indexer Controller (e2e)', () => {
     );
   });
 
-  it('/api/v1/txs (POST)', () => {
+  it('/api/v1/indexer/txs (POST)', () => {
     return request(app.getHttpServer())
-      .post('/api/v1/txs')
+      .post('/api/v1/indexer/txs')
       .send({
         type: 'bis',
         header: '0x01',

@@ -165,7 +165,7 @@ async function submitIndexerTx(
   });
 }
 
-export function processBlock(block: number) {
+export function processBlock$(block: number) {
   return getIndexerTxOnBlock(block).pipe(
     switchMap(tx => {
       return from(submitIndexerTx(tx));

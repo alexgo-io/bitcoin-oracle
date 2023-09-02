@@ -1,10 +1,10 @@
 import { startHeartBeat } from '@alex-b20/commons';
-import { patchNestJsSwagger } from 'nestjs-zod'
-import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import assert from 'assert';
 import { Response, json, urlencoded } from 'express';
+import { Logger } from 'nestjs-pino';
+import { patchNestJsSwagger } from 'nestjs-zod';
 import { AppModule } from './app/app.module';
 import { AllExceptionsFilter } from './app/interceptors/all-exceptions.filter';
 import { env } from './env';
@@ -29,16 +29,9 @@ function amendActionPath(document: OpenAPIObject) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {});
-  const logger = new Logger('api-server', { timestamp: true });
+  const logger = app.get(Logger);
+  app.useLogger(logger);
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: false,
-      transformOptions: { enableImplicitConversion: true },
-      forbidUnknownValues: false,
-    }),
-  );
   app.enableCors();
   app.use(json({ limit: clientJsonPayloadLimit }));
   app.use(urlencoded({ limit: clientJsonPayloadLimit, extended: true }));
@@ -77,7 +70,7 @@ async function bootstrap() {
 
   const port = env.API_PORT;
   await app.listen(port, () => {
-    logger.log(`BRIDGE API server started at port ${port}`);
+    logger.log(`B20 API server started at port ${port}`);
     startHeartBeat(env.HEARTBEAT_URL);
   });
 }

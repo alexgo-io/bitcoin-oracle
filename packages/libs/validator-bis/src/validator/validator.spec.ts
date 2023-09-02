@@ -2,7 +2,7 @@
 import {
   getBisTxOnBlock,
   getIndexerTxOnBlock,
-  processBlock,
+  processBlock$,
 } from './validator';
 
 jest.mock('@alex-b20/api-client', () => {
@@ -276,7 +276,7 @@ describe('libs-validator-bis', () => {
 
   it('should processIndexerTxOnBlock', done => {
     const txs: any[] = [];
-    processBlock(802396).subscribe({
+    processBlock$(802396).subscribe({
       next: val => {
         txs.push(val);
       },

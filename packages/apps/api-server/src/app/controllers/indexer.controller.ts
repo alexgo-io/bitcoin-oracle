@@ -10,7 +10,7 @@ export class IndexerTxsCreateInput extends createZodDto(
   IndexerTxWithProofSchema,
 ) {}
 
-@Controller('/api/v1')
+@Controller('/api/v1/indexer')
 export class IndexerController {
   constructor(@Inject(Indexer) private readonly indexer: Indexer) {}
   @Post('/txs')
