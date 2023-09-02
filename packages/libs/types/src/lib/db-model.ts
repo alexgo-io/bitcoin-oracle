@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { BigIntSchema, BufferSchema } from './basic-model';
+import { IndexerTypeSchema } from './enum-model';
 
 /*
     "height"     integer     not null,
@@ -31,45 +33,6 @@ export type IndexerBlock = z.infer<typeof IndexerBlockSchema>;
     "from_bal"     numeric     not null,
     "to_bal"       numeric     not null,
  */
-
-export const BufferSchema = z.preprocess((val, ctx) => {
-  if (typeof val === 'string') {
-    return Buffer.from(
-      val.length >= 2 && val[1] === 'x' ? val.slice(2) : val,
-      'hex',
-    );
-  }
-  if (val instanceof Buffer) {
-    return val;
-  }
-  ctx.addIssue({
-    message: `val is not a buffer: ${val}`,
-    code: 'custom',
-  });
-  return z.NEVER;
-}, z.instanceof(Buffer)) as z.ZodType<Buffer, z.ZodTypeDef, Buffer>;
-
-export const BigIntSchema = z.preprocess((val, ctx) => {
-  if (typeof val === 'bigint') {
-    return val;
-  }
-  if (typeof val === 'string') {
-    if (val.endsWith('n')) {
-      return BigInt(val.slice(0, -1));
-    }
-    return BigInt(val);
-  }
-  if (typeof val === 'number') {
-    return BigInt(val);
-  }
-  ctx.addIssue({
-    message: `val is not a bigint: ${val}`,
-    code: 'custom',
-  });
-  return z.NEVER;
-}, z.bigint());
-
-export const IndexerTypeSchema = z.enum(['bis', 'okx']);
 
 export const IndexerTxSchema = z.object({
   type: IndexerTypeSchema,
