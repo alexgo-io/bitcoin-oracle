@@ -1,8 +1,6 @@
-import {
-  getBitcoinData$,
-  getBitcoinTxData,
-  withElectrumClient,
-} from '@alex-b20/bitcoin';
+import { indexer } from '@alex-b20/api-client';
+import { getBitcoinData$ } from '@alex-b20/bitcoin';
+import { generateOrderHash, signOrderHash } from '@alex-b20/brc20-indexer';
 import { log } from '@alex-b20/commons';
 import assert from 'assert';
 import {
@@ -14,10 +12,12 @@ import {
   mergeMap,
   of,
   retry,
+  switchMap,
   tap,
 } from 'rxjs';
 import { BISBalance } from '../api/base';
 import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
+import { env } from '../env';
 
 function getBalanceOnBlockCached$({
   address,
@@ -90,9 +90,9 @@ export function getBisTxOnBlock(block: number) {
 function getSatpoint(tx: string) {
   const data = tx.split(':');
   assert(data.length === 3, `Invalid satpoint: ${tx}`);
-  const [txId, vout, satoshis] = data;
+  const [tx_id, vout, satoshis] = data;
   return {
-    txId,
+    tx_id,
     vout,
     satoshis,
   };
@@ -101,13 +101,14 @@ function getSatpoint(tx: string) {
 export function getIndexerTxOnBlock(block: number) {
   return getBisTxOnBlock(block).pipe(
     mergeMap(tx => {
-      const { txId, vout } = getSatpoint(tx.old_satpoint);
-      return getBitcoinData$([txId]).pipe(
+      const { tx_id, vout } = getSatpoint(tx.old_satpoint);
+      return getBitcoinData$([tx_id]).pipe(
         map(result => {
           return {
             ...tx,
             ...result,
             vout,
+            tx_id,
           };
         }),
       );
@@ -115,27 +116,59 @@ export function getIndexerTxOnBlock(block: number) {
   );
 }
 
-export function getIndexerTxOnBlock2(block: number) {
-  return new Observable(subscriber => {
-    withElectrumClient(async client => {
-      getBisTxOnBlock(block)
-        .pipe(
-          mergeMap(tx => {
-            const { txId, vout } = getSatpoint(tx.old_satpoint);
-            return from(getBitcoinTxData(txId, client)).pipe(
-              map(result => {
-                return {
-                  ...tx,
-                  ...result,
-                  vout,
-                };
-              }),
-            );
-          }),
-        )
-        .subscribe(subscriber);
-    }).catch(error => {
-      subscriber.error(error);
-    });
+type Unobservable<T> = T extends Observable<infer R> ? R : T;
+
+const post = indexer(env().INDEXER_URL).txs().post;
+
+async function submitIndexerTx(
+  tx: Unobservable<ReturnType<typeof getIndexerTxOnBlock>>,
+) {
+  assert(
+    tx.old_pkscript != null,
+    `old_pkscript is null for ${tx.tx_id}, inscription_id: ${tx.inscription_id}`,
+  );
+
+  const order_hash = generateOrderHash({
+    amt: BigInt(tx.amount),
+    from: Buffer.from(tx.old_pkscript, 'hex'),
+    'from-bal': BigInt(tx.from_bal),
+    to: Buffer.from(tx.new_pkscript, 'hex'),
+    'to-bal': BigInt(tx.to_bal),
+    'bitcoin-tx': Buffer.from(tx.tx_id, 'hex'),
+    tick: tx.tick,
+    output: BigInt(tx.vout),
   });
+  const signature = await signOrderHash(
+    env().STACKS_VALIDATOR_ACCOUNT_SECRET,
+    order_hash,
+  );
+
+  return post({
+    type: 'bis',
+    header: tx.header,
+    height: tx.height.toString(10),
+    tx_id: tx.tx_id, // TODO: remove??
+    bitcoin_tx: tx.tx_id,
+    proof_hashes: tx.proof.hashes,
+    tx_index: tx.proof['tx-index'].toString(10),
+    tree_depth: tx.proof['tree-depth'].toString(10),
+    from: tx.old_pkscript ?? '', // TODO: refine model
+    to: tx.new_pkscript ?? '', // TODO: refine model
+    output: tx.vout,
+    tick: tx.tick,
+    amt: tx.amount,
+    from_bal: tx.from_bal,
+    to_bal: tx.to_bal,
+    order_hash: order_hash.toString('hex'),
+    signature: signature.toString('hex'),
+    signer: env().STACKS_VALIDATOR_ACCOUNT_ADDRESS,
+  });
+}
+
+export function processBlock(block: number) {
+  return getIndexerTxOnBlock(block).pipe(
+    switchMap(tx => {
+      return from(submitIndexerTx(tx));
+    }),
+  );
 }
