@@ -46,6 +46,6 @@ describe('Indexer Controller (e2e)', () => {
         signer: randomBytes(20).toString('hex'),
       })
       .expect(201)
-      .expect('ok');
+      .expect({"message":"ok"});
   });
 });

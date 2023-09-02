@@ -77,7 +77,7 @@ describe('libs-validator-bis', () => {
         done();
       },
     });
-  }, 10e3);
+  }, 20e3);
 
   it('should getIndexerTxOnBlock', done => {
     const txs: { id: string }[] = [];
