@@ -33,7 +33,9 @@ create table indexer.txs
     "header"       bytea       not null,
 -- stacks height
     "height"       integer     not null,
+-- remove tx id?
     "tx_id"        bytea       not null,
+    "bitcoin_tx"   bytea       not null,
     "proof_hashes" bytea[]     not null,
     "tx_index"     integer     not null,
     "tree_depth"   integer     not null,
@@ -42,7 +44,6 @@ create table indexer.txs
     "output"       integer     not null,
     "tick"         text        not null,
     "amt"          numeric     not null,
-    "bitcoin_tx"   bytea       not null,
     "from_bal"     numeric     not null,
     "to_bal"       numeric     not null,
     "created_at"   timestamptz not null default now(),
