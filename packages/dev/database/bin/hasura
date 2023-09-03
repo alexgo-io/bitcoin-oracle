@@ -33,7 +33,7 @@ pushd ${DIR}/../schema >/dev/null 2>&1 || exit 1
 #metadata_directory: metadata
 #" > config.yaml
 unset NODE_OPTIONS
-if [ $1 = "migrate" ] || [ $1 = "metadata" ]; then
+if [ $1 = "migrate" ] || [ $1 = "metadata" ] || [ $1 = "seed" ]; then
   $DIR/${CLI_PATH} --skip-update-check --endpoint $HASURA_ENDPOINT --admin-secret $HASURA_SECRET "$@"
 else
   ${DIR}/${CLI_PATH} --skip-update-check "$@"
