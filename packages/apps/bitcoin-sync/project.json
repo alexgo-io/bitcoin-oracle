@@ -1,0 +1,64 @@
+{
+  "name": "bitcoin-sync",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/apps/bitcoin-sync/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/packages/apps/bitcoin-sync",
+        "main": "packages/apps/bitcoin-sync/src/main.ts",
+        "tsConfig": "packages/apps/bitcoin-sync/tsconfig.app.json",
+        "assets": ["packages/apps/bitcoin-sync/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "packages/apps/bitcoin-sync/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "bitcoin-sync:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "bitcoin-sync:build:development"
+        },
+        "production": {
+          "buildTarget": "bitcoin-sync:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/apps/bitcoin-sync/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/apps/bitcoin-sync/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
