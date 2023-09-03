@@ -89,12 +89,13 @@ export class IndexerRepository {
     });
   }
 
-  async getBlockByHeader(header: Buffer) {
+  async getBlockByBlockHash(hash: Buffer) {
     return this.persistentService.pgPool.maybeOne(SQL.typeAlias(
       'indexer_block',
     )`
       select * from indexer.blocks
-               where header = ${SQL.binary(header)}
+               where block_hash = ${SQL.binary(hash)}
+      limit 1;
     `);
   }
 }

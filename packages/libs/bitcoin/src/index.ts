@@ -1,3 +1,5 @@
+export * from './lib/calculate-block-hash';
 export * from './lib/electrum-client';
-export * from './lib/get-bitcoin-tx-data';
+export * from './lib/get-bitcoin-tx-data-with-stacks';
 export * from './lib/get-bitcoin.rx';
+export * from './lib/utils';

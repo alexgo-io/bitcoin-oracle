@@ -2,7 +2,7 @@
 import {
   getBitcoinBlockHeaderByHeight,
   getCurrentBitcoinHeader,
-} from './get-bitcoin-tx-data';
+} from './get-bitcoin-tx-data-with-stacks';
 import { getBitcoinData$ } from './get-bitcoin.rx';
 
 describe('libs-bitcoin', () => {

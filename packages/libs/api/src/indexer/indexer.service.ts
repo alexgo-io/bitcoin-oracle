@@ -13,12 +13,12 @@ export class DefaultIndexer implements Indexer {
     return this.indexerRepository.upsertTxWithProof(tx);
   }
 
-  async blockNumberOfHeader(header: string) {
-    const block = await this.indexerRepository.getBlockByHeader(
-      Buffer.from(header, 'hex'),
+  async getBlockByBlockHash(hash: string) {
+    const block = await this.indexerRepository.getBlockByBlockHash(
+      Buffer.from(hash, 'hex'),
     );
 
-    return block?.height ?? null;
+    return block;
   }
 }
 

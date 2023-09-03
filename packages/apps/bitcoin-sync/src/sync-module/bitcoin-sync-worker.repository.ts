@@ -11,9 +11,10 @@ export class BitcoinSyncWorkerRepository {
 
   async upsertBlock(block: IndexerBlock) {
     await this.persistentService.pgPool.query(SQL.typeAlias('void')`
-      insert into indexer.blocks (height, header, canonical)
+      insert into indexer.blocks (height, header, block_hash, canonical)
       VALUES (${block.height.toString()},
               ${SQL.binary(block.header)},
+              ${SQL.binary(block.block_hash)},
               ${block.canonical.toString()})
       on conflict (header, header) do update
         set canonical = ${block.canonical.toString()}

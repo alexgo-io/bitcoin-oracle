@@ -12,6 +12,14 @@ function createResponseSchema<ItemType extends z.ZodTypeAny>(
   });
 }
 
+export const IndexerBlockJSONSchema = z.object({
+  height: BigIntStringSchema,
+  header: BufferStringSchema,
+  block_hash: BufferStringSchema,
+  canonical: z.boolean(),
+});
+export type IndexerBlockJSON = z.infer<typeof IndexerBlockJSONSchema>;
+
 export const IndexerTxsPostResponseSchema = createResponseSchema(z.undefined());
 export type IndexerTxsPostResponse = z.infer<
   typeof IndexerTxsPostResponseSchema
