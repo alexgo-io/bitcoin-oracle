@@ -10,8 +10,8 @@ import { IndexerTypeSchema } from './enum-model';
  */
 
 export const IndexerBlockSchema = z.object({
-  height: z.bigint(),
-  header: z.string(),
+  height: BigIntSchema,
+  header: BufferSchema,
   canonical: z.boolean(),
 });
 export type IndexerBlock = z.infer<typeof IndexerBlockSchema>;

@@ -1,8 +1,12 @@
-import { IndexerProofSchema, IndexerTxSchema } from '@alex-b20/types';
+import {
+  IndexerBlockSchema,
+  IndexerProofSchema,
+  IndexerTxSchema,
+} from '@alex-b20/types';
 import { createSqlTag } from 'slonik';
 import z from 'zod';
 
-export const sql = createSqlTag({
+export const SQL = createSqlTag({
   typeAliases: {
     id: z.object({
       id: z.number(),
@@ -14,5 +18,6 @@ export const sql = createSqlTag({
     }),
     indexer_txs: IndexerTxSchema,
     indexer_proof: IndexerProofSchema,
+    indexer_block: IndexerBlockSchema,
   },
 });
