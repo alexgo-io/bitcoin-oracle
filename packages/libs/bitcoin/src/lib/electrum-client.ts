@@ -20,3 +20,4 @@ export async function withElectrumClient<T = void>(
     throw error;
   }
 }
+
