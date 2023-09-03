@@ -1,4 +1,5 @@
 import {
+  calculateBlockHash,
   getBitcoinBlockHeaderByHeights,
   getCurrentBitcoinHeader,
 } from '@alex-b20/bitcoin';
@@ -59,23 +60,21 @@ export class DefaultBitcoinSyncWorkerService
 
   async syncFrom(fromHeight: number, toHeight: number) {
     this.logger.verbose(`syncing from ${fromHeight} to ${toHeight}`);
-    const headers = await getBitcoinBlockHeaderByHeights(
+    await getBitcoinBlockHeaderByHeights(
       range(fromHeight, toHeight),
-    );
-
-    await Promise.all(
-      headers.map(header => {
-        return this.repository.upsertBlock({
-          height: BigInt(header.height),
-          header: Buffer.from(header.header, 'hex'),
+      async (h, height) => {
+        const header = Buffer.from(h, 'hex');
+        await this.repository.upsertBlock({
+          height: BigInt(height),
+          header,
+          block_hash: calculateBlockHash(header),
           canonical: true,
         });
-      }),
+        this.logger.debug(`synced block ${height}`);
+      },
     );
 
-    this.logger.verbose(
-      `synced ${headers.length} blocks, from ${fromHeight} to ${toHeight}`,
-    );
+    this.logger.verbose(`synced from ${fromHeight} to ${toHeight}`);
   }
 }
 

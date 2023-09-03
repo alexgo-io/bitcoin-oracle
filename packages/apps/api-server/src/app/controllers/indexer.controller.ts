@@ -1,16 +1,15 @@
 import { Indexer } from '@alex-b20/api';
 import {
+  IndexerBlockJSONSchema,
   IndexerTxsPostResponseSchema,
   IndexerTxWithProofSchema,
 } from '@alex-b20/types';
-import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { createZodDto } from 'nestjs-zod';
-import { z } from "zod";
 
 export class IndexerTxsCreateInput extends createZodDto(
   IndexerTxWithProofSchema,
 ) {}
-
 
 // class IndexerBlockNumberOfHeaderResponseDto extends createZodDto(
 //   z.object({
@@ -26,12 +25,10 @@ export class IndexerController {
     return IndexerTxsPostResponseSchema.parse({ message: 'ok' });
   }
 
-  @Get('/block-number/:header')
-  async blockNumberOfHeader(header: string) {
-    const result = await this.indexer.blockNumberOfHeader(header);
-    if (result == null) {
-      return { block_number: null };
-    }
-    return { block_number: result.toString() };
+  @Get('/block-hash/:block_hash')
+  async blockNumberOfHeader(@Param('block_hash') block_hash: string) {
+    return IndexerBlockJSONSchema.parse(
+      await this.indexer.getBlockByBlockHash(block_hash),
+    );
   }
 }

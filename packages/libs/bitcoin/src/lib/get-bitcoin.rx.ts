@@ -1,13 +1,13 @@
 import { Observable } from 'rxjs';
 import { withElectrumClient } from './electrum-client';
-import { BitcoinTxDataType, getBitcoinTxData } from './get-bitcoin-tx-data';
+import { BitcoinTxDataType, getBitcoinTxDataWithStacks } from './get-bitcoin-tx-data-with-stacks';
 
 export function getBitcoinData$(txIds: string[]) {
   return new Observable<BitcoinTxDataType>(subscriber => {
     withElectrumClient(async client => {
       await Promise.all(
         txIds.map(txId =>
-          getBitcoinTxData(txId, client)
+          getBitcoinTxDataWithStacks(txId, client)
             .then(data => {
               subscriber.next(data);
             })

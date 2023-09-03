@@ -21,6 +21,7 @@ create table indexer.blocks
 -- stacks height
     "height"     integer     not null,
     "header"     bytea       not null unique,
+    "block_hash" bytea       not null,
     primary key ("height", "header"),
     "canonical"  boolean     not null,
     "created_at" timestamptz not null default now(),

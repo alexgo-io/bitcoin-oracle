@@ -1,4 +1,6 @@
 import {
+  IndexerBlock,
+  IndexerBlockSchema,
   IndexerTxsPostResponse,
   IndexerTxsPostResponseSchema,
   IndexerTxWithProofJSON,
@@ -18,6 +20,17 @@ export function indexer(baseURL: string) {
                 IndexerTxsPostResponseSchema.parse(JSON.parse(body)),
             })
             .json<IndexerTxsPostResponse>();
+        },
+      };
+    },
+    block() {
+      return {
+        async get(params: { block_hash: string }) {
+          return got
+            .get(`${url}/block-hash/${params.block_hash}`, {
+              parseJson: body => IndexerBlockSchema.parse(JSON.parse(body)),
+            })
+            .json<IndexerBlock>();
         },
       };
     },

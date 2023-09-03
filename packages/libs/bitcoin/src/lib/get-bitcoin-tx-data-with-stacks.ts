@@ -65,7 +65,7 @@ export type BitcoinTxDataType = {
   height: number;
 };
 
-export async function getBitcoinTxData(
+export async function getBitcoinTxDataWithStacks(
   txId: string,
   electrumClient: TypedElectrumClient,
 ): Promise<BitcoinTxDataType> {
@@ -85,7 +85,7 @@ export async function getBitcoinTxData(
     txId,
     burnHeight,
   );
-  const merkleHashes = merkle.merkle.map((hash: any) => {
+  const merkleHashes = merkle.merkle.map((hash: string) => {
     return reverseBuffer(hexToBytes(hash));
   });
 
@@ -115,21 +115,21 @@ export async function getBitcoinBlockHeaderByHeight(height: number) {
   });
 }
 
-export async function getBitcoinBlockHeaderByHeights(heights: number[]) {
+export async function getBitcoinBlockHeaderByHeights(
+  heights: number[],
+  onHeaderReceived: (header: string, height: number) => Promise<void>,
+) {
   return withElectrumClient(async client => {
     const queue = new PQueue();
-    const results: { height: number; header: string }[] = [];
     for (const height of heights) {
       noAwait(
         queue.add(async () => {
-          const a = await client.blockchain_block_header(height);
-          results.push({ height, header: a });
+          const header = await client.blockchain_block_header(height);
+          await onHeaderReceived(header, height);
         }),
       );
     }
     await queue.onIdle();
-
-    return results;
   });
 }
 
