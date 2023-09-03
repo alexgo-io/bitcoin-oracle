@@ -59,9 +59,9 @@ export type BitcoinTxDataType = {
   burnHeight: number;
   tx: string;
   header: string;
-  proof: { "tx-index": number; "tree-depth": number; hashes: string[] };
-  height: number
-}
+  proof: { 'tx-index': number; 'tree-depth': number; hashes: string[] };
+  height: number;
+};
 
 export async function getBitcoinTxData(
   txId: string,
@@ -105,4 +105,11 @@ export async function getBitcoinTxData(
       'tree-depth': proofArg.treeDepth,
     },
   };
+}
+
+export async function getBlockHeader(
+  height: number,
+  electrumClient: ElectrumClient,
+) {
+  return electrumClient.blockchain_block_header(height);
 }

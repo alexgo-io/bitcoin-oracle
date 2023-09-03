@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { withElectrumClient } from './electrum-client';
+import { getBlockHeader } from './get-bitcoin-tx-data';
 import { getBitcoinData$ } from './get-bitcoin.rx';
 
 describe('libs-bitcoin', () => {
@@ -44,4 +46,20 @@ describe('libs-bitcoin', () => {
       },
     });
   }, 20e3);
+
+  it('should get bitcoin block header', async () => {
+    await withElectrumClient(async electrumClient => {
+      const data = await getBlockHeader(802222, electrumClient);
+      expect(data).toMatchInlineSnapshot(`
+        {
+          "data1": "00400020eac1caaab83f909c1f05d7952849100df0c1164a61f3030000000000000000006f3ce3c363be3276d90d1b3010ca674428132d75fc6b1ce862e1f3dbec9303c9bf1ad26402610517794d6761",
+          "data2": {
+            "count": 3,
+            "hex": "00400020eac1caaab83f909c1f05d7952849100df0c1164a61f3030000000000000000006f3ce3c363be3276d90d1b3010ca674428132d75fc6b1ce862e1f3dbec9303c9bf1ad26402610517794d67610000c020b3aa25ad8ed3504cfaa2e51484abb61376d8467b20e500000000000000000000a1e16020a47b9867ef38de11f0d5caf0cf04441b32dbc0e6a71ad53c8fca6ef0562bd2640261051752bf984e00a05931a03751733b3c04b03344fb23f3edc118b7b8cfaa0f050200000000000000000046c98d9ac0d5e28631216550bec6f99f66b03e6ef27510b1a168e5488986212fd333d264026105175c06df4e",
+            "max": 2016,
+          },
+        }
+      `);
+    });
+  });
 });

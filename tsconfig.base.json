@@ -16,6 +16,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "typeRoots": ["node_modules/@types", "types"],
     "paths": {
       "@alex-b20/api": ["packages/libs/api/src/index.ts"],
       "@alex-b20/api-client": ["packages/libs/api-client/src/index.ts"],
