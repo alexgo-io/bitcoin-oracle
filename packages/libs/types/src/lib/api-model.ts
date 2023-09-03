@@ -13,22 +13,24 @@ function createResponseSchema<ItemType extends z.ZodTypeAny>(
 }
 
 export const IndexerTxsPostResponseSchema = createResponseSchema(z.undefined());
-export type IndexerTxsPostResponse = z.infer<typeof IndexerTxsPostResponseSchema>;
+export type IndexerTxsPostResponse = z.infer<
+  typeof IndexerTxsPostResponseSchema
+>;
 
 export const IndexerTxJSONSchema = z.object({
   type: IndexerTypeSchema,
   header: BufferStringSchema,
   height: BigIntStringSchema,
   tx_id: BufferStringSchema,
+  output: BigIntStringSchema,
+  satpoint: BigIntStringSchema,
   proof_hashes: z.array(BufferStringSchema),
   tx_index: BigIntStringSchema,
   tree_depth: BigIntStringSchema,
   from: BufferStringSchema,
   to: BufferStringSchema,
-  output: BigIntStringSchema,
   tick: z.string(),
   amt: BigIntStringSchema,
-  bitcoin_tx: BufferStringSchema,
   from_bal: BigIntStringSchema,
   to_bal: BigIntStringSchema,
 });

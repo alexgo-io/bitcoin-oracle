@@ -17,21 +17,25 @@ export const IndexerBlockSchema = z.object({
 export type IndexerBlock = z.infer<typeof IndexerBlockSchema>;
 
 /*
-    "type"         text        not null,
-    "header"       bytea       not null,
-    "height"       integer     not null,
-    "tx_id"        bytea       not null,
-    "proof_hashes" bytea[]     not null,
-    "tx_index"     integer     not null,
-    "tree_depth"   integer     not null,
-    "from"         bytea       not null,
-    "to"           bytea       not null,
-    "output"       integer     not null,
-    "tick"         text        not null,
-    "amt"          numeric     not null,
-    "bitcoin_tx"   bytea       not null,
-    "from_bal"     numeric     not null,
-    "to_bal"       numeric     not null,
+  "type"         text        not null,
+  "header"       bytea       not null,
+-- bitcoin height
+  "height"       integer     not null,
+  "tx_id"        bytea       not null,
+  "output"       integer     not null,
+  "satpoint"     integer     not null,
+  "proof_hashes" bytea[]     not null,
+  "tx_index"     integer     not null,
+  "tree_depth"   integer     not null,
+  "from"         bytea       not null,
+  "to"           bytea       not null,
+  "tick"         text        not null,
+  "amt"          numeric     not null,
+  "from_bal"     numeric     not null,
+  "to_bal"       numeric     not null,
+  "created_at"   timestamptz not null default now(),
+  unique ("header", "tx_id", "satpoint", "output"),
+  "updated_at"   timestamptz not null default now()
  */
 
 export const IndexerTxSchema = z.object({
@@ -39,15 +43,15 @@ export const IndexerTxSchema = z.object({
   header: BufferSchema,
   height: BigIntSchema,
   tx_id: BufferSchema,
+  output: BigIntSchema,
+  satpoint: BigIntSchema,
   proof_hashes: z.array(BufferSchema),
   tx_index: BigIntSchema,
   tree_depth: BigIntSchema,
   from: BufferSchema,
   to: BufferSchema,
-  output: BigIntSchema,
   tick: z.string(),
   amt: BigIntSchema,
-  bitcoin_tx: BufferSchema,
   from_bal: BigIntSchema,
   to_bal: BigIntSchema,
 });

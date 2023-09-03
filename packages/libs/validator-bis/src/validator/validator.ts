@@ -90,18 +90,18 @@ export function getBisTxOnBlock(block: number) {
 function getSatpoint(tx: string) {
   const data = tx.split(':');
   assert(data.length === 3, `Invalid satpoint: ${tx}`);
-  const [tx_id, vout, satoshis] = data;
+  const [tx_id, vout, satpoint] = data;
   return {
     tx_id,
     vout,
-    satoshis,
+    satpoint,
   };
 }
 
 export function getIndexerTxOnBlock(block: number) {
   return getBisTxOnBlock(block).pipe(
     mergeMap(tx => {
-      const { tx_id, vout } = getSatpoint(tx.old_satpoint);
+      const { tx_id, vout, satpoint } = getSatpoint(tx.old_satpoint);
       return getBitcoinData$([tx_id]).pipe(
         map(result => {
           return {
@@ -109,6 +109,7 @@ export function getIndexerTxOnBlock(block: number) {
             ...result,
             vout,
             tx_id,
+            satpoint,
           };
         }),
       );
@@ -147,8 +148,8 @@ async function submitIndexerTx(
     type: 'bis',
     header: tx.header,
     height: tx.height.toString(10),
-    tx_id: tx.tx_id, // TODO: remove??
-    bitcoin_tx: tx.tx_id,
+    tx_id: tx.tx_id,
+    satpoint: tx.satpoint,
     proof_hashes: tx.proof.hashes,
     tx_index: tx.proof['tx-index'].toString(10),
     tree_depth: tx.proof['tree-depth'].toString(10),
