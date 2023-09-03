@@ -1,7 +1,9 @@
-import { env } from '@alex-b20/env';
-import ElectrumClient from 'electrum-client-sl';
+import { noAwait } from '@alex-b20/commons';
 import got from 'got-cjs';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
+import PQueue from 'p-queue';
+import { env } from '../env';
+import { TypedElectrumClient, withElectrumClient } from './electrum-client';
 import { reverseBuffer } from './utils';
 
 interface StacksBlockByHeight {
@@ -38,7 +40,7 @@ async function confirmationsToHeight(confirmations: number) {
 export async function findStacksBlockAtHeight(
   height: number,
   prevBlocks: string[],
-  electrumClient: ElectrumClient,
+  electrumClient: TypedElectrumClient,
 ): Promise<StacksBlockByHeight> {
   const [header, stacksHeight] = await Promise.all([
     electrumClient.blockchain_block_header(height),
@@ -65,7 +67,7 @@ export type BitcoinTxDataType = {
 
 export async function getBitcoinTxData(
   txId: string,
-  electrumClient: ElectrumClient,
+  electrumClient: TypedElectrumClient,
 ): Promise<BitcoinTxDataType> {
   const tx = await electrumClient.blockchain_transaction_get(txId, true);
   if (typeof tx.confirmations === 'undefined' || tx.confirmations < 1) {
@@ -107,9 +109,32 @@ export async function getBitcoinTxData(
   };
 }
 
-export async function getBlockHeader(
-  height: number,
-  electrumClient: ElectrumClient,
-) {
-  return electrumClient.blockchain_block_header(height);
+export async function getBitcoinBlockHeaderByHeight(height: number) {
+  return withElectrumClient(async client => {
+    return client.blockchain_block_header(height);
+  });
+}
+
+export async function getBitcoinBlockHeaderByHeights(heights: number[]) {
+  return withElectrumClient(async client => {
+    const queue = new PQueue();
+    const results: { height: number; header: string }[] = [];
+    for (const height of heights) {
+      noAwait(
+        queue.add(async () => {
+          const a = await client.blockchain_block_header(height);
+          results.push({ height, header: a });
+        }),
+      );
+    }
+    await queue.onIdle();
+
+    return results;
+  });
+}
+
+export async function getCurrentBitcoinHeader() {
+  return withElectrumClient(async client => {
+    return client.blockchain_headers_subscribe();
+  });
 }

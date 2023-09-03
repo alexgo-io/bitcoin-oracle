@@ -1,4 +1,4 @@
-import { sql } from '@alex-b20/commons';
+import { SQL } from '@alex-b20/commons';
 import { PersistentService } from '@alex-b20/persistent';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -18,7 +18,7 @@ describe('Indexer Controller (e2e)', () => {
     await app.init();
     const persistent = moduleFixture.get(PersistentService);
     await persistent.pgPool.query(
-      sql.typeAlias('void')`truncate table indexer.txs cascade`,
+      SQL.typeAlias('void')`truncate table indexer.txs cascade`,
     );
   });
 

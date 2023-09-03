@@ -1,4 +1,4 @@
-import { sql } from '@alex-b20/commons';
+import { SQL } from '@alex-b20/commons';
 import { PersistentService } from '@alex-b20/persistent';
 import { IndexerTxWithProof } from '@alex-b20/types';
 import { Inject } from '@nestjs/common';
@@ -17,11 +17,11 @@ export class IndexerRepository {
 
   async upsertTxWithProof(tx: IndexerTxWithProof) {
     return this.persistentService.pgPool.transaction(async conn => {
-      const existing = await conn.maybeOne(sql.typeAlias('indexer_txs')`
+      const existing = await conn.maybeOne(SQL.typeAlias('indexer_txs')`
                 select *
                 from indexer.txs
-                where tx_id = ${sql.binary(tx.tx_id)}
-                  and header = ${sql.binary(tx.header)}
+                where tx_id = ${SQL.binary(tx.tx_id)}
+                  and header = ${SQL.binary(tx.header)}
                   and output = ${tx.output.toString()}
                 ;
             `);
@@ -41,7 +41,7 @@ export class IndexerRepository {
         return;
       }
 
-      await conn.query(sql.typeAlias('void')`
+      await conn.query(SQL.typeAlias('void')`
                 INSERT INTO indexer.txs(type,
                                         header,
                                         height,
@@ -58,14 +58,14 @@ export class IndexerRepository {
                                         from_bal,
                                         to_bal)
                 VALUES (${tx.type},
-                        ${sql.binary(tx.header)},
+                        ${SQL.binary(tx.header)},
                         ${tx.height.toString()},
-                        ${sql.binary(tx.tx_id)},
-                        ${sql.array(tx.proof_hashes, 'bytea')},
+                        ${SQL.binary(tx.tx_id)},
+                        ${SQL.array(tx.proof_hashes, 'bytea')},
                         ${tx.tx_index.toString()},
                         ${tx.tree_depth.toString()},
-                        ${sql.binary(tx.from)},
-                        ${sql.binary(tx.to)},
+                        ${SQL.binary(tx.from)},
+                        ${SQL.binary(tx.to)},
                         ${tx.output.toString()},
                         ${tx.tick},
                         ${tx.amt.toString()},
@@ -74,18 +74,27 @@ export class IndexerRepository {
                         ${tx.to_bal.toString()});
             `);
 
-      await conn.query(sql.typeAlias('void')`
+      await conn.query(SQL.typeAlias('void')`
                 INSERT INTO indexer.proofs(type,
                                            order_hash,
                                            signature,
                                            signer)
                 VALUES (${tx.type},
-                        ${sql.binary(tx.order_hash)},
-                        ${sql.binary(tx.signature)},
+                        ${SQL.binary(tx.order_hash)},
+                        ${SQL.binary(tx.signature)},
                         ${tx.signer})
                 on conflict do nothing;
                 ;
             `);
     });
+  }
+
+  async getBlockByHeader(header: Buffer) {
+    return this.persistentService.pgPool.maybeOne(SQL.typeAlias(
+      'indexer_block',
+    )`
+      select * from indexer.blocks
+               where header = ${SQL.binary(header)}
+    `);
   }
 }

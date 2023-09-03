@@ -4,7 +4,7 @@ export * from './logging/heart-beat';
 export * from './logging/pino-logging.module';
 export * from './logging/rx.extentions';
 export * from './logging/status-tracker';
-export * from './sql';
+export * from './SQL';
 export * from './utils/bitint-json';
 export * from './utils/common.utils';
 export * from './utils/no-await';

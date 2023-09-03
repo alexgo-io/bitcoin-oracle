@@ -14,7 +14,6 @@
         "outputPath": "dist/packages/apps/bitcoin-sync",
         "main": "packages/apps/bitcoin-sync/src/main.ts",
         "tsConfig": "packages/apps/bitcoin-sync/tsconfig.app.json",
-        "assets": ["packages/apps/bitcoin-sync/src/assets"],
         "isolatedConfig": true,
         "webpackConfig": "packages/apps/bitcoin-sync/webpack.config.js"
       },
