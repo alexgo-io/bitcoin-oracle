@@ -1,7 +1,7 @@
 
 import {
 defineContract,
-numberT,
+uintT,
 bufferT,
 responseSimpleT,
 booleanT,
@@ -14,14 +14,14 @@ export const clarityBitcoin = defineContract({
 "clarity-bitcoin": {
   'mock-add-burnchain-block-header-hash': {
     input: [
-      { name: 'burn-height', type: numberT },
+      { name: 'burn-height', type: uintT },
       { name: 'hash', type: bufferT }
     ],
     output: responseSimpleT(booleanT, ),
     mode: 'public'
   },
   'get-bc-h-hash': {
-    input: [ { name: 'bh', type: numberT } ],
+    input: [ { name: 'bh', type: uintT } ],
     output: optionalT(bufferT, ),
     mode: 'readonly'
   },
@@ -47,39 +47,39 @@ export const clarityBitcoin = defineContract({
   },
   'inner-merkle-proof-verify': {
     input: [
-      { name: 'ctr', type: numberT },
+      { name: 'ctr', type: uintT },
       {
         name: 'state',
         type: tupleT({
           'cur-hash': bufferT,
-          path: numberT,
+          path: uintT,
           'proof-hashes': listT(bufferT, ),
           'root-hash': bufferT,
-          'tree-depth': numberT,
+          'tree-depth': uintT,
           verified: booleanT
         }, )
       }
     ],
     output: tupleT({
       'cur-hash': bufferT,
-      path: numberT,
+      path: uintT,
       'proof-hashes': listT(bufferT, ),
       'root-hash': bufferT,
-      'tree-depth': numberT,
+      'tree-depth': uintT,
       verified: booleanT
     }, ),
     mode: 'readonly'
   },
   'inner-reverse': {
     input: [
-      { name: 'target-index', type: numberT },
+      { name: 'target-index', type: uintT },
       { name: 'hash-input', type: bufferT }
     ],
     output: bufferT,
     mode: 'readonly'
   },
   'is-bit-set': {
-    input: [ { name: 'val', type: numberT }, { name: 'bit', type: numberT } ],
+    input: [ { name: 'val', type: uintT }, { name: 'bit', type: uintT } ],
     output: booleanT,
     mode: 'readonly'
   },
@@ -87,11 +87,11 @@ export const clarityBitcoin = defineContract({
     input: [ { name: 'headerbuff', type: bufferT } ],
     output: responseSimpleT(tupleT({
       'merkle-root': bufferT,
-      nbits: numberT,
-      nonce: numberT,
+      nbits: uintT,
+      nonce: uintT,
       parent: bufferT,
-      timestamp: numberT,
-      version: numberT
+      timestamp: uintT,
+      version: uintT
     }, ), ),
     mode: 'readonly'
   },
@@ -99,13 +99,13 @@ export const clarityBitcoin = defineContract({
     input: [ { name: 'tx', type: bufferT } ],
     output: responseSimpleT(tupleT({
       ins: listT(tupleT({
-        outpoint: tupleT({ hash: bufferT, index: numberT }, ),
+        outpoint: tupleT({ hash: bufferT, index: uintT }, ),
         scriptSig: bufferT,
-        sequence: numberT
+        sequence: uintT
       }, ), ),
-      locktime: numberT,
-      outs: listT(tupleT({ scriptPubKey: bufferT, value: numberT }, ), ),
-      version: numberT
+      locktime: uintT,
+      outs: listT(tupleT({ scriptPubKey: bufferT, value: uintT }, ), ),
+      version: uintT
     }, ), ),
     mode: 'readonly'
   },
@@ -113,15 +113,15 @@ export const clarityBitcoin = defineContract({
     input: [ { name: 'tx', type: bufferT } ],
     output: responseSimpleT(tupleT({
       ins: listT(tupleT({
-        outpoint: tupleT({ hash: bufferT, index: numberT }, ),
+        outpoint: tupleT({ hash: bufferT, index: uintT }, ),
         scriptSig: bufferT,
-        sequence: numberT
+        sequence: uintT
       }, ), ),
-      locktime: numberT,
-      outs: listT(tupleT({ scriptPubKey: bufferT, value: numberT }, ), ),
-      'segwit-marker': numberT,
-      'segwit-version': numberT,
-      version: numberT,
+      locktime: uintT,
+      outs: listT(tupleT({ scriptPubKey: bufferT, value: uintT }, ), ),
+      'segwit-marker': uintT,
+      'segwit-version': uintT,
+      version: uintT,
       witnesses: listT(listT(bufferT, ), )
     }, ), ),
     mode: 'readonly'
@@ -130,11 +130,11 @@ export const clarityBitcoin = defineContract({
     input: [
       {
         name: 'old-ctx',
-        type: tupleT({ index: numberT, txbuff: bufferT }, )
+        type: tupleT({ index: uintT, txbuff: bufferT }, )
       }
     ],
     output: responseSimpleT(tupleT({
-      ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
+      ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
       hashslice: bufferT
     }, ), ),
     mode: 'readonly'
@@ -145,13 +145,13 @@ export const clarityBitcoin = defineContract({
       {
         name: 'state-res',
         type: responseSimpleT(tupleT({
-          ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
+          ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
           elements: listT(bufferT, )
         }, ), )
       }
     ],
     output: responseSimpleT(tupleT({
-      ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
+      ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
       elements: listT(bufferT, )
     }, ), ),
     mode: 'readonly'
@@ -162,23 +162,23 @@ export const clarityBitcoin = defineContract({
       {
         name: 'state-res',
         type: responseSimpleT(tupleT({
-          ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
-          remaining: numberT,
+          ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
+          remaining: uintT,
           txins: listT(tupleT({
-            outpoint: tupleT({ hash: bufferT, index: numberT }, ),
+            outpoint: tupleT({ hash: bufferT, index: uintT }, ),
             scriptSig: bufferT,
-            sequence: numberT
+            sequence: uintT
           }, ), )
         }, ), )
       }
     ],
     output: responseSimpleT(tupleT({
-      ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
-      remaining: numberT,
+      ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
+      remaining: uintT,
       txins: listT(tupleT({
-        outpoint: tupleT({ hash: bufferT, index: numberT }, ),
+        outpoint: tupleT({ hash: bufferT, index: uintT }, ),
         scriptSig: bufferT,
-        sequence: numberT
+        sequence: uintT
       }, ), )
     }, ), ),
     mode: 'readonly'
@@ -189,14 +189,14 @@ export const clarityBitcoin = defineContract({
       {
         name: 'state-res',
         type: responseSimpleT(tupleT({
-          ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
-          txouts: listT(tupleT({ scriptPubKey: bufferT, value: numberT }, ), )
+          ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
+          txouts: listT(tupleT({ scriptPubKey: bufferT, value: uintT }, ), )
         }, ), )
       }
     ],
     output: responseSimpleT(tupleT({
-      ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
-      txouts: listT(tupleT({ scriptPubKey: bufferT, value: numberT }, ), )
+      ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
+      txouts: listT(tupleT({ scriptPubKey: bufferT, value: uintT }, ), )
     }, ), ),
     mode: 'readonly'
   },
@@ -206,13 +206,13 @@ export const clarityBitcoin = defineContract({
       {
         name: 'state-res',
         type: responseSimpleT(tupleT({
-          ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
+          ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
           witnesses: listT(listT(bufferT, ), )
         }, ), )
       }
     ],
     output: responseSimpleT(tupleT({
-      ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
+      ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
       witnesses: listT(listT(bufferT, ), )
     }, ), ),
     mode: 'readonly'
@@ -221,16 +221,16 @@ export const clarityBitcoin = defineContract({
     input: [
       {
         name: 'ctx',
-        type: tupleT({ index: numberT, txbuff: bufferT }, )
+        type: tupleT({ index: uintT, txbuff: bufferT }, )
       }
     ],
     output: responseSimpleT(tupleT({
-      ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
-      remaining: numberT,
+      ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
+      remaining: uintT,
       txins: listT(tupleT({
-        outpoint: tupleT({ hash: bufferT, index: numberT }, ),
+        outpoint: tupleT({ hash: bufferT, index: uintT }, ),
         scriptSig: bufferT,
-        sequence: numberT
+        sequence: uintT
       }, ), )
     }, ), ),
     mode: 'readonly'
@@ -239,12 +239,12 @@ export const clarityBitcoin = defineContract({
     input: [
       {
         name: 'ctx',
-        type: tupleT({ index: numberT, txbuff: bufferT }, )
+        type: tupleT({ index: uintT, txbuff: bufferT }, )
       }
     ],
     output: responseSimpleT(tupleT({
-      ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
-      txouts: listT(tupleT({ scriptPubKey: bufferT, value: numberT }, ), )
+      ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
+      txouts: listT(tupleT({ scriptPubKey: bufferT, value: uintT }, ), )
     }, ), ),
     mode: 'readonly'
   },
@@ -252,75 +252,72 @@ export const clarityBitcoin = defineContract({
     input: [
       {
         name: 'ctx',
-        type: tupleT({ index: numberT, txbuff: bufferT }, )
+        type: tupleT({ index: uintT, txbuff: bufferT }, )
       }
     ],
-    output: responseSimpleT(tupleT({ ctx: tupleT({ index: numberT, txbuff: bufferT }, ), uint16: numberT }, ), ),
+    output: responseSimpleT(tupleT({ ctx: tupleT({ index: uintT, txbuff: bufferT }, ), uint16: uintT }, ), ),
     mode: 'readonly'
   },
   'read-uint32': {
     input: [
       {
         name: 'ctx',
-        type: tupleT({ index: numberT, txbuff: bufferT }, )
+        type: tupleT({ index: uintT, txbuff: bufferT }, )
       }
     ],
-    output: responseSimpleT(tupleT({ ctx: tupleT({ index: numberT, txbuff: bufferT }, ), uint32: numberT }, ), ),
+    output: responseSimpleT(tupleT({ ctx: tupleT({ index: uintT, txbuff: bufferT }, ), uint32: uintT }, ), ),
     mode: 'readonly'
   },
   'read-uint64': {
     input: [
       {
         name: 'ctx',
-        type: tupleT({ index: numberT, txbuff: bufferT }, )
+        type: tupleT({ index: uintT, txbuff: bufferT }, )
       }
     ],
-    output: responseSimpleT(tupleT({ ctx: tupleT({ index: numberT, txbuff: bufferT }, ), uint64: numberT }, ), ),
+    output: responseSimpleT(tupleT({ ctx: tupleT({ index: uintT, txbuff: bufferT }, ), uint64: uintT }, ), ),
     mode: 'readonly'
   },
   'read-uint8': {
     input: [
       {
         name: 'ctx',
-        type: tupleT({ index: numberT, txbuff: bufferT }, )
+        type: tupleT({ index: uintT, txbuff: bufferT }, )
       }
     ],
-    output: responseSimpleT(tupleT({ ctx: tupleT({ index: numberT, txbuff: bufferT }, ), uint8: numberT }, ), ),
+    output: responseSimpleT(tupleT({ ctx: tupleT({ index: uintT, txbuff: bufferT }, ), uint8: uintT }, ), ),
     mode: 'readonly'
   },
   'read-varint': {
     input: [
       {
         name: 'ctx',
-        type: tupleT({ index: numberT, txbuff: bufferT }, )
+        type: tupleT({ index: uintT, txbuff: bufferT }, )
       }
     ],
-    output: responseSimpleT(tupleT({ ctx: tupleT({ index: numberT, txbuff: bufferT }, ), varint: numberT }, ), ),
+    output: responseSimpleT(tupleT({ ctx: tupleT({ index: uintT, txbuff: bufferT }, ), varint: uintT }, ), ),
     mode: 'readonly'
   },
   'read-varslice': {
     input: [
       {
         name: 'old-ctx',
-        type: tupleT({ index: numberT, txbuff: bufferT }, )
+        type: tupleT({ index: uintT, txbuff: bufferT }, )
       }
     ],
-    output: responseSimpleT(tupleT({
-      ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
-      varslice: bufferT
-    }, ), ),
+    output: responseSimpleT(tupleT({ ctx: tupleT({ index: uintT, txbuff: bufferT }, ), varslice: bufferT }, ), ),
     mode: 'readonly'
   },
   'read-witnesses': {
     input: [
       {
         name: 'ctx',
-        type: tupleT({ index: numberT, txbuff: bufferT }, )
+        type: tupleT({ index: uintT, txbuff: bufferT }, )
       },
-      { name: 'num-txins', type: numberT }
+      { name: 'num-txins', type: uintT }
     ],
     output: responseSimpleT(tupleT({
-      ctx: tupleT({ index: numberT, txbuff: bufferT }, ),
+      ctx: tupleT({ index: uintT, txbuff: bufferT }, ),
       witnesses: listT(listT(bufferT, ), )
     }, ), ),
     mode: 'readonly'
@@ -333,7 +330,7 @@ export const clarityBitcoin = defineContract({
   'verify-block-header': {
     input: [
       { name: 'headerbuff', type: bufferT },
-      { name: 'expected-block-height', type: numberT }
+      { name: 'expected-block-height', type: uintT }
     ],
     output: booleanT,
     mode: 'readonly'
@@ -344,11 +341,7 @@ export const clarityBitcoin = defineContract({
       { name: 'merkle-root', type: bufferT },
       {
         name: 'proof',
-        type: tupleT({
-          hashes: listT(bufferT, ),
-          'tree-depth': numberT,
-          'tx-index': numberT
-        }, )
+        type: tupleT({ hashes: listT(bufferT, ), 'tree-depth': uintT, 'tx-index': uintT }, )
       }
     ],
     output: responseSimpleT(booleanT, ),
@@ -358,16 +351,12 @@ export const clarityBitcoin = defineContract({
     input: [
       {
         name: 'block',
-        type: tupleT({ header: bufferT, height: numberT }, )
+        type: tupleT({ header: bufferT, height: uintT }, )
       },
       { name: 'tx', type: bufferT },
       {
         name: 'proof',
-        type: tupleT({
-          hashes: listT(bufferT, ),
-          'tree-depth': numberT,
-          'tx-index': numberT
-        }, )
+        type: tupleT({ hashes: listT(bufferT, ), 'tree-depth': uintT, 'tx-index': uintT }, )
       }
     ],
     output: responseSimpleT(booleanT, ),
@@ -377,22 +366,18 @@ export const clarityBitcoin = defineContract({
     input: [
       {
         name: 'block',
-        type: tupleT({ header: bufferT, height: numberT }, )
+        type: tupleT({ header: bufferT, height: uintT }, )
       },
       { name: 'tx', type: bufferT },
       {
         name: 'proof',
-        type: tupleT({
-          hashes: listT(bufferT, ),
-          'tree-depth': numberT,
-          'tx-index': numberT
-        }, )
+        type: tupleT({ hashes: listT(bufferT, ), 'tree-depth': uintT, 'tx-index': uintT }, )
       }
     ],
     output: responseSimpleT(booleanT, ),
     mode: 'readonly'
   },
-  'mock-burnchain-header-hashes': { input: numberT, output: optionalT(bufferT, ), mode: 'mapEntry' }
+  'mock-burnchain-header-hashes': { input: uintT, output: optionalT(bufferT, ), mode: 'mapEntry' }
 }
 } as const)
 

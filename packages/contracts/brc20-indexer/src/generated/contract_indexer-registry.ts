@@ -5,7 +5,7 @@ principalT,
 booleanT,
 responseSimpleT,
 tupleT,
-numberT,
+uintT,
 bufferT,
 stringT,
 optionalT,
@@ -36,11 +36,11 @@ export const indexerRegistry = defineContract({
     input: [
       {
         name: 'key',
-        type: tupleT({ output: numberT, 'tx-hash': bufferT }, )
+        type: tupleT({ offset: uintT, output: uintT, 'tx-hash': bufferT }, )
       },
       {
         name: 'value',
-        type: tupleT({ amt: numberT, from: bufferT, tick: stringT, to: bufferT }, )
+        type: tupleT({ amt: uintT, from: bufferT, tick: stringT, to: bufferT }, )
       }
     ],
     output: responseSimpleT(booleanT, ),
@@ -59,7 +59,7 @@ export const indexerRegistry = defineContract({
       { name: 'key', type: tupleT({ tick: stringT, user: bufferT }, ) },
       {
         name: 'value',
-        type: tupleT({ balance: numberT, 'up-to-block': numberT }, )
+        type: tupleT({ balance: uintT, 'up-to-block': uintT }, )
       }
     ],
     output: responseSimpleT(booleanT, ),
@@ -73,9 +73,10 @@ export const indexerRegistry = defineContract({
   'get-bitcoin-tx-indexed-or-fail': {
     input: [
       { name: 'bitcoin-tx', type: bufferT },
-      { name: 'output', type: numberT }
+      { name: 'output', type: uintT },
+      { name: 'offset', type: uintT }
     ],
-    output: responseSimpleT(tupleT({ amt: numberT, from: bufferT, tick: stringT, to: bufferT }, ), ),
+    output: responseSimpleT(tupleT({ amt: uintT, from: bufferT, tick: stringT, to: bufferT }, ), ),
     mode: 'readonly'
   },
   'get-bitcoin-tx-mined-or-default': {
@@ -90,7 +91,7 @@ export const indexerRegistry = defineContract({
       { name: 'user', type: bufferT },
       { name: 'tick', type: stringT }
     ],
-    output: tupleT({ balance: numberT, 'up-to-block': numberT }, ),
+    output: tupleT({ balance: uintT, 'up-to-block': uintT }, ),
     mode: 'readonly'
   },
   'approved-operators': {
@@ -99,14 +100,14 @@ export const indexerRegistry = defineContract({
     mode: 'mapEntry'
   },
   'bitcoin-tx-indexed': {
-    input: tupleT({ output: numberT, 'tx-hash': bufferT }, ),
-    output: optionalT(tupleT({ amt: numberT, from: bufferT, tick: stringT, to: bufferT }, ), ),
+    input: tupleT({ offset: uintT, output: uintT, 'tx-hash': bufferT }, ),
+    output: optionalT(tupleT({ amt: uintT, from: bufferT, tick: stringT, to: bufferT }, ), ),
     mode: 'mapEntry'
   },
   'bitcoin-tx-mined': { input: bufferT, output: optionalT(booleanT, ), mode: 'mapEntry' },
   'user-balance': {
     input: tupleT({ tick: stringT, user: bufferT }, ),
-    output: optionalT(tupleT({ balance: numberT, 'up-to-block': numberT }, ), ),
+    output: optionalT(tupleT({ balance: uintT, 'up-to-block': uintT }, ), ),
     mode: 'mapEntry'
   },
   'contract-owner': { input: noneT, output: principalT, mode: 'variable' },
