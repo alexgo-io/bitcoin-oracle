@@ -132,6 +132,7 @@ async function submitIndexerTx(
   const order_hash = generateOrderHash({
     amt: BigInt(tx.amount),
     from: Buffer.from(tx.old_pkscript, 'hex'),
+    offset: 0n,
     'from-bal': BigInt(tx.from_bal),
     to: Buffer.from(tx.new_pkscript, 'hex'),
     'to-bal': BigInt(tx.to_bal),

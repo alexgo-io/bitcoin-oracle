@@ -36,5 +36,5 @@ volumes:
   pgdata: {}
 networks:
   default:
-    name: alex_b20_network
+    name: ${DEV_NETWORK_NAME}
     external: true

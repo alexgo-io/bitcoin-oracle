@@ -215,12 +215,12 @@
     "code": "ERR-TX-NOT-INDEXED",
     "comment": "indexer-registry.clar:58"
   },
-  "4072773241": {
+  "4072773244": {
     "code": "ERR-NOT-AUTHORIZED",
-    "comment": "indexer-registry.clar:84"
+    "comment": "indexer-registry.clar:87"
   },
-  "4072773245": {
+  "4072773269": {
     "code": "ERR-NOT-AUTHORIZED",
-    "comment": "indexer-registry.clar:88"
+    "comment": "indexer-registry.clar:91"
   }
 }

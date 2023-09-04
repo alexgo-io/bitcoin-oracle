@@ -4,7 +4,7 @@ defineContract,
 bufferT,
 principalT,
 responseSimpleT,
-numberT,
+uintT,
 booleanT,
 listT,
 tupleT,
@@ -20,7 +20,7 @@ export const indexer = defineContract({
       { name: 'validator-pubkey', type: bufferT },
       { name: 'validator', type: principalT }
     ],
-    output: responseSimpleT(numberT, ),
+    output: responseSimpleT(uintT, ),
     mode: 'public'
   },
   'approve-relayer': {
@@ -36,22 +36,19 @@ export const indexer = defineContract({
       {
         name: 'tx-many',
         type: listT(tupleT({
-          block: tupleT({ header: bufferT, height: numberT }, ),
-          proof: tupleT({
-            hashes: listT(bufferT, ),
-            'tree-depth': numberT,
-            'tx-index': numberT
-          }, ),
+          block: tupleT({ header: bufferT, height: uintT }, ),
+          proof: tupleT({ hashes: listT(bufferT, ), 'tree-depth': uintT, 'tx-index': uintT }, ),
           'signature-packs': listT(tupleT({ signature: bufferT, signer: principalT, 'tx-hash': bufferT }, ), ),
           tx: tupleT({
-            amt: numberT,
+            amt: uintT,
             'bitcoin-tx': bufferT,
             from: bufferT,
-            'from-bal': numberT,
-            output: numberT,
+            'from-bal': uintT,
+            offset: uintT,
+            output: uintT,
             tick: stringT,
             to: bufferT,
-            'to-bal': numberT
+            'to-bal': uintT
           }, )
         }, ), )
       }
@@ -61,7 +58,7 @@ export const indexer = defineContract({
   },
   'remove-validator': {
     input: [ { name: 'validator', type: principalT } ],
-    output: responseSimpleT(numberT, ),
+    output: responseSimpleT(uintT, ),
     mode: 'public'
   },
   'set-contract-owner': {
@@ -75,16 +72,17 @@ export const indexer = defineContract({
     mode: 'public'
   },
   'set-required-validators': {
-    input: [ { name: 'new-required-validators', type: numberT } ],
+    input: [ { name: 'new-required-validators', type: uintT } ],
     output: responseSimpleT(booleanT, ),
     mode: 'public'
   },
   'get-bitcoin-tx-indexed-or-fail': {
     input: [
       { name: 'bitcoin-tx', type: bufferT },
-      { name: 'output', type: numberT }
+      { name: 'output', type: uintT },
+      { name: 'offset', type: uintT }
     ],
-    output: responseSimpleT(tupleT({ amt: numberT, from: bufferT, tick: stringT, to: bufferT }, ), ),
+    output: responseSimpleT(tupleT({ amt: uintT, from: bufferT, tick: stringT, to: bufferT }, ), ),
     mode: 'readonly'
   },
   'get-bitcoin-tx-mined-or-default': {
@@ -94,13 +92,13 @@ export const indexer = defineContract({
   },
   'get-contract-owner': { input: [], output: principalT, mode: 'readonly' },
   'get-paused': { input: [], output: booleanT, mode: 'readonly' },
-  'get-required-validators': { input: [], output: numberT, mode: 'readonly' },
+  'get-required-validators': { input: [], output: uintT, mode: 'readonly' },
   'get-user-balance-or-default': {
     input: [
       { name: 'user', type: bufferT },
       { name: 'tick', type: stringT }
     ],
-    output: tupleT({ balance: numberT, 'up-to-block': numberT }, ),
+    output: tupleT({ balance: uintT, 'up-to-block': uintT }, ),
     mode: 'readonly'
   },
   'get-validator-or-fail': {
@@ -113,14 +111,15 @@ export const indexer = defineContract({
       {
         name: 'tx',
         type: tupleT({
-          amt: numberT,
+          amt: uintT,
           'bitcoin-tx': bufferT,
           from: bufferT,
-          'from-bal': numberT,
-          output: numberT,
+          'from-bal': uintT,
+          offset: uintT,
+          output: uintT,
           tick: stringT,
           to: bufferT,
-          'to-bal': numberT
+          'to-bal': uintT
         }, )
       }
     ],
@@ -143,15 +142,11 @@ export const indexer = defineContract({
       { name: 'tx', type: bufferT },
       {
         name: 'block',
-        type: tupleT({ header: bufferT, height: numberT }, )
+        type: tupleT({ header: bufferT, height: uintT }, )
       },
       {
         name: 'proof',
-        type: tupleT({
-          hashes: listT(bufferT, ),
-          'tree-depth': numberT,
-          'tx-index': numberT
-        }, )
+        type: tupleT({ hashes: listT(bufferT, ), 'tree-depth': uintT, 'tx-index': uintT }, )
       }
     ],
     output: responseSimpleT(booleanT, ),
@@ -170,9 +165,9 @@ export const indexer = defineContract({
   validators: { input: principalT, output: optionalT(bufferT, ), mode: 'mapEntry' },
   'contract-owner': { input: noneT, output: principalT, mode: 'variable' },
   'is-paused': { input: noneT, output: booleanT, mode: 'variable' },
-  'required-validators': { input: noneT, output: numberT, mode: 'variable' },
+  'required-validators': { input: noneT, output: uintT, mode: 'variable' },
   'tx-hash-to-iter': { input: noneT, output: bufferT, mode: 'variable' },
-  'validator-count': { input: noneT, output: numberT, mode: 'variable' }
+  'validator-count': { input: noneT, output: uintT, mode: 'variable' }
 }
 } as const)
 

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PROJECT_NAME="dev-network"
+# shellcheck source=./_dev_utils
+source "$NX_WORKSPACE_ROOT"/tools/bin/_dev_utils
+echo_welcome
+
+NETWORK_NAME="${DEV_NETWORK_NAME}"
+
+main() {
+  local cmd=$1
+  case $cmd in
+  up)
+    if [ "$PROFILE" = "local" ] || [ "$PROFILE" = "ci" ]; then
+      docker network create --driver bridge --attachable ${NETWORK_NAME} || true
+    else
+      echo "creating network ${NETWORK_NAME} on remote host: ${REMOTE_SSH_HOST}"
+      ssh "$(REMOTE_USER_HOST)" "docker network create --driver bridge --attachable ${NETWORK_NAME}" || true
+      echo "created network ${NETWORK_NAME} on remote host: ${REMOTE_SSH_HOST}"
+    fi
+    ;;
+  down)
+    if [ "$PROFILE" = "local" ] || [ "$PROFILE" = "ci" ]; then
+      docker network rm ${NETWORK_NAME} || true
+    else
+      echo "removing network ${NETWORK_NAME} on remote host: ${REMOTE_SSH_HOST}"
+      ssh "$(REMOTE_USER_HOST)" "docker network rm ${NETWORK_NAME}" || true
+      echo "removed network ${NETWORK_NAME} on remote host: ${REMOTE_SSH_HOST}"
+    fi
+    ;;
+  *)
+    echo "Usage: $0 [up|down]"
+    exit 1
+    ;;
+  esac
+}
+
+main $@
