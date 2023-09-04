@@ -30,7 +30,7 @@ export class DefaultBitcoinSyncWorkerService
   }
 
   sync() {
-    interval(env.BITCOIN_SYNC_POLL_INTERVAL)
+    interval(env().BITCOIN_SYNC_POLL_INTERVAL)
       .pipe(
         exhaustMap(() =>
           combineLatest([this.getFromBlockHeight$(), this.getToBlockHeight$()]),
@@ -48,7 +48,8 @@ export class DefaultBitcoinSyncWorkerService
   getFromBlockHeight$() {
     return from(this.repository.latestBlock()).pipe(
       map(
-        block => block?.height ?? BigInt(env.BITCOIN_SYNC_GENESIS_BLOCK_HEIGHT),
+        block =>
+          block?.height ?? BigInt(env().BITCOIN_SYNC_GENESIS_BLOCK_HEIGHT),
       ),
       map(height => Number(height)),
     );

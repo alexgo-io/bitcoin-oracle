@@ -10,8 +10,7 @@
       "options": {
         "outputPath": "dist/packages/libs/env",
         "main": "packages/libs/env/src/index.ts",
-        "tsConfig": "packages/libs/env/tsconfig.lib.json",
-        "assets": ["packages/libs/env/*.md"]
+        "tsConfig": "packages/libs/env/tsconfig.lib.json"
       }
     },
     "lint": {
