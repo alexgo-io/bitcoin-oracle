@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# pin ethers.js v5, v6 has breaking changes
+ncu -u -x p-queue,p-retry,chalk,nanoid,node-fetch,slonik,normalize-url,query-string,prettier
