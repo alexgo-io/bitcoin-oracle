@@ -85,8 +85,8 @@ describe('Indexer', () => {
     const amt = BigInt('0x' + randomBytes(10).toString('hex'));
     const bitcoinTx = randomBytes(32);
     const order = tupleCV({
-      from: bufferCV(Buffer.from(bisData.old_wallet)),
-      to: bufferCV(Buffer.from(bisData.new_wallet)),
+      from: bufferCV(Buffer.from(bisData.old_pkscript, 'hex')),
+      to: bufferCV(Buffer.from(bisData.new_pkscript, 'hex')),
       output: numberCV(10n),
       tick: stringCV('sat', 'utf8'),
       amt: numberCV(amt),
