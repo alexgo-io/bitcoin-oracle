@@ -39,7 +39,7 @@ async function bootstrap() {
 
   const swaggerBuilder = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle('Alex B20 API')
+    .setTitle('ALEX B20 API')
     .setDescription('Alex B20 API service')
     .setVersion('0.0.1')
     .build();

@@ -39,7 +39,6 @@ function getBalanceOnBlockCached$({
   return getBalanceOnBlock$(address, block).pipe(
     map(result => result.data),
     tap(result => cache.set(key, result)),
-    log('---'),
   );
 }
 function getBalance(balances: BISBalance[] | null, tick: string) {

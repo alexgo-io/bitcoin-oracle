@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="validator" type="NodeJSConfigurationType" application-parameters="run validator:serve --inspect=true --port=19102" path-to-js-file="node_modules/nx/bin/nx.js" working-dir="$PROJECT_DIR$">
+    <method v="2" />
+  </configuration>
+</component>
