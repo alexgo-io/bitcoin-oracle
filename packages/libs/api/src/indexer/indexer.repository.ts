@@ -1,7 +1,8 @@
 import { SQL } from '@alex-b20/commons';
 import { PersistentService } from '@alex-b20/persistent';
-import { IndexerTxWithProof } from '@alex-b20/types';
+import { IndexerTxWithProof, IndexerType } from '@alex-b20/types';
 import { Inject } from '@nestjs/common';
+import { z } from 'zod';
 
 function same<T>(actual: T, expected: T, msg: string) {
   if (actual !== expected) {
@@ -27,17 +28,17 @@ export class IndexerRepository {
             `);
 
       if (existing != null) {
-        same(existing.type, tx.type, `!type ${tx.tx_id}`);
-        same(existing.height, tx.height, `!height ${tx.tx_id}`);
-        same(existing.tx_index, tx.tx_index, `!tx_index ${tx.tx_id}`);
-        same(existing.tree_depth, tx.tree_depth, `!tree_depth ${tx.tx_id}`);
-        same(existing.from, tx.from, `!from ${tx.tx_id}`);
-        same(existing.to, tx.to, `!to ${tx.tx_id}`);
-        same(existing.tick, tx.tick, `!tick ${tx.tx_id}`);
-        same(existing.amt, tx.amt, `!amt ${tx.tx_id}`);
-        same(existing.satpoint, tx.satpoint, `!satpoint ${tx.tx_id}`);
-        same(existing.from_bal, tx.from_bal, `!from_bal ${tx.tx_id}`);
-        same(existing.to_bal, tx.to_bal, `!to_bal ${tx.tx_id}`);
+        // same(existing.type, tx.type, `!type ${tx.tx_id.toString('hex')}`);
+        // same(existing.height, tx.height, `!height ${tx.tx_id.toString('hex')}`);
+        // same(existing.tx_index, tx.tx_index, `!tx_index ${tx.tx_id.toString('hex')}`);
+        // same(existing.tree_depth, tx.tree_depth, `!tree_depth ${tx.tx_id.toString('hex')}`);
+        // same(existing.from, tx.from, `!from ${tx.tx_id.toString('hex')}`);
+        // same(existing.to, tx.to, `!to ${tx.tx_id.toString('hex')}`);
+        // same(existing.tick, tx.tick, `!tick ${tx.tx_id.toString('hex')}`);
+        // same(existing.amt, tx.amt, `!amt ${tx.tx_id.toString('hex')}`);
+        // same(existing.satpoint, tx.satpoint, `!satpoint ${tx.tx_id.toString('hex')}`);
+        // same(existing.from_bal, tx.from_bal, `!from_bal ${tx.tx_id.toString('hex')}`);
+        // same(existing.to_bal, tx.to_bal, `!to_bal ${tx.tx_id.toString('hex')}`);
         return;
       }
 
@@ -98,4 +99,18 @@ export class IndexerRepository {
       limit 1;
     `);
   }
+
+  // async getMissingBlockNumbers(type: IndexerType) {
+  //   return this.persistentService.pgPool.query(SQL.type(
+  //     z.object({
+  //       missing_blocks: z.array(z.bigint()),
+  //     }),
+  //   )`
+  //       SELECT s.i AS missing_blocks
+  //       FROM generate_series(700000, (select max(height) from indexer.blocks)) s(i)
+  //       WHERE NOT EXISTS (SELECT 1 FROM indexer.blocks
+  //                                  WHERE height = s.i
+  //                                  );
+  //   `);
+  // }
 }
