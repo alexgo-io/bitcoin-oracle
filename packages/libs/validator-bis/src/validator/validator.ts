@@ -1,5 +1,4 @@
 import { indexer } from '@alex-b20/api-client';
-import { getBitcoinData$ } from '@alex-b20/bitcoin';
 import { generateOrderHash, signOrderHash } from '@alex-b20/brc20-indexer';
 import { log } from '@alex-b20/commons';
 import assert from 'assert';
@@ -13,11 +12,12 @@ import {
   of,
   retry,
   switchMap,
-  tap,
-} from 'rxjs';
+  tap, concatMap
+} from "rxjs";
 import { BISBalance } from '../api/base';
 import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
 import { env } from '../env';
+import { getBitcoinTx$ } from '../valiadtor-lib/validator-lib';
 
 function getBalanceOnBlockCached$({
   address,
@@ -101,7 +101,7 @@ export function getIndexerTxOnBlock(block: number) {
   return getBisTxOnBlock(block).pipe(
     mergeMap(tx => {
       const { tx_id, vout, satpoint } = getSatpoint(tx.old_satpoint);
-      return getBitcoinData$([tx_id]).pipe(
+      return getBitcoinTx$(tx_id).pipe(
         map(result => {
           return {
             ...tx,
@@ -111,8 +111,9 @@ export function getIndexerTxOnBlock(block: number) {
             satpoint,
           };
         }),
+        log('getIndexerTxOnBlock'),
       );
-    }),
+    }, 2),
   );
 }
 
@@ -147,7 +148,7 @@ async function submitIndexerTx(
   return post({
     type: 'bis',
     header: tx.header,
-    height: tx.height.toString(10),
+    height: tx.height,
     tx_id: tx.tx_id,
     satpoint: tx.satpoint,
     proof_hashes: tx.proof.hashes,
@@ -168,7 +169,7 @@ async function submitIndexerTx(
 
 export function processBlock$(block: number) {
   return getIndexerTxOnBlock(block).pipe(
-    switchMap(tx => {
+    concatMap(tx => {
       return from(submitIndexerTx(tx));
     }),
   );

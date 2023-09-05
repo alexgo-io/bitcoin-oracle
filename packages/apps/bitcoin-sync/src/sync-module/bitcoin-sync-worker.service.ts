@@ -32,6 +32,7 @@ export class DefaultBitcoinSyncWorkerService
   sync() {
     interval(env().BITCOIN_SYNC_POLL_INTERVAL)
       .pipe(
+        exhaustMap(() => from(this.syncMissingBlocks())),
         exhaustMap(() =>
           combineLatest([this.getFromBlockHeight$(), this.getToBlockHeight$()]),
         ),
@@ -57,6 +58,25 @@ export class DefaultBitcoinSyncWorkerService
 
   getToBlockHeight$() {
     return from(getCurrentBitcoinHeader()).pipe(map(block => block.height));
+  }
+
+  async syncMissingBlocks() {
+    const missingBlocks = await this.repository.getMissingBlocks(
+      env().BITCOIN_SYNC_GENESIS_BLOCK_HEIGHT,
+    );
+    await getBitcoinBlockHeaderByHeights(
+      missingBlocks.rows.map(i => Number(i.missing_block)),
+      async (h, height) => {
+        const header = Buffer.from(h, 'hex');
+        await this.repository.upsertBlock({
+          height: BigInt(height),
+          header,
+          block_hash: calculateBlockHash(header),
+          canonical: true,
+        });
+        this.logger.debug(`synced block ${height}`);
+      },
+    );
   }
 
   async syncFrom(fromHeight: number, toHeight: number) {

@@ -10,6 +10,7 @@ export const env = memoizeWith(String, () =>
       INDEXER_URL: z.string().default('http://localhost:8716'),
       STACKS_VALIDATOR_ACCOUNT_ADDRESS: z.string().min(1),
       STACKS_VALIDATOR_ACCOUNT_SECRET: z.string().min(1),
+      VALIDATOR_GENESIS_BLOCK_NUMBER: z.number().default(806108),
     },
     runtimeEnv: process.env,
   }),

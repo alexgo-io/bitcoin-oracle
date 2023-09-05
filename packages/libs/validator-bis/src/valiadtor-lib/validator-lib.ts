@@ -1,6 +1,7 @@
 import { ApiClient } from '@alex-b20/api-client';
 import { reverseBuffer, withElectrumClient } from '@alex-b20/bitcoin';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
+import { from } from 'rxjs';
 import { env } from '../env';
 
 export async function getBitcoinTx(txId: string) {
@@ -44,4 +45,8 @@ export async function getBitcoinTx(txId: string) {
       },
     };
   });
+}
+
+export function getBitcoinTx$(txId: string) {
+  return from(getBitcoinTx(txId));
 }

@@ -1,4 +1,4 @@
-import { noAwait } from '@alex-b20/commons';
+import { expoRetry, noAwait } from '@alex-b20/commons';
 import got from 'got-cjs';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
 import PQueue from 'p-queue';
@@ -120,11 +120,13 @@ export async function getBitcoinBlockHeaderByHeights(
   onHeaderReceived: (header: string, height: number) => Promise<void>,
 ) {
   return withElectrumClient(async client => {
-    const queue = new PQueue();
+    const queue = new PQueue({ concurrency: 5 });
     for (const height of heights) {
       noAwait(
         queue.add(async () => {
-          const header = await client.blockchain_block_header(height);
+          const header = await expoRetry(() =>
+            client.blockchain_block_header(height),
+          );
           await onHeaderReceived(header, height);
         }),
       );
