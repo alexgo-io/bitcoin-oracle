@@ -24,7 +24,6 @@ export const env = createEnv({
     ELECTRUM_HOST: z.string().default('fortress.qtornado.com'),
     ELECTRUM_PORT: z.coerce.number().default(443),
     ELECTRUM_PROTOCOL: z.string().default('ssl'),
-    BITCOIN_SYNC_GENESIS_BLOCK_HEIGHT: z.coerce.number().default(8000),
     STACKS_API_URL: z.string().min(1),
     STACKS_MAINNET_API_URL: z
       .string()

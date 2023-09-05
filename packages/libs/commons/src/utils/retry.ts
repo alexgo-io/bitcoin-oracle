@@ -21,12 +21,12 @@ export function dbRetry<T>(
 }
 
 const logger = new Logger('retry');
-export const wrapRetry = <T>(
+export const fastRetry = <T>(
   fn: () => Promise<T>,
   label = 'retry',
 ): Promise<T> => {
   return pRetry(
-    () => {
+    async () => {
       return fn().catch(e => {
         if (e instanceof Error) {
           throw e;
@@ -46,6 +46,42 @@ export const wrapRetry = <T>(
       factor: 1,
       minTimeout: 200,
       maxTimeout: 500,
+      onFailedAttempt: error => {
+        logger.warn(
+          `[${label}] Attempt ${error.attemptNumber} failed. There are ${
+            error.retriesLeft
+          } retries left., error: ${error.stack ?? error}}`,
+        );
+      },
+    },
+  );
+};
+
+export const expoRetry = <T>(
+  fn: () => Promise<T>,
+  label = 'retry',
+): Promise<T> => {
+  return pRetry(
+    async () => {
+      return fn().catch(e => {
+        if (e instanceof Error) {
+          throw e;
+        } else {
+          const wrapError = new Error(
+            `[${label}] wrapped error: ${stringifyJSON(e)}`,
+          );
+          logger.error(
+            `[${label}] is not error, wrapping error: ${stringifyJSON(e)}`,
+          );
+          throw wrapError;
+        }
+      });
+    },
+    {
+      retries: 10,
+      factor: 2,
+      minTimeout: 500,
+      maxTimeout: 5000,
       onFailedAttempt: error => {
         logger.warn(
           `[${label}] Attempt ${error.attemptNumber} failed. There are ${
