@@ -3,16 +3,9 @@ import {
   getBitcoinBlockHeaderByHeights,
   getCurrentBitcoinHeader,
 } from '@alex-b20/bitcoin';
+import { sleep } from '@alex-b20/commons';
 import { Inject, Logger } from '@nestjs/common';
 import { range } from 'ramda';
-import {
-  combineLatest,
-  exhaustMap,
-  from,
-  interval,
-  map,
-  switchMap,
-} from 'rxjs';
 import { env } from '../env';
 import { BitcoinSyncWorkerService } from './bitcoin-sync-worker.interface';
 import { BitcoinSyncWorkerRepository } from './bitcoin-sync-worker.repository';
@@ -26,38 +19,31 @@ export class DefaultBitcoinSyncWorkerService
     private readonly repository: BitcoinSyncWorkerRepository,
   ) {}
   async start(): Promise<void> {
-    this.sync();
+    await this.sync();
+    // await this.syncMissingBlocks();
   }
 
-  sync() {
-    interval(env().BITCOIN_SYNC_POLL_INTERVAL)
-      .pipe(
-        exhaustMap(() => from(this.syncMissingBlocks())),
-        exhaustMap(() =>
-          combineLatest([this.getFromBlockHeight$(), this.getToBlockHeight$()]),
-        ),
-        switchMap(value => {
-          const [fromHeight, toHeight] = value;
-          return from(this.syncFrom(fromHeight, toHeight)).pipe(
-            map(() => value),
-          );
-        }),
-      )
-      .subscribe();
+  async sync() {
+    for (;;) {
+      await this.syncMissingBlocks();
+      const fromHeight = await this.getFromBlockHeight$();
+      const toHeight = await this.getToBlockHeight$();
+      await this.syncFrom(fromHeight, toHeight);
+
+      await sleep(env().BITCOIN_SYNC_POLL_INTERVAL);
+    }
   }
 
-  getFromBlockHeight$() {
-    return from(this.repository.latestBlock()).pipe(
-      map(
-        block =>
-          block?.height ?? BigInt(env().BITCOIN_SYNC_GENESIS_BLOCK_HEIGHT),
-      ),
-      map(height => Number(height)),
+  async getFromBlockHeight$() {
+    const dbLast = await this.repository.latestBlock();
+
+    return Number(
+      dbLast?.height ?? BigInt(env().BITCOIN_SYNC_GENESIS_BLOCK_HEIGHT),
     );
   }
 
-  getToBlockHeight$() {
-    return from(getCurrentBitcoinHeader()).pipe(map(block => block.height));
+  async getToBlockHeight$() {
+    return (await getCurrentBitcoinHeader()).height;
   }
 
   async syncMissingBlocks() {
