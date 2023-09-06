@@ -19,24 +19,28 @@ create schema if not exists indexer;
 create table indexer.blocks
 (
 -- stacks height
-    "height"     integer     not null,
-    "header"     bytea       not null unique,
-    "block_hash" bytea       not null,
-    primary key ("height", "header"),
-    "canonical"  boolean     not null,
-    "created_at" timestamptz not null default now(),
-    "updated_at" timestamptz not null default now()
+  "height"     integer     not null,
+  "header"     bytea       not null unique,
+  "block_hash" bytea       not null,
+  primary key ("height", "header"),
+  "canonical"  boolean     not null,
+  "created_at" timestamptz not null default now(),
+  "updated_at" timestamptz not null default now()
 );
 
 create table indexer.txs
 (
+  "id"           text unique generated always as ( lower(encode(tx_id, 'hex')) ||
+                                                   ':' || cast(output as text) ||
+                                                   ':' || cast(satpoint as text) ) STORED,
+  "tx_id"        bytea       not null,
+  "output"       integer     not null,
+  "satpoint"     integer     not null,
+
   "type"         text        not null,
   "header"       bytea       not null,
 -- bitcoin height
   "height"       integer     not null,
-  "tx_id"        bytea       not null,
-  "output"       integer     not null,
-  "satpoint"     integer     not null,
   "proof_hashes" bytea[]     not null,
   "tx_index"     integer     not null,
   "tree_depth"   integer     not null,
@@ -47,13 +51,19 @@ create table indexer.txs
   "from_bal"     numeric     not null,
   "to_bal"       numeric     not null,
   "created_at"   timestamptz not null default now(),
-  unique ("header", "tx_id", "satpoint", "output"),
   "updated_at"   timestamptz not null default now()
 );
 CREATE INDEX tx_height ON indexer.txs (height);
 
 create table indexer.proofs
 (
+  "id"         text generated always as ( lower(encode(tx_id, 'hex')) ||
+                                          ':' || cast(output as text) ||
+                                          ':' || cast(satpoint as text) ) STORED,
+  "tx_id"      bytea       not null,
+  "output"     integer     not null,
+  "satpoint"   integer     not null,
+
   "type"       text        not null,
   "order_hash" bytea       not null,
   "signature"  bytea       not null,
@@ -64,3 +74,19 @@ create table indexer.proofs
 );
 CREATE INDEX proof_order_hash ON indexer.proofs (order_hash);
 
+create table indexer.submitted_tx
+(
+  "id"                    text generated always as ( lower(encode(tx_id, 'hex')) ||
+                                                     ':' || cast(output as text) ||
+                                                     ':' || cast(satpoint as text) ) STORED,
+  "tx_id"                 bytea       not null,
+  "satpoint"              integer     not null,
+  "output"                integer     not null,
+  "stacks_tx_id"          bytea       null,
+  "broadcast_result_type" text        not null,
+  "error"                 text,
+  "submitted_by"          text        not null,
+  "submitted_at"          timestamptz not null default now(),
+  "created_at"            timestamptz not null default now(),
+  "updated_at"            timestamptz not null default now()
+);

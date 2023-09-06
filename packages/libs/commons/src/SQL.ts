@@ -1,6 +1,7 @@
 import {
   IndexerBlockSchema,
   IndexerProofSchema,
+  IndexerSubmittedTxSchema,
   IndexerTxSchema,
 } from '@alex-b20/types';
 import { createSqlTag } from 'slonik';
@@ -19,5 +20,7 @@ export const SQL = createSqlTag({
     indexer_txs: IndexerTxSchema,
     indexer_proof: IndexerProofSchema,
     indexer_block: IndexerBlockSchema,
+    indexer_txs_proof: IndexerTxSchema.merge(IndexerProofSchema),
+    indexer_submitted_tx: IndexerSubmittedTxSchema,
   },
 });
