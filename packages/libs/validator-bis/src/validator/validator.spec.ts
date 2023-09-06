@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  getBisTxOnBlock,
-  getIndexerTxOnBlock,
+  getBisTxOnBlock$,
+  getIndexerTxOnBlock$,
   processBlock$,
 } from './validator';
 
@@ -29,7 +29,7 @@ describe('libs-validator-bis', () => {
 
   it.skip('should getBisTxOnBlock', done => {
     const txs: { id: string }[] = [];
-    getBisTxOnBlock(802396).subscribe({
+    getBisTxOnBlock$(802396).subscribe({
       next: tx => {
         txs.push(tx as any);
       },
@@ -106,7 +106,7 @@ describe('libs-validator-bis', () => {
 
   it.skip('should getIndexerTxOnBlock', done => {
     const txs: { id: string }[] = [];
-    getIndexerTxOnBlock(802396).subscribe({
+    getIndexerTxOnBlock$(802396).subscribe({
       next: tx => {
         txs.push(tx as any);
       },

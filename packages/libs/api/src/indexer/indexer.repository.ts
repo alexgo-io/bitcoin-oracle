@@ -76,11 +76,17 @@ export class IndexerRepository {
             `);
 
       await conn.query(SQL.typeAlias('void')`
-                INSERT INTO indexer.proofs(type,
+                INSERT INTO indexer.proofs(tx_id,
+                                           output,
+                                           satpoint,
+                                           type,
                                            order_hash,
                                            signature,
                                            signer)
-                VALUES (${tx.type},
+                VALUES (${SQL.binary(tx.tx_id)},
+                        ${tx.output.toString()},
+                        ${tx.satpoint.toString()},
+                        ${tx.type},
                         ${SQL.binary(tx.order_hash)},
                         ${SQL.binary(tx.signature)},
                         ${tx.signer})
@@ -97,6 +103,15 @@ export class IndexerRepository {
       select * from indexer.blocks
                where block_hash = ${SQL.binary(hash)}
       limit 1;
+    `);
+  }
+
+  async getLatestBlockNumberOfProof(type: IndexerType) {
+    return this.persistentService.pgPool.one(SQL.type(
+      z.object({ lasted_block_number: z.bigint().nullable() }),
+    )`
+      select max(height) as lasted_block_number from indexer.txs
+               where type = ${type}
     `);
   }
 

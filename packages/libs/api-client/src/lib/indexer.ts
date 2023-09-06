@@ -4,6 +4,7 @@ import {
   IndexerTxsPostResponse,
   IndexerTxsPostResponseSchema,
   IndexerTxWithProofJSON,
+  IndexerType,
 } from '@alex-b20/types';
 import got from 'got-cjs';
 
@@ -31,6 +32,15 @@ export function indexer(baseURL: string) {
               parseJson: body => IndexerBlockSchema.parse(JSON.parse(body)),
             })
             .json<IndexerBlock>();
+        },
+      };
+    },
+    latest_block_number() {
+      return {
+        async get(params: { type: IndexerType }) {
+          return got
+            .get(`${url}/latest-block-number/${params.type}`)
+            .json<{ latest_block_number: number | null }>();
         },
       };
     },

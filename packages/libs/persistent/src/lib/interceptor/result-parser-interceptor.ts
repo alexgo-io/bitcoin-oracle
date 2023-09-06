@@ -1,3 +1,4 @@
+import { stringifyJSON } from '@alex-b20/commons';
 import { Logger } from '@nestjs/common';
 import {
   SchemaValidationError,
@@ -24,11 +25,11 @@ export const createResultParserInterceptor = (): Interceptor => {
 
       if (validationResult.success === false) {
         logger.error(
-          `Validation result: ${JSON.stringify(validationResult, null, 2)}
+          `Validation result: ${stringifyJSON(validationResult, 2)}
           query: ${actualQuery.sql}
-          value: ${JSON.stringify(actualQuery.values, null, 2)}
+          value: ${stringifyJSON(actualQuery.values, 2)}
           ---
-          row: ${JSON.stringify(row, null, 2)}
+          row: ${stringifyJSON(row, 2)}
           `,
         );
         throw new SchemaValidationError(

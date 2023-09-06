@@ -76,3 +76,15 @@ export type IndexerProof = z.infer<typeof IndexerProofSchema>;
 export const IndexerTxWithProofSchema =
   IndexerTxSchema.merge(IndexerProofSchema);
 export type IndexerTxWithProof = z.infer<typeof IndexerTxWithProofSchema>;
+
+export const IndexerSubmittedTxSchema = z.object({
+  tx_id: BufferSchema,
+  satpoint: BigIntSchema,
+  output: BigIntSchema,
+  stacks_tx_id: BufferSchema.nullable(),
+  broadcast_result_type: z.enum(['ok', 'error']),
+  error: z.string().nullish(),
+  submitted_by: z.string(),
+  submitted_at: z.date(),
+});
+export type IndexerSubmittedTx = z.infer<typeof IndexerSubmittedTxSchema>;
