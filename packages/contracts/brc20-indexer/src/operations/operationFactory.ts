@@ -26,7 +26,7 @@ export const callPublic = <
 ): PublicCall => {
   const descriptor = contracts[contractOrType][
     functionName
-  ] as any as OpenCallFunctionDescriptor;
+  ] as unknown as OpenCallFunctionDescriptor;
   return {
     type: 'publicCall',
     contract: contractOrType as string,

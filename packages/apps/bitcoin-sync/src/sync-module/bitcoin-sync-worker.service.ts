@@ -24,6 +24,7 @@ export class DefaultBitcoinSyncWorkerService
   }
 
   async sync() {
+    // noinspection InfiniteLoopJS
     for (;;) {
       await this.syncMissingBlocks();
       const fromHeight = await this.getFromBlockHeight$();

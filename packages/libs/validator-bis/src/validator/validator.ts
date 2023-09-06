@@ -1,19 +1,18 @@
 import { indexer } from '@alex-b20/api-client';
 import { generateOrderHash, signOrderHash } from '@alex-b20/brc20-indexer';
-import { log } from '@alex-b20/commons';
 import assert from 'assert';
 import {
   Observable,
   combineLatest,
+  concatMap,
   from,
   map,
   mergeAll,
   mergeMap,
   of,
   retry,
-  switchMap,
-  tap, concatMap
-} from "rxjs";
+  tap,
+} from 'rxjs';
 import { BISBalance } from '../api/base';
 import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
 import { env } from '../env';
@@ -47,7 +46,7 @@ function getBalance(balances: BISBalance[] | null, tick: string) {
   }
   return balances.find(balance => balance.tick === tick);
 }
-export function getBisTxOnBlock(block: number) {
+export function getBisTxOnBlock$(block: number) {
   const cache = new Map<string, BISBalance[]>();
 
   return getActivityOnBlock$(block).pipe(
@@ -97,8 +96,8 @@ function getSatpoint(tx: string) {
   };
 }
 
-export function getIndexerTxOnBlock(block: number) {
-  return getBisTxOnBlock(block).pipe(
+export function getIndexerTxOnBlock$(block: number) {
+  return getBisTxOnBlock$(block).pipe(
     mergeMap(tx => {
       const { tx_id, vout, satpoint } = getSatpoint(tx.old_satpoint);
       return getBitcoinTx$(tx_id).pipe(
@@ -111,7 +110,6 @@ export function getIndexerTxOnBlock(block: number) {
             satpoint,
           };
         }),
-        log('getIndexerTxOnBlock'),
       );
     }, 2),
   );
@@ -122,7 +120,7 @@ type Unobservable<T> = T extends Observable<infer R> ? R : T;
 const post = indexer(env().INDEXER_URL).txs().post;
 
 async function submitIndexerTx(
-  tx: Unobservable<ReturnType<typeof getIndexerTxOnBlock>>,
+  tx: Unobservable<ReturnType<typeof getIndexerTxOnBlock$>>,
 ) {
   assert(
     tx.old_pkscript != null,
@@ -168,7 +166,7 @@ async function submitIndexerTx(
 }
 
 export function processBlock$(block: number) {
-  return getIndexerTxOnBlock(block).pipe(
+  return getIndexerTxOnBlock$(block).pipe(
     concatMap(tx => {
       return from(submitIndexerTx(tx));
     }),

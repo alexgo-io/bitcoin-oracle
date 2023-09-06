@@ -1,5 +1,6 @@
 import {
   parseErrorDetail,
+  stringifyJSON,
   toErrorDetailsHttpException,
 } from '@alex-b20/commons';
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
@@ -26,9 +27,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
         },
       };
       this.logger.error(
-        `Error occurred for request ${request.url}, ${JSON.stringify(
+        `Error occurred for request ${request.url}, ${stringifyJSON(
           data,
-          null,
           2,
         )}
             `,

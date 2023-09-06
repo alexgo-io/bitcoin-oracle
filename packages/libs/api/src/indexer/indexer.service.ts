@@ -1,4 +1,4 @@
-import { IndexerTxWithProof } from '@alex-b20/types';
+import { IndexerTxWithProof, IndexerType } from '@alex-b20/types';
 import { Inject } from '@nestjs/common';
 import { Indexer } from './indexer.interface';
 import { IndexerRepository } from './indexer.repository';
@@ -14,11 +14,14 @@ export class DefaultIndexer implements Indexer {
   }
 
   async getBlockByBlockHash(hash: string) {
-    const block = await this.indexerRepository.getBlockByBlockHash(
+    return await this.indexerRepository.getBlockByBlockHash(
       Buffer.from(hash, 'hex'),
     );
+  }
 
-    return block;
+  async getLatestBlockNumberOfProof(type: IndexerType) {
+    return (await this.indexerRepository.getLatestBlockNumberOfProof(type))
+      .lasted_block_number;
   }
 }
 
