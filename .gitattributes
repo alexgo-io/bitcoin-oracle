@@ -1,0 +1,1 @@
+packages/dev/database/schema/seeds/main_db/*.sql filter=lfs diff=lfs merge=lfs -text
