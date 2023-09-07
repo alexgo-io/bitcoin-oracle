@@ -1,5 +1,4 @@
 import { createEnv } from '@t3-oss/env-core';
-import 'dotenv/config';
 import { memoizeWith } from 'ramda';
 import { z } from 'zod';
 

@@ -1,5 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="validator" type="NodeJSConfigurationType" application-parameters="run validator:serve --inspect=true --port=19102" path-to-js-file="node_modules/nx/bin/nx.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="validator" type="NodeJSConfigurationType" application-parameters="run validator:serve --inspect=true --port=19102" node-parameters="-r dotenv/config" path-to-js-file="node_modules/nx/bin/nx.js" working-dir="$PROJECT_DIR$">
+    <envs>
+      <env name="DOTENV_CONFIG_DEBUG" value="true" />
+      <env name="DOTENV_CONFIG_OVERRIDE" value="true" />
+    </envs>
     <method v="2" />
   </configuration>
 </component>
