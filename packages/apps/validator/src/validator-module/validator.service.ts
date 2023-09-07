@@ -5,7 +5,7 @@ import { processBlock$ } from '@alex-b20/validator-bis';
 import { Logger } from '@nestjs/common';
 import PQueue from 'p-queue';
 import { range } from 'ramda';
-import { firstValueFrom, retry, tap } from "rxjs";
+import { firstValueFrom, retry, tap } from 'rxjs';
 import { env } from '../env';
 import { ValidatorService } from './validator.interface';
 
@@ -31,7 +31,7 @@ export class DefaultValidatorService implements ValidatorService {
   async start() {
     this.logger.log(`Starting ValidatorService: ${process.env['LOG_LEVEL']}`);
 
-    const queue = new PQueue({ concurrency: 5 });
+    const queue = new PQueue({ concurrency: 10 });
     // noinspection InfiniteLoopJS
     for (;;) {
       const fromBlockHeight = await this.getFromBlockHeight();

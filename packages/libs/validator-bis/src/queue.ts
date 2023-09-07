@@ -1,5 +1,8 @@
 import { getGlobalPQueue } from '@alex-b20/commons';
 
-export const getValidatorQueue = () => {
-  return getGlobalPQueue('validator-queue', { concurrency: 5 });
+export const getBISQueue = () => {
+  return getGlobalPQueue('bis-queue', { concurrency: 5 });
+};
+export const getElectrumQueue = () => {
+  return getGlobalPQueue('electrum-queue', { concurrency: 20 });
 };
