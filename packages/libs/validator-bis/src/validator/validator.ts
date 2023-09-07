@@ -102,7 +102,7 @@ function getSatpoint(tx: string) {
 export function getIndexerTxOnBlock$(block: number) {
   return getBisTxOnBlock$(block).pipe(
     mergeMap(tx => {
-      const { tx_id, vout, satpoint } = getSatpoint(tx.old_satpoint);
+      const { tx_id, vout, satpoint } = getSatpoint(tx.new_satpoint);
       logger.debug(
         `getting bitcoin tx: ${tx_id}, queue: ${getElectrumQueue().size}`,
       );
@@ -135,11 +135,11 @@ async function submitIndexerTx(
   const order_hash = generateOrderHash({
     amt: BigInt(tx.amount),
     from: Buffer.from(tx.old_pkscript, 'hex'),
-    offset: 0n,
+    offset: BigInt(tx.satpoint),
     'from-bal': BigInt(tx.from_bal),
     to: Buffer.from(tx.new_pkscript, 'hex'),
     'to-bal': BigInt(tx.to_bal),
-    'bitcoin-tx': Buffer.from(tx.tx_id, 'hex'),
+    'bitcoin-tx': Buffer.from(tx.tx, 'hex'),
     tick: tx.tick,
     output: BigInt(tx.vout),
   });
@@ -154,7 +154,7 @@ async function submitIndexerTx(
       type: 'bis',
       header: tx.header,
       height: tx.height,
-      tx_id: tx.tx_id,
+      tx_id: tx.tx,
       satpoint: tx.satpoint,
       proof_hashes: tx.proof.hashes,
       tx_index: tx.proof['tx-index'].toString(10),

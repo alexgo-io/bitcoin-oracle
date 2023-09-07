@@ -30,10 +30,6 @@ export async function setupIndexer() {
     }),
     callPublic(kIndexerRegistryName, 'approve-operator', {
       approved: true,
-      operator: envDevelopment.STACKS_RELAYER_ACCOUNT_ADDRESS,
-    }),
-    callPublic(kIndexerRegistryName, 'approve-operator', {
-      approved: true,
       operator: `${envDevelopment.STACKS_DEPLOYER_ACCOUNT_ADDRESS}.${kIndexerContractName}`,
     }),
   ]);

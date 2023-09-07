@@ -1,8 +1,8 @@
 import { createEnv } from '@t3-oss/env-core';
-import { memoizeWith } from 'ramda';
 import { z } from 'zod';
+import memoizee from "memoizee";
 
-export const env = memoizeWith(String, () =>
+export const env = memoizee(() =>
   createEnv({
     server: {
       STACKS_RELAYER_ACCOUNT_ADDRESS: z.string().min(1),

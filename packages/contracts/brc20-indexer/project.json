@@ -45,7 +45,8 @@
         "contracts": [
           "clarity-bitcoin",
           "utils",
-          "indexer-registry"
+          "indexer-registry",
+          "indexer"
         ],
         "deployerSecretKey": "${STACKS_DEPLOYER_ACCOUNT_SECRET}",
         "puppetURL": "${STACKS_PUPPET_URL}",
@@ -89,7 +90,7 @@
             "principal": "${STACKS_DEPLOYER_ACCOUNT_ADDRESS}",
             "contracts": [
               "clarity-bitcoin",
-              "indexer-dev-preview-3",
+              "indexer-dev-preview-4",
               "indexer-registry-dev-preview-1"
             ],
             "packageName": "../codegenImport"

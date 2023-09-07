@@ -30,9 +30,9 @@ create table indexer.blocks
 
 create table indexer.txs
 (
-  "id"           text unique generated always as ( lower(encode(tx_id, 'hex')) ||
-                                                   ':' || cast(output as text) ||
-                                                   ':' || cast(satpoint as text) ) STORED,
+  "id"           bytea unique generated always as (digest(lower(encode(tx_id, 'hex')) ||
+                                                         ':' || cast(output as text) ||
+                                                         ':' || cast(satpoint as text), 'sha256')) STORED,
   "tx_id"        bytea       not null,
   "output"       integer     not null,
   "satpoint"     integer     not null,
@@ -57,9 +57,9 @@ CREATE INDEX tx_height ON indexer.txs (height);
 
 create table indexer.proofs
 (
-  "id"         text generated always as ( lower(encode(tx_id, 'hex')) ||
-                                          ':' || cast(output as text) ||
-                                          ':' || cast(satpoint as text) ) STORED,
+  "id"         bytea generated always as (digest(lower(encode(tx_id, 'hex')) ||
+                                                ':' || cast(output as text) ||
+                                                ':' || cast(satpoint as text), 'sha256')) STORED,
   "tx_id"      bytea       not null,
   "output"     integer     not null,
   "satpoint"   integer     not null,
@@ -76,9 +76,9 @@ CREATE INDEX proof_order_hash ON indexer.proofs (order_hash);
 
 create table indexer.submitted_tx
 (
-  "id"                    text generated always as ( lower(encode(tx_id, 'hex')) ||
-                                                     ':' || cast(output as text) ||
-                                                     ':' || cast(satpoint as text) ) STORED,
+  "id"                    bytea generated always as (digest(lower(encode(tx_id, 'hex')) ||
+                                                           ':' || cast(output as text) ||
+                                                           ':' || cast(satpoint as text), 'sha256')) STORED,
   "tx_id"                 bytea       not null,
   "satpoint"              integer     not null,
   "output"                integer     not null,
