@@ -1,19 +1,5 @@
 import { createEnv } from '@t3-oss/env-core';
-import { config } from 'dotenv';
-import * as fs from 'fs';
 import { z } from 'zod';
-
-if (process.env['NODE_ENV'] !== 'production') {
-  if (fs.existsSync('.env')) {
-    config({ path: '.env' });
-  } else if (fs.existsSync('../.env')) {
-    config({ path: '../.env' });
-  } else if (fs.existsSync('../../.env')) {
-    config({ path: '../../.env' });
-  } else if (fs.existsSync('../../../.env')) {
-    config({ path: '../../../.env' });
-  }
-}
 
 export const env = createEnv({
   server: {
@@ -41,9 +27,9 @@ export const envDevelopment = {
   ...env,
   ...createEnv({
     server: {
-      STACKS_DEPLOYER_ACCOUNT_SECRET: z.string().min(1),
+      STACKS_DEPLOYER_ACCOUNT_SECRET: z.string(),
       STACKS_DEPLOYER_ACCOUNT_ADDRESS: z.string().min(1),
-      STACKS_PUPPET_URL: z.string().min(1),
+      STACKS_PUPPET_URL: z.string(),
     },
     runtimeEnv: process.env,
   }),

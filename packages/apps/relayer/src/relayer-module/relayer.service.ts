@@ -1,6 +1,8 @@
 import {
   callPublic,
   indexerContracts,
+  kIndexerContractName,
+  kIndexerRegistryName,
   StacksCaller,
 } from '@alex-b20/brc20-indexer';
 import { toBuffer } from '@alex-b20/commons';
@@ -23,15 +25,18 @@ export class DefaultRelayerService implements RelayerService {
 
   async startRelayer(): Promise<void> {
     const pendingTxs = await this.relayerRepository.getPendingSubmitTx();
+    // const rows = pendingTxs.rows;
+    const rows = [pendingTxs.rows[0]];
 
     const TxManyInputEncoder =
-      indexerContracts['indexer']['index-tx-many']['input'][0].type.encode;
+      indexerContracts[kIndexerContractName]['index-tx-many']['input'][0].type
+        .encode;
     type TxManyInput = Parameters<typeof TxManyInputEncoder>[0][number];
     const txManyInputs: TxManyInput[] = [];
 
-    for (const tx of pendingTxs.rows) {
+    for (const tx of rows) {
       const isIndexedTx = await this.stacks.readonlyCaller()(
-        'indexer-registry',
+        kIndexerRegistryName,
         'get-bitcoin-tx-indexed-or-fail',
         {
           'bitcoin-tx': tx.tx_id,
@@ -75,12 +80,14 @@ export class DefaultRelayerService implements RelayerService {
       }
     }
 
-    const chunkInputs = chunk(txManyInputs, 25);
+    const kChunkSize = 25;
+
+    const chunkInputs = chunk(txManyInputs, kChunkSize);
 
     for (const inputs of chunkInputs) {
       this.stacks.queueProcessOperation([
         callPublic(
-          'indexer',
+          kIndexerContractName,
           'index-tx-many',
           {
             'tx-many': inputs,

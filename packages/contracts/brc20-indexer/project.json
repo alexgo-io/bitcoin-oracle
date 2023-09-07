@@ -44,7 +44,6 @@
         "clarinetPath": "packages/contracts/brc20-indexer/brc20-indexer-v1",
         "contracts": [
           "clarity-bitcoin",
-          "indexer",
           "utils",
           "indexer-registry"
         ],
@@ -90,9 +89,8 @@
             "principal": "${STACKS_DEPLOYER_ACCOUNT_ADDRESS}",
             "contracts": [
               "clarity-bitcoin",
-              "indexer",
-              "utils",
-              "indexer-registry"
+              "indexer-dev-preview-3",
+              "indexer-registry-dev-preview-1"
             ],
             "packageName": "../codegenImport"
           }
