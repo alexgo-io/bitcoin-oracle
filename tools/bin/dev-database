@@ -49,6 +49,7 @@ main() {
 
         hasura metadata apply &&
           hasura migrate apply --all-databases &&
+          hasura seed apply --all-databases &&
           hasura metadata reload
         exit 0
       fi

@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: alex_b20_db
     ports:
-      - "7543:5432"
+      - "61543:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:

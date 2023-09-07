@@ -1,8 +1,8 @@
 import { createEnv } from '@t3-oss/env-core';
-import { memoizeWith } from 'ramda';
+import memoizee from 'memoizee';
 import { z } from 'zod';
 
-export const env = memoizeWith(String, () =>
+export const env = memoizee(() =>
   createEnv({
     server: {
       BIS_ACCESS_KEY: z.string().min(1),
