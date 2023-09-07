@@ -1,10 +1,11 @@
 import { from } from 'rxjs';
+import { getBISQueue, getElectrumQueue } from '../queue';
 import { getActivityOnBlock, getBalanceOnBlock } from './bis-api';
 
 export function getActivityOnBlock$(block: number) {
-  return from(getActivityOnBlock(block));
+  return from(getBISQueue().add(() => getActivityOnBlock(block)));
 }
 
 export function getBalanceOnBlock$(address: string, block: number) {
-  return from(getBalanceOnBlock(address, block));
+  return from(getElectrumQueue().add(() => getBalanceOnBlock(address, block)));
 }
