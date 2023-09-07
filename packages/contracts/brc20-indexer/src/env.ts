@@ -1,10 +1,10 @@
 import { StacksMainnet, StacksMocknet } from '@stacks/network';
 import { ChainID, TransactionVersion } from '@stacks/transactions';
 import { createEnv } from '@t3-oss/env-core';
-import { memoizeWith } from 'ramda';
+import memoizee from 'memoizee';
 import { z } from 'zod';
 
-export const env = memoizeWith(String, () =>
+export const env = memoizee(() =>
   createEnv({
     server: {
       STACKS_PUPPET_URL: z.string().optional(),

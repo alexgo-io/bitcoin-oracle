@@ -65,7 +65,7 @@ export type BitcoinTxDataType = {
   height: number;
 };
 
-export async function getBitcoinTxDataWithStacks(
+async function getBitcoinTxDataWithStacks(
   txId: string,
   electrumClient: TypedElectrumClient,
 ): Promise<BitcoinTxDataType> {
@@ -138,5 +138,11 @@ export async function getBitcoinBlockHeaderByHeights(
 export async function getCurrentBitcoinHeader() {
   return withElectrumClient(async client => {
     return client.blockchain_headers_subscribe();
+  });
+}
+
+export async function getBitcoinTxStacks(txId: string) {
+  return withElectrumClient(async client => {
+    return client.blockchain_transaction_get(txId, true);
   });
 }

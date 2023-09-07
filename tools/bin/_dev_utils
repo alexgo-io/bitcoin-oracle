@@ -21,9 +21,11 @@ echo_welcome() {
   grey "run - project: $PROJECT_NAME, profile: [$PROFILE]"
 }
 
+export DOCKER_PROJECT_NAME="${PROJECT_NAME}_${WORKSPACE_NAME:-"default"}"
+
 _docker_compose() {
   pushd "$PROJECT_ROOT" >/dev/null 2>&1 || exit 1
-  docker-compose --profile "$PROFILE" --project-name "$PROJECT_NAME" "$@"
+  docker-compose --profile "$PROFILE" --project-name "$DOCKER_PROJECT_NAME" "$@"
   popd >/dev/null 2>&1 || exit 1
 }
 

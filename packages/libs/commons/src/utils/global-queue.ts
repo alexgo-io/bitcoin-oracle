@@ -1,11 +1,8 @@
+import memoizee from 'memoizee';
 import PQueue from 'p-queue';
-import { memoizeWith } from 'ramda';
 
 type QueueConfig = ConstructorParameters<typeof PQueue>[0];
-export const getGlobalPQueue = memoizeWith(
-  (v: string) => {
-    return v;
-  },
+export const getGlobalPQueue = memoizee(
   (queueName: string, config?: QueueConfig | undefined) => {
     return new PQueue(config);
   },

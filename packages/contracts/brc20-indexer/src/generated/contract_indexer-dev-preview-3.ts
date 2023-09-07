@@ -14,7 +14,7 @@ noneT
 } from "../codegenImport"
 
 export const indexerDevPreview3 = defineContract({
-"indexer-dev-preview-3": {
+"indexer-dev-preview-4": {
   'add-validator': {
     input: [
       { name: 'validator-pubkey', type: bufferT },

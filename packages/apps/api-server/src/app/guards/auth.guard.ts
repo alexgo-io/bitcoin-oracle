@@ -5,16 +5,13 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { memoizeWith } from 'ramda';
+import memoizee from 'memoizee';
 import { Observable } from 'rxjs';
 import { env } from '../../env';
 
-const getSecretKeys: () => { [key: string]: string } = memoizeWith(
-  String,
-  () => {
-    return JSON.parse(env.ALEX_B20_API_CREDENTIALS);
-  },
-);
+const getSecretKeys: () => { [key: string]: string } = memoizee(() => {
+  return JSON.parse(env.ALEX_B20_API_CREDENTIALS);
+});
 
 const logger = new Logger('api-server', { timestamp: true });
 

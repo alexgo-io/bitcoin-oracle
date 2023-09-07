@@ -1,9 +1,9 @@
 import { IndexerTypeSchema } from '@alex-b20/types';
 import { createEnv } from '@t3-oss/env-core';
-import { memoizeWith } from 'ramda';
+import memoizee from 'memoizee';
 import { z } from 'zod';
 
-export const env = memoizeWith(String, () =>
+export const env = memoizee(() =>
   createEnv({
     server: {
       VALIDATOR_GENESIS_BLOCK_HEIGHT: z.coerce.number().default(800600),
