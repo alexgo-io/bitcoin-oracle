@@ -1,5 +1,6 @@
 import { indexer } from '@alex-b20/api-client';
 import { generateOrderHash, signOrderHash } from '@alex-b20/brc20-indexer';
+import { Logger } from '@nestjs/common';
 import assert from 'assert';
 import {
   Observable,
@@ -16,8 +17,10 @@ import {
 import { BISBalance } from '../api/base';
 import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
 import { env } from '../env';
+import { getElectrumQueue } from '../queue';
 import { getBitcoinTx$ } from '../valiadtor-lib/validator-lib';
 
+const logger = new Logger('validator', { timestamp: true });
 function getBalanceOnBlockCached$({
   address,
   block,
@@ -81,7 +84,7 @@ export function getBisTxOnBlock$(block: number) {
           };
         }),
       );
-    }, 10),
+    }),
   );
 }
 
@@ -100,8 +103,12 @@ export function getIndexerTxOnBlock$(block: number) {
   return getBisTxOnBlock$(block).pipe(
     mergeMap(tx => {
       const { tx_id, vout, satpoint } = getSatpoint(tx.old_satpoint);
+      logger.debug(
+        `getting bitcoin tx: ${tx_id}, queue: ${getElectrumQueue().size}`,
+      );
       return getBitcoinTx$(tx_id).pipe(
         map(result => {
+          logger.log(`got bitcoin tx ${tx_id}`);
           return {
             ...tx,
             ...result,
@@ -111,13 +118,11 @@ export function getIndexerTxOnBlock$(block: number) {
           };
         }),
       );
-    }, 2),
+    }),
   );
 }
 
 type Unobservable<T> = T extends Observable<infer R> ? R : T;
-
-const post = indexer(env().INDEXER_URL).txs().post;
 
 async function submitIndexerTx(
   tx: Unobservable<ReturnType<typeof getIndexerTxOnBlock$>>,
@@ -143,26 +148,28 @@ async function submitIndexerTx(
     order_hash,
   );
 
-  return post({
-    type: 'bis',
-    header: tx.header,
-    height: tx.height,
-    tx_id: tx.tx_id,
-    satpoint: tx.satpoint,
-    proof_hashes: tx.proof.hashes,
-    tx_index: tx.proof['tx-index'].toString(10),
-    tree_depth: tx.proof['tree-depth'].toString(10),
-    from: tx.old_pkscript ?? '', // TODO: refine model
-    to: tx.new_pkscript ?? '', // TODO: refine model
-    output: tx.vout,
-    tick: tx.tick,
-    amt: tx.amount,
-    from_bal: tx.from_bal,
-    to_bal: tx.to_bal,
-    order_hash: order_hash.toString('hex'),
-    signature: signature.toString('hex'),
-    signer: env().STACKS_VALIDATOR_ACCOUNT_ADDRESS,
-  });
+  return indexer(env().INDEXER_URL)
+    .txs()
+    .post({
+      type: 'bis',
+      header: tx.header,
+      height: tx.height,
+      tx_id: tx.tx_id,
+      satpoint: tx.satpoint,
+      proof_hashes: tx.proof.hashes,
+      tx_index: tx.proof['tx-index'].toString(10),
+      tree_depth: tx.proof['tree-depth'].toString(10),
+      from: tx.old_pkscript ?? '', // TODO: refine model
+      to: tx.new_pkscript ?? '', // TODO: refine model
+      output: tx.vout,
+      tick: tx.tick,
+      amt: tx.amount,
+      from_bal: tx.from_bal,
+      to_bal: tx.to_bal,
+      order_hash: order_hash.toString('hex'),
+      signature: signature.toString('hex'),
+      signer: env().STACKS_VALIDATOR_ACCOUNT_ADDRESS,
+    });
 }
 
 export function processBlock$(block: number) {

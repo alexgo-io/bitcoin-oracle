@@ -3,6 +3,7 @@ import { reverseBuffer, withElectrumClient } from '@alex-b20/bitcoin';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
 import { from } from 'rxjs';
 import { env } from '../env';
+import { getElectrumQueue } from '../queue';
 
 export async function getBitcoinTx(txId: string) {
   return withElectrumClient(async client => {
@@ -48,5 +49,5 @@ export async function getBitcoinTx(txId: string) {
 }
 
 export function getBitcoinTx$(txId: string) {
-  return from(getBitcoinTx(txId));
+  return from(getElectrumQueue().add(() => getBitcoinTx(txId)));
 }
