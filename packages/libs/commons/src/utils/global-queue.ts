@@ -6,4 +6,9 @@ export const getGlobalPQueue = memoizee(
   (queueName: string, config?: QueueConfig | undefined) => {
     return new PQueue(config);
   },
+  {
+    normalizer: function (args) {
+      return args[0];
+    },
+  },
 );
