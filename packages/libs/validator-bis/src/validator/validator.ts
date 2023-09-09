@@ -12,7 +12,6 @@ import {
   mergeMap,
   of,
   retry,
-  tap,
 } from 'rxjs';
 import { BISBalance } from '../api/base';
 import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
@@ -24,24 +23,14 @@ const logger = new Logger('validator', { timestamp: true });
 function getBalanceOnBlockCached$({
   address,
   block,
-  cache,
 }: {
   address?: string | null;
   block: number;
-  cache: Map<string, BISBalance[]>;
 }) {
   if (address == null) {
     return of(null);
   }
-  const key = `${address}-${block}`;
-  const val = cache.get(key);
-  if (val != null) {
-    return of(val);
-  }
-  return getBalanceOnBlock$(address, block).pipe(
-    map(result => result.data),
-    tap(result => cache.set(key, result)),
-  );
+  return getBalanceOnBlock$(address, block).pipe(map(result => result.data));
 }
 function getBalance(balances: BISBalance[] | null, tick: string) {
   if (balances == null) {
@@ -50,10 +39,8 @@ function getBalance(balances: BISBalance[] | null, tick: string) {
   return balances.find(balance => balance.tick === tick);
 }
 export function getBisTxOnBlock$(block: number) {
-  const cache = new Map<string, BISBalance[]>();
-
   return getActivityOnBlock$(block).pipe(
-    retry(5),
+    retry(10),
     map(result => {
       return result.data.filter(
         activity => activity.activity_type === 'transfer-transfer',
@@ -65,12 +52,10 @@ export function getBisTxOnBlock$(block: number) {
         getBalanceOnBlockCached$({
           address: activity.old_pkscript,
           block: block + 1,
-          cache,
         }),
         getBalanceOnBlockCached$({
           address: activity.new_pkscript,
           block: block + 1,
-          cache,
         }),
       ]).pipe(
         retry(5),
