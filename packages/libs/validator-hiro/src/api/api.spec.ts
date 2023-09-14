@@ -1,4 +1,4 @@
-import { getAllActivitiesOnBlock$ } from './api';
+import { getActivityOnBlock$, getAllActivitiesOnBlock$ } from './api';
 import { getActivityOnBlock, getBalanceOnBlock } from './api.raw';
 
 describe('Hiro API', function () {
@@ -11,42 +11,92 @@ describe('Hiro API', function () {
         "offset": 0,
         "results": [
           {
-            "address": "bc1pl52nl77zc7j3f7wtd9g2rwpzse39mpu0qtwdda5axk6hqdhwlg5quff5qw",
-            "block_hash": "00000000000000000002ae73ecff763831e4f150132d070026b9ae2bcf04f0e2",
-            "block_height": 807588,
-            "inscription_id": "6667e7e60d1d7ec07a78a9df403067e1f69eab7b3f9c060e7ca86fba79a1bb9ci0",
-            "location": "10e14faca2e2b977b91bd6f9146cd8b38233555c76ae0c81f1367ad75be355ac:0:0",
+            "address": "bc1pyrgf85yca9zpkc4q7m2ta5j73cp8kgz0cec8h0y2rrses85jwlxs5mphus",
+            "block_hash": "000000000000000000050cc43ce1e33a57f0b953e27b733eda042e6fe6b16df9",
+            "block_height": 807657,
+            "inscription_id": "7728635dd2a2bc67d7408368973c32c12814de3c29019ea78919eabe2a57605bi0",
+            "location": "30305b4f40f760e4228ea94a73f849ff1c1a4b8ee414f80b85ac8e47af3bbde4:1:0",
             "operation": "transfer_send",
-            "ticker": "NTTT",
-            "timestamp": 1694673803000,
+            "ticker": "trac",
+            "timestamp": 1694712011000,
             "transfer_send": {
-              "amount": "1080.000000000000000000",
-              "from_address": "bc1pmv09prt6cn5x9aj7e2swea73vxstkxr45p8qnax7308l2mp6syuq0v68z3",
-              "to_address": "bc1pl52nl77zc7j3f7wtd9g2rwpzse39mpu0qtwdda5axk6hqdhwlg5quff5qw",
+              "amount": "1000.000000000000000000",
+              "from_address": "bc1pgcul57dg5w6fql3x8ac6zxph98xq0ddh9m25hd0q5ze3jhagn2hs3q6xnt",
+              "to_address": "bc1pyrgf85yca9zpkc4q7m2ta5j73cp8kgz0cec8h0y2rrses85jwlxs5mphus",
             },
-            "tx_id": "10e14faca2e2b977b91bd6f9146cd8b38233555c76ae0c81f1367ad75be355ac",
+            "tx_id": "30305b4f40f760e4228ea94a73f849ff1c1a4b8ee414f80b85ac8e47af3bbde4",
           },
           {
-            "address": "bc1p6zxqmc68c9r8p5z733jyhtgv7qgpny0ck8urzx88qd03kfmwwqrqln9ers",
-            "block_hash": "00000000000000000002ae73ecff763831e4f150132d070026b9ae2bcf04f0e2",
-            "block_height": 807588,
-            "inscription_id": "41f7f57447891ba31fba127e438d0f240587a739e64ee496758ae7a26817dc68i0",
-            "location": "d24355151bd1aafc0adbec1b2dffbf6137dfc3ae9a06ee2e0ed65f664390afbd:1:0",
+            "address": "bc1pluvguhzeduclycxsusxc8a24jphgk4ruq08xgf96qek4vn4m9xvqdjrgmf",
+            "block_hash": "000000000000000000050cc43ce1e33a57f0b953e27b733eda042e6fe6b16df9",
+            "block_height": 807657,
+            "inscription_id": "e5b5bc4499aa5c912e96088b1876b1ca100a72aa71cd36827b27f92a5a9738cai0",
+            "location": "3797035f4faf1abee85a9c9b47327451868f7603dfa697ad3d751bc0ae3ce588:0:0",
             "operation": "transfer_send",
-            "ticker": "sats",
-            "timestamp": 1694673803000,
+            "ticker": "BTCs",
+            "timestamp": 1694712011000,
             "transfer_send": {
-              "amount": "100000000000.000000000000000000",
-              "from_address": "bc1quwxgw94fct7xu20z06uvd8hd0fk5f3a0u9w7rr",
-              "to_address": "bc1p6zxqmc68c9r8p5z733jyhtgv7qgpny0ck8urzx88qd03kfmwwqrqln9ers",
+              "amount": "100.000000000000000000",
+              "from_address": "bc1pypphtq6jczzqzs387x0k3s3ez2z5vyyyj5f2r220wc5zxqagzyssyhvrtz",
+              "to_address": "bc1pluvguhzeduclycxsusxc8a24jphgk4ruq08xgf96qek4vn4m9xvqdjrgmf",
             },
-            "tx_id": "d24355151bd1aafc0adbec1b2dffbf6137dfc3ae9a06ee2e0ed65f664390afbd",
+            "tx_id": "3797035f4faf1abee85a9c9b47327451868f7603dfa697ad3d751bc0ae3ce588",
           },
         ],
-        "total": 739298,
+        "total": 739718,
       }
     `);
   }, 10e3);
+
+  it('should get parsed activity', done => {
+    getActivityOnBlock$(802396, 0, 2).subscribe(value => {
+      expect(value.results).toMatchInlineSnapshot(`
+        [
+          {
+            "address": "512020d093d098e9441b62a0f6d4bed25e8e027b204fc6707bbc8a18e1981e9277cd",
+            "block_hash": "000000000000000000050cc43ce1e33a57f0b953e27b733eda042e6fe6b16df9",
+            "block_height": 807657,
+            "inscription_id": "7728635dd2a2bc67d7408368973c32c12814de3c29019ea78919eabe2a57605bi0",
+            "location": {
+              "satpoint": 0n,
+              "tx_id": "30305b4f40f760e4228ea94a73f849ff1c1a4b8ee414f80b85ac8e47af3bbde4",
+              "vout": 1n,
+            },
+            "operation": "transfer_send",
+            "ticker": "trac",
+            "timestamp": 1694712011000,
+            "transfer_send": {
+              "amount": 1000000000000000000000n,
+              "from_address": "51204639fa79a8a3b4907e263f71a1183729cc07b5b72ed54bb5e0a0b3195fa89aaf",
+              "to_address": "512020d093d098e9441b62a0f6d4bed25e8e027b204fc6707bbc8a18e1981e9277cd",
+            },
+            "tx_id": "30305b4f40f760e4228ea94a73f849ff1c1a4b8ee414f80b85ac8e47af3bbde4",
+          },
+          {
+            "address": "5120ff188e5c596f31f260d0e40d83f555906e8b547c03ce6424ba066d564ebb2998",
+            "block_hash": "000000000000000000050cc43ce1e33a57f0b953e27b733eda042e6fe6b16df9",
+            "block_height": 807657,
+            "inscription_id": "e5b5bc4499aa5c912e96088b1876b1ca100a72aa71cd36827b27f92a5a9738cai0",
+            "location": {
+              "satpoint": 0n,
+              "tx_id": "3797035f4faf1abee85a9c9b47327451868f7603dfa697ad3d751bc0ae3ce588",
+              "vout": 0n,
+            },
+            "operation": "transfer_send",
+            "ticker": "BTCs",
+            "timestamp": 1694712011000,
+            "transfer_send": {
+              "amount": 100000000000000000000n,
+              "from_address": "51202043758352c084014227f19f68c23912854610849512a1a94f76282303a81121",
+              "to_address": "5120ff188e5c596f31f260d0e40d83f555906e8b547c03ce6424ba066d564ebb2998",
+            },
+            "tx_id": "3797035f4faf1abee85a9c9b47327451868f7603dfa697ad3d751bc0ae3ce588",
+          },
+        ]
+      `);
+      done();
+    });
+  });
 
   it('should get activity match schema', function (done) {
     getAllActivitiesOnBlock$(802396, 2, 6).subscribe(value => {
