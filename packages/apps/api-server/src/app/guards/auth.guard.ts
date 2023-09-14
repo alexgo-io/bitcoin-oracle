@@ -1,4 +1,4 @@
-import { ServiceType, ServiceTypeSchema } from '@alex-b20/types';
+import { Enums } from '@alex-b20/types';
 import {
   CanActivate,
   ExecutionContext,
@@ -16,8 +16,8 @@ const getSecretKeys: () => { [key: string]: string } = memoizee(() => {
 const logger = new Logger('api-server', { timestamp: true });
 
 const AUTH_VERSION_MAP = {
-  [ServiceTypeSchema.enum.RELAYER]: '0.0.1',
-  [ServiceTypeSchema.enum.VALIDATOR]: '0.0.1',
+  [Enums.ServiceType.enum.RELAYER]: '0.0.1',
+  [Enums.ServiceType.enum.VALIDATOR]: '0.0.1',
 } as const;
 
 @Injectable()
@@ -27,7 +27,9 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const { authorization } = request.headers;
-    const serviceType = request.headers['x-service-type'] as ServiceType;
+    const serviceType = Enums.ServiceType.parse(
+      request.headers['x-service-type'],
+    );
     const version = request.headers['x-version'];
 
     if (!authorization) {
@@ -37,7 +39,7 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       return false;
     }
-    // @AUDIT: ME-01
+
     const secretKey = getSecretKeys()[token];
     if (!secretKey) {
       return false;

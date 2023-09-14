@@ -1,6 +1,6 @@
 import { SQL } from '@alex-b20/commons';
 import { PersistentService } from '@alex-b20/persistent';
-import { IndexerBlock } from '@alex-b20/types';
+import { ModelIndexer } from '@alex-b20/types';
 import { Inject } from '@nestjs/common';
 import { z } from 'zod';
 
@@ -10,7 +10,7 @@ export class BitcoinSyncWorkerRepository {
     private readonly persistentService: PersistentService,
   ) {}
 
-  async upsertBlock(block: IndexerBlock) {
+  async upsertBlock(block: ModelIndexer<'blocks'>) {
     await this.persistentService.pgPool.query(SQL.typeAlias('void')`
       insert into indexer.blocks (height, header, block_hash, canonical)
       VALUES (${block.height.toString()},
@@ -22,7 +22,7 @@ export class BitcoinSyncWorkerRepository {
     `);
   }
 
-  async latestBlock(): Promise<IndexerBlock | null> {
+  async latestBlock(): Promise<ModelIndexer<'blocks'> | null> {
     return this.persistentService.pgPool.maybeOne(SQL.typeAlias(
       'indexer_block',
     )`
