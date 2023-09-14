@@ -1,7 +1,7 @@
 import { SQL } from '@alex-b20/commons';
 
 import { PersistentService } from '@alex-b20/persistent';
-import { IndexerSubmittedTx } from '@alex-b20/types';
+import { ModelIndexer } from '@alex-b20/types';
 import { Inject, Logger } from '@nestjs/common';
 
 export class RelayerRepository {
@@ -35,7 +35,7 @@ export class RelayerRepository {
     });
   }
 
-  async upsertSubmittedTx(params: IndexerSubmittedTx[]) {
+  async upsertSubmittedTx(params: ModelIndexer<'submitted_tx'>[]) {
     return this.persistent.pgPool.transaction(async conn => {
       for (const tx of params) {
         await conn.query(SQL.typeAlias('indexer_submitted_tx')`

@@ -1,7 +1,6 @@
+import { Enums } from '@alex-b20/types';
 import { z } from 'zod';
 import { BigIntStringSchema, BufferStringSchema } from './basic-model';
-
-import { IndexerTypeSchema } from './enum-model';
 
 function createResponseSchema<ItemType extends z.ZodTypeAny>(
   itemSchema: ItemType,
@@ -12,21 +11,17 @@ function createResponseSchema<ItemType extends z.ZodTypeAny>(
   });
 }
 
-export const IndexerBlockJSONSchema = z.object({
+const blocks = z.object({
   height: BigIntStringSchema,
   header: BufferStringSchema,
   block_hash: BufferStringSchema,
   canonical: z.boolean(),
 });
-export type IndexerBlockJSON = z.infer<typeof IndexerBlockJSONSchema>;
 
-export const IndexerTxsPostResponseSchema = createResponseSchema(z.undefined());
-export type IndexerTxsPostResponse = z.infer<
-  typeof IndexerTxsPostResponseSchema
->;
+const txs_post_response = createResponseSchema(z.undefined());
 
-export const IndexerTxJSONSchema = z.object({
-  type: IndexerTypeSchema,
+const txs = z.object({
+  type: Enums.IndexerType,
   header: BufferStringSchema,
   height: BigIntStringSchema,
   tx_id: BufferStringSchema,
@@ -42,19 +37,19 @@ export const IndexerTxJSONSchema = z.object({
   from_bal: BigIntStringSchema,
   to_bal: BigIntStringSchema,
 });
-export type IndexerTxJSON = z.infer<typeof IndexerTxJSONSchema>;
 
-export const IndexerProofJSONSchema = z.object({
-  type: IndexerTypeSchema,
+const proofs = z.object({
+  type: Enums.IndexerType,
   order_hash: BufferStringSchema,
   signature: BufferStringSchema,
   signer: z.string(),
 });
-export type IndexerProofJSON = z.infer<typeof IndexerProofJSONSchema>;
 
-export const IndexerTxWithProofJSONSchema = IndexerTxJSONSchema.merge(
-  IndexerProofJSONSchema,
-);
-export type IndexerTxWithProofJSON = z.infer<
-  typeof IndexerTxWithProofJSONSchema
->;
+const txs_with_proofs = txs.merge(proofs);
+
+export const indexerJSON = {
+  blocks,
+  txs,
+  txs_post_response,
+  txs_with_proofs,
+};
