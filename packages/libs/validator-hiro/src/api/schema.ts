@@ -1,3 +1,4 @@
+import { BigIntSchema } from '@alex-b20/types';
 import { Address, OutScript } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
 
@@ -36,6 +37,38 @@ const HiroAddressToPKScriptSchema = z.preprocess((val, ctx) => {
   return z.never();
 }, z.string());
 
+export const HiroSatpointSchema = z.object({
+  tx_id: z.string(),
+  vout: BigIntSchema,
+  satpoint: BigIntSchema,
+});
+
+const HiroSatpointStringSchema = z.preprocess((val, ctx) => {
+  if (typeof val !== 'string') {
+    ctx.addIssue({
+      code: 'invalid_type',
+      expected: 'string',
+      received: typeof val,
+    });
+    return z.never();
+  }
+  const data = val.split(':');
+  if (data.length !== 3) {
+    ctx.addIssue({
+      code: 'custom',
+      message: `Invalid satpoint: ${val}`,
+    });
+    return z.never();
+  }
+
+  const [tx_id, vout, satpoint] = data;
+  return HiroSatpointSchema.parse({
+    tx_id,
+    vout,
+    satpoint,
+  });
+}, HiroSatpointSchema);
+
 const transfer_send = z.object({
   amount: HiroAmountBigIntSchema,
   from_address: HiroAddressToPKScriptSchema,
@@ -48,9 +81,10 @@ const activity = z.object({
   block_height: z.number(),
   inscription_id: z.string(),
   operation: z.string(),
+  location: HiroSatpointStringSchema,
   ticker: z.string(),
   timestamp: z.number(),
-  transfer_send: transfer_send.optional(),
+  transfer_send: transfer_send,
   tx_id: z.string(),
 });
 
