@@ -1,5 +1,4 @@
-import { firstValueFrom } from 'rxjs';
-import { getActivityOnBlock$ } from './api';
+import { getAllActivitiesOnBlock$ } from './api';
 import { getActivityOnBlock, getBalanceOnBlock } from './api.raw';
 
 describe('Hiro API', function () {
@@ -49,48 +48,104 @@ describe('Hiro API', function () {
     `);
   }, 10e3);
 
-  it('should get activity match schema', async function () {
-    const data = await firstValueFrom(getActivityOnBlock$(802396, 0, 2));
-    expect(data).toBeDefined();
-    expect(data).toMatchInlineSnapshot(`
-      {
-        "limit": 2,
-        "offset": 0,
-        "results": [
+  it('should get activity match schema', function (done) {
+    getAllActivitiesOnBlock$(802396, 2, 6).subscribe(value => {
+      expect(value).toMatchInlineSnapshot(`
+        [
           {
-            "address": "5120fd153ffbc2c7a514f9cb6950a1b82286625d878f02dcd6f69d35b57036eefa28",
-            "block_hash": "00000000000000000002ae73ecff763831e4f150132d070026b9ae2bcf04f0e2",
-            "block_height": 807588,
-            "inscription_id": "6667e7e60d1d7ec07a78a9df403067e1f69eab7b3f9c060e7ca86fba79a1bb9ci0",
-            "operation": "transfer_send",
-            "ticker": "NTTT",
-            "timestamp": 1694673803000,
-            "transfer_send": {
-              "amount": 1080000000000000000000n,
-              "from_address": "5120db1e508d7ac4e862f65ecaa0ecf7d161a0bb1875a04e09f4de8bcff56c3a8138",
-              "to_address": "5120fd153ffbc2c7a514f9cb6950a1b82286625d878f02dcd6f69d35b57036eefa28",
-            },
-            "tx_id": "10e14faca2e2b977b91bd6f9146cd8b38233555c76ae0c81f1367ad75be355ac",
-          },
-          {
-            "address": "5120d08c0de347c14670d05e8c644bad0cf0101991f8b1f83118e7035f1b276e7006",
-            "block_hash": "00000000000000000002ae73ecff763831e4f150132d070026b9ae2bcf04f0e2",
-            "block_height": 807588,
-            "inscription_id": "41f7f57447891ba31fba127e438d0f240587a739e64ee496758ae7a26817dc68i0",
+            "address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            "block_hash": "0000000000000000000315cad6058c2f977b91b99dad7f6b9a4be3daba20c169",
+            "block_height": 807597,
+            "inscription_id": "f95f50e2e9787f2617e8d96d6f3439b70ba12f6f1513b5da575f6a4c8bc11debi0",
             "operation": "transfer_send",
             "ticker": "sats",
-            "timestamp": 1694673803000,
+            "timestamp": 1694678289000,
+            "transfer_send": {
+              "amount": 200000000000000000000000000000n,
+              "from_address": "0014519cd00a4c05a26b9784ba06bf3f657e524534aa",
+              "to_address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            },
+            "tx_id": "3667d72824d362f6628498c6d4e1a82212f7ef5cc44e0f3ebd0132654283fb1d",
+          },
+          {
+            "address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            "block_hash": "0000000000000000000315cad6058c2f977b91b99dad7f6b9a4be3daba20c169",
+            "block_height": 807597,
+            "inscription_id": "532429be69cd1144705c8664698fe61fa68b1f5bde4bcbe12e0bd84794f1b4fci0",
+            "operation": "transfer_send",
+            "ticker": "sats",
+            "timestamp": 1694678289000,
+            "transfer_send": {
+              "amount": 150000000000000000000000000000n,
+              "from_address": "5120a7c6dd0638c3a22b7828728358df6243d42dedb304af842c0fc3cb2bc59e9456",
+              "to_address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            },
+            "tx_id": "e5369a6c95bd869678faad9260301d646dd055b6d3da8b11cc2189e8d78c2db8",
+          },
+          {
+            "address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            "block_hash": "0000000000000000000315cad6058c2f977b91b99dad7f6b9a4be3daba20c169",
+            "block_height": 807597,
+            "inscription_id": "949d4ef918d091f102f21ff55d352d97743c625b6ebfe90aa3f748daa3f31819i0",
+            "operation": "transfer_send",
+            "ticker": "sats",
+            "timestamp": 1694678289000,
+            "transfer_send": {
+              "amount": 300000000000000000000000000000n,
+              "from_address": "001413c8d4f4be75d11b463a35b141a1067155c407a8",
+              "to_address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            },
+            "tx_id": "95d89b701101c51238a217c12dc65c04642f1f0c0b807037047e386f2b541fc3",
+          },
+          {
+            "address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            "block_hash": "0000000000000000000315cad6058c2f977b91b99dad7f6b9a4be3daba20c169",
+            "block_height": 807597,
+            "inscription_id": "e3609517e7b393ee3b5433ca7c1c7533bfc121ffd819aa96f045b09c0b318b8ci0",
+            "operation": "transfer_send",
+            "ticker": "sats",
+            "timestamp": 1694678289000,
             "transfer_send": {
               "amount": 100000000000000000000000000000n,
-              "from_address": "0014e38c8716a9c2fc6e29e27eb8c69eed7a6d44c7af",
-              "to_address": "5120d08c0de347c14670d05e8c644bad0cf0101991f8b1f83118e7035f1b276e7006",
+              "from_address": "00145ab2d25e8a98bce67f993771c939867e7d1865a1",
+              "to_address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
             },
-            "tx_id": "d24355151bd1aafc0adbec1b2dffbf6137dfc3ae9a06ee2e0ed65f664390afbd",
+            "tx_id": "c99e2ea0ce45cf218b81abf1cb7076059d8d1bcfebff2feab3ccb1fd4da9acd8",
           },
-        ],
-        "total": 739298,
-      }
-    `);
+          {
+            "address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            "block_hash": "0000000000000000000315cad6058c2f977b91b99dad7f6b9a4be3daba20c169",
+            "block_height": 807597,
+            "inscription_id": "08b723b18c6d74aa5950b1646159431309ef63d45d969dd0b0d7100b1a076d85i0",
+            "operation": "transfer_send",
+            "ticker": "sats",
+            "timestamp": 1694678289000,
+            "transfer_send": {
+              "amount": 200000000000000000000000000000n,
+              "from_address": "00140e137a24f03d517fe4ca60efab72ab55a996a752",
+              "to_address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            },
+            "tx_id": "0dec4f40135093c43e6379dde53f6d2db5c12c4d2582a70e09a576c29ce601f9",
+          },
+          {
+            "address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            "block_hash": "0000000000000000000315cad6058c2f977b91b99dad7f6b9a4be3daba20c169",
+            "block_height": 807597,
+            "inscription_id": "0fa644a41cc7f65b134c2e22e131386623241deba822ed603d74295c797b949bi0",
+            "operation": "transfer_send",
+            "ticker": "sats",
+            "timestamp": 1694678289000,
+            "transfer_send": {
+              "amount": 200000000000000000000000000000n,
+              "from_address": "00140e137a24f03d517fe4ca60efab72ab55a996a752",
+              "to_address": "5120ffe2bec636c2dbc56645a181ab159c4f5ab2bdad76b4cba5fa334ce96315d629",
+            },
+            "tx_id": "597afad4ffa8509b1939eff0c46a3f0450cf18f22bbe6f7621feafd2e2908d6e",
+          },
+        ]
+      `);
+      done();
+    });
   }, 10e3);
 
   it('should get balance', async function () {

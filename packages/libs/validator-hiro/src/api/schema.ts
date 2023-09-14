@@ -71,11 +71,20 @@ const balance = z.object({
 });
 
 /// exports
-export const HiroSchema = {
+export const HiroAPISchema = {
   activity: createPaginationSchema(activity),
   balance: createPaginationSchema(balance),
 };
 
-export type HiroType<K extends keyof typeof HiroSchema> = z.infer<
+export type HiroAPIType<K extends keyof typeof HiroAPISchema> = z.infer<
+  (typeof HiroAPISchema)[K]
+>;
+
+export const HiroSchema = {
+  activity,
+  balance,
+};
+
+export type HiroType<K extends keyof typeof HiroAPISchema> = z.infer<
   (typeof HiroSchema)[K]
 >;
