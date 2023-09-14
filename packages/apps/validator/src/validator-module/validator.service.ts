@@ -29,7 +29,7 @@ export class DefaultValidatorService implements ValidatorService {
   }
 
   async start() {
-    this.logger.log(`Starting ValidatorService: ${process.env['LOG_LEVEL']}`);
+    this.logger.log(`Starting ValidatorService - ${env().INDEXER_URL}`);
 
     const queue = new PQueue({ concurrency: 10 });
     // noinspection InfiniteLoopJS

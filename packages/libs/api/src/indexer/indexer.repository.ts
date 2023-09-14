@@ -1,14 +1,8 @@
 import { SQL } from '@alex-b20/commons';
 import { PersistentService } from '@alex-b20/persistent';
-import { IndexerTxWithProof, IndexerType } from '@alex-b20/types';
+import { IndexerType, ModelOf } from '@alex-b20/types';
 import { Inject } from '@nestjs/common';
 import { z } from 'zod';
-
-function same<T>(actual: T, expected: T, msg: string) {
-  if (actual !== expected) {
-    throw new Error(msg);
-  }
-}
 
 export class IndexerRepository {
   constructor(
@@ -16,7 +10,7 @@ export class IndexerRepository {
     private readonly persistentService: PersistentService,
   ) {}
 
-  async upsertTxWithProof(tx: IndexerTxWithProof) {
+  async upsertTxWithProof(tx: ModelOf<'indexer', 'tx_with_proofs'>) {
     return this.persistentService.pgPool.transaction(async conn => {
       const existing = await conn.maybeOne(SQL.typeAlias('indexer_txs')`
                 select *
@@ -28,17 +22,6 @@ export class IndexerRepository {
             `);
 
       if (existing != null) {
-        // same(existing.type, tx.type, `!type ${tx.tx_id.toString('hex')}`);
-        // same(existing.height, tx.height, `!height ${tx.tx_id.toString('hex')}`);
-        // same(existing.tx_index, tx.tx_index, `!tx_index ${tx.tx_id.toString('hex')}`);
-        // same(existing.tree_depth, tx.tree_depth, `!tree_depth ${tx.tx_id.toString('hex')}`);
-        // same(existing.from, tx.from, `!from ${tx.tx_id.toString('hex')}`);
-        // same(existing.to, tx.to, `!to ${tx.tx_id.toString('hex')}`);
-        // same(existing.tick, tx.tick, `!tick ${tx.tx_id.toString('hex')}`);
-        // same(existing.amt, tx.amt, `!amt ${tx.tx_id.toString('hex')}`);
-        // same(existing.satpoint, tx.satpoint, `!satpoint ${tx.tx_id.toString('hex')}`);
-        // same(existing.from_bal, tx.from_bal, `!from_bal ${tx.tx_id.toString('hex')}`);
-        // same(existing.to_bal, tx.to_bal, `!to_bal ${tx.tx_id.toString('hex')}`);
         return;
       }
 

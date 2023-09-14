@@ -10,7 +10,7 @@ export async function getActivityOnBlock(
     `${env().HIRO_B20_API_URL}/ordinals/v1/brc-20/activity`,
     {
       searchParams: {
-        block_height: block,
+        // block_height: block,
         operation: 'transfer_send',
         offset,
         limit,

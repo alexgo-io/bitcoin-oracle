@@ -1,9 +1,4 @@
-import {
-  IndexerBlockSchema,
-  IndexerProofSchema,
-  IndexerSubmittedTxSchema,
-  IndexerTxSchema,
-} from '@alex-b20/types';
+import { m } from '@alex-b20/types';
 import { createSqlTag } from 'slonik';
 import z from 'zod';
 
@@ -17,10 +12,10 @@ export const SQL = createSqlTag({
     tx_id: z.object({
       tx_id: z.string(),
     }),
-    indexer_txs: IndexerTxSchema,
-    indexer_proof: IndexerProofSchema,
-    indexer_block: IndexerBlockSchema,
-    indexer_txs_proof: IndexerTxSchema.merge(IndexerProofSchema),
-    indexer_submitted_tx: IndexerSubmittedTxSchema,
+    indexer_txs: m.database('indexer', 'txs'),
+    indexer_proof: m.database('indexer', 'proofs'),
+    indexer_block: m.database('indexer', 'blocks'),
+    indexer_txs_proof: m.database('indexer', 'tx_with_proofs'),
+    indexer_submitted_tx: m.database('indexer', 'submitted_tx'),
   },
 });
