@@ -1,9 +1,10 @@
 import { indexer } from '@alex-b20/api-client';
 import { generateOrderHash, signOrderHash } from '@alex-b20/brc20-indexer';
+import { Unobservable } from '@alex-b20/commons';
+import { getBitcoinTx$ } from '@alex-b20/validator';
 import { Logger } from '@nestjs/common';
 import assert from 'assert';
 import {
-  Observable,
   combineLatest,
   concatMap,
   from,
@@ -17,7 +18,6 @@ import { BISBalance } from '../api/base';
 import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
 import { env } from '../env';
 import { getElectrumQueue } from '../queue';
-import { getBitcoinTx$ } from '../valiadtor-lib/validator-lib';
 
 const logger = new Logger('validator', { timestamp: true });
 function getBalanceOnBlockCached$({
@@ -106,8 +106,6 @@ export function getIndexerTxOnBlock$(block: number) {
     }),
   );
 }
-
-type Unobservable<T> = T extends Observable<infer R> ? R : T;
 
 async function submitIndexerTx(
   tx: Unobservable<ReturnType<typeof getIndexerTxOnBlock$>>,
