@@ -1,3 +1,4 @@
+import { Observable } from "rxjs";
 
 export class Nothing {
   // This lets us do `Exclude<T, Nothing>`
@@ -27,3 +28,5 @@ export function toPrefix0xString(tx: string) {
 export async function sleep(timeout: number) {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
+
+export type Unobservable<T> = T extends Observable<infer R> ? R : T;
