@@ -1,7 +1,7 @@
 import { Address, OutScript } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
 
-export const HiroAmountBigIntSchema = z.preprocess((val, ctx) => {
+const HiroAmountBigIntSchema = z.preprocess((val, ctx) => {
   if (val instanceof BigInt) {
     return val;
   }
@@ -14,7 +14,7 @@ export const HiroAmountBigIntSchema = z.preprocess((val, ctx) => {
   });
   return z.never;
 }, z.bigint());
-export const HiroAddressToPKScriptSchema = z.preprocess((val, ctx) => {
+const HiroAddressToPKScriptSchema = z.preprocess((val, ctx) => {
   if (typeof val === 'string') {
     try {
       return Buffer.from(OutScript.encode(Address().decode(val))).toString(
@@ -36,13 +36,13 @@ export const HiroAddressToPKScriptSchema = z.preprocess((val, ctx) => {
   return z.never();
 }, z.string());
 
-export const HiroTransferSend = z.object({
+const transfer_send = z.object({
   amount: HiroAmountBigIntSchema,
   from_address: HiroAddressToPKScriptSchema,
   to_address: HiroAddressToPKScriptSchema,
 });
 
-export const HiroResult = z.object({
+const activity = z.object({
   address: HiroAddressToPKScriptSchema,
   block_hash: z.string(),
   block_height: z.number(),
@@ -50,13 +50,32 @@ export const HiroResult = z.object({
   operation: z.string(),
   ticker: z.string(),
   timestamp: z.number(),
-  transfer_send: HiroTransferSend.optional(),
+  transfer_send: transfer_send.optional(),
   tx_id: z.string(),
 });
 
-export const HiroPaginationResponse = z.object({
-  limit: z.number(),
-  offset: z.number(),
-  results: z.array(HiroResult),
-  total: z.number(),
+function createPaginationSchema<T extends z.ZodTypeAny>(schema: T) {
+  return z.object({
+    limit: z.number(),
+    offset: z.number(),
+    results: z.array(schema),
+    total: z.number(),
+  });
+}
+
+const balance = z.object({
+  ticker: z.string(),
+  available_balance: HiroAmountBigIntSchema,
+  transferrable_balance: HiroAmountBigIntSchema,
+  overall_balance: HiroAmountBigIntSchema,
 });
+
+/// exports
+export const HiroSchema = {
+  activity: createPaginationSchema(activity),
+  balance: createPaginationSchema(balance),
+};
+
+export type HiroType<K extends keyof typeof HiroSchema> = z.infer<
+  (typeof HiroSchema)[K]
+>;
