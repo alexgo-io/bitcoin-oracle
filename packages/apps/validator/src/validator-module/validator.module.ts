@@ -2,6 +2,7 @@ import { Enums, IndexerType } from '@alex-b20/types';
 import { ValidatorBisModule } from '@alex-b20/validator-bis';
 import { DynamicModule, Module } from '@nestjs/common';
 import ValidatorServiceProvider from './validator.service';
+import { PinoLoggerModule } from "@alex-b20/commons";
 
 @Module({})
 export class ValidatorModule {
@@ -12,10 +13,15 @@ export class ValidatorModule {
     };
 
     const validatorModule = moduleMapping[type];
+    if (validatorModule === null) {
+      throw new Error(`No validator module for ${type}`);
+    }
+
+    console.log(`Using ${type} validator module: ${validatorModule}`);
 
     return {
       module: ValidatorModule,
-      imports: [validatorModule],
+      imports: [validatorModule, PinoLoggerModule],
       providers: [ValidatorServiceProvider],
       exports: [ValidatorServiceProvider],
     };
