@@ -2,7 +2,7 @@
 import {
 defineContract,
 bufferT,
-numberT,
+uintT,
 booleanT,
 stringAsciiT
 } from "../codegenImport"
@@ -11,7 +11,7 @@ export const utils = defineContract({
 "utils": {
   'byte-to-uint': {
     input: [ { name: 'byte', type: bufferT } ],
-    output: numberT,
+    output: uintT,
     mode: 'readonly'
   },
   'serialize-bool': {
@@ -30,7 +30,7 @@ export const utils = defineContract({
     mode: 'readonly'
   },
   'serialize-uint': {
-    input: [ { name: 'value', type: numberT } ],
+    input: [ { name: 'value', type: uintT } ],
     output: bufferT,
     mode: 'readonly'
   },
@@ -40,17 +40,17 @@ export const utils = defineContract({
     mode: 'readonly'
   },
   'uint-to-byte': {
-    input: [ { name: 'n', type: numberT } ],
+    input: [ { name: 'n', type: uintT } ],
     output: bufferT,
     mode: 'readonly'
   },
   'uint128-to-buff-be': {
-    input: [ { name: 'n', type: numberT } ],
+    input: [ { name: 'n', type: uintT } ],
     output: bufferT,
     mode: 'readonly'
   },
   'uint32-to-buff-be': {
-    input: [ { name: 'n', type: numberT } ],
+    input: [ { name: 'n', type: uintT } ],
     output: bufferT,
     mode: 'readonly'
   }

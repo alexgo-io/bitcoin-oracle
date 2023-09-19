@@ -1,0 +1,31 @@
+{
+  "name": "dev-database",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/dev/database",
+  "projectType": "application",
+  "implicitDependencies": ["dev-network"],
+  "targets": {
+    "codegen": {
+      "command": "slonik-typegen generate --config packages/dev/database/typegen.config.js --skip-check-clean"
+    },
+    "setup": {
+      "command": "hasura metadata apply && hasura migrate apply --all-databases && hasura metadata reload"
+    },
+    "up": {
+      "command": "dev-database up"
+    },
+    "sync": {
+      "command": "dev-database sync"
+    },
+    "logs": {
+      "command": "dev-database logs"
+    },
+    "recreate": {
+      "command": "dev-database reset"
+    },
+    "down": {
+      "command": "dev-database clean"
+    }
+  },
+  "tags": []
+}
