@@ -6,6 +6,14 @@ import {
   ModelIndexer,
 } from '@alex-b20/types';
 import got from 'got-cjs';
+import memoizee from 'memoizee';
+import { env } from '../env';
+
+const headers = memoizee(() => ({
+  'x-service-type': Enums.ServiceType.enum.VALIDATOR,
+  'x-version': '0.0.1',
+  authorization: `Bearer ${env().INDEXER_ACCESS_KEY}`,
+}));
 
 export function indexer(baseURL: string) {
   const url = `${baseURL}/api/v1/indexer`;
@@ -15,6 +23,7 @@ export function indexer(baseURL: string) {
         async post(params: DTOIndexer<'txs_with_proofs'>) {
           return got
             .post(`${url}/txs`, {
+              headers: headers(),
               json: params,
               parseJson: body =>
                 m.json('indexer', 'txs_with_proofs').parse(JSON.parse(body)),
@@ -28,6 +37,7 @@ export function indexer(baseURL: string) {
         async get(params: { block_hash: string }) {
           return got
             .get(`${url}/block-hash/${params.block_hash}`, {
+              headers: headers(),
               parseJson: body =>
                 m.database('indexer', 'blocks').parse(JSON.parse(body)),
             })
@@ -43,6 +53,9 @@ export function indexer(baseURL: string) {
               `${url}/latest-block-number/${Enums.IndexerType.parse(
                 params.type,
               )}`,
+              {
+                headers: headers(),
+              },
             )
             .json<{ latest_block_number: number | null }>();
         },
