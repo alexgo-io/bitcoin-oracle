@@ -23,7 +23,7 @@ export function dbRetry<T>(
 const logger = new Logger('retry');
 export const fastRetry = <T>(
   fn: () => Promise<T>,
-  label = 'retry',
+  label = 'fast-retry',
 ): Promise<T> => {
   return pRetry(
     async () => {
@@ -59,7 +59,7 @@ export const fastRetry = <T>(
 
 export const expoRetry = <T>(
   fn: () => Promise<T>,
-  label = 'retry',
+  label = 'expo-retry',
 ): Promise<T> => {
   return pRetry(
     async () => {
@@ -71,7 +71,9 @@ export const expoRetry = <T>(
             `[${label}] wrapped error: ${stringifyJSON(e)}`,
           );
           logger.error(
-            `[${label}] is not error, wrapping error: ${stringifyJSON(e)}`,
+            `[${label}] is not error: ${e}, wrapping error: ${stringifyJSON(
+              e,
+            )}`,
           );
           throw wrapError;
         }
