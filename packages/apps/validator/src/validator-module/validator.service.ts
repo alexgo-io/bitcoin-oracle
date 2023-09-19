@@ -11,10 +11,10 @@ import { ValidatorService } from './validator.interface';
 
 export class DefaultValidatorService implements ValidatorService {
   private readonly logger = new Logger(DefaultValidatorService.name);
+  private readonly api = new ApiClient(env().INDEXER_URL);
   constructor(
     @Inject(ValidatorProcessInterface)
     private readonly processor: ValidatorProcessInterface,
-    private readonly api = new ApiClient(env().INDEXER_URL),
   ) {}
   async getFromBlockHeight() {
     const latestBlocks = await this.api

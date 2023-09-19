@@ -19,6 +19,7 @@ export class DefaultBitcoinSyncWorkerService
     private readonly repository: BitcoinSyncWorkerRepository,
   ) {}
   async start(): Promise<void> {
+    this.logger.verbose(`starting sync`);
     await this.sync();
     // await this.syncMissingBlocks();
   }
@@ -51,17 +52,12 @@ export class DefaultBitcoinSyncWorkerService
     const missingBlocks = await this.repository.getMissingBlocks(
       env().BITCOIN_SYNC_GENESIS_BLOCK_HEIGHT,
     );
+    this.logger.verbose(`syncing missing blocks ${missingBlocks.rows.length}`);
+
     await getBitcoinBlockHeaderByHeights(
       missingBlocks.rows.map(i => Number(i.missing_block)),
-      async (h, height) => {
-        const header = Buffer.from(h, 'hex');
-        await this.repository.upsertBlock({
-          height: BigInt(height),
-          header,
-          block_hash: calculateBlockHash(header),
-          canonical: true,
-        });
-        this.logger.debug(`synced block ${height}`);
+      async (header, height) => {
+        await this.insertBlock(header, height);
       },
     );
   }
@@ -71,18 +67,24 @@ export class DefaultBitcoinSyncWorkerService
     await getBitcoinBlockHeaderByHeights(
       range(fromHeight, toHeight),
       async (h, height) => {
-        const header = Buffer.from(h, 'hex');
-        await this.repository.upsertBlock({
-          height: BigInt(height),
-          header,
-          block_hash: calculateBlockHash(header),
-          canonical: true,
-        });
-        this.logger.debug(`synced block ${height}`);
+        await this.insertBlock(h, height);
       },
     );
 
     this.logger.verbose(`synced from ${fromHeight} to ${toHeight}`);
+  }
+
+  async insertBlock(header: string, height: number) {
+    const headBuf = Buffer.from(header, 'hex');
+    const rows = await this.repository.upsertBlock({
+      height: BigInt(height),
+      header: headBuf,
+      block_hash: calculateBlockHash(headBuf),
+      canonical: true,
+    });
+    if (rows.length > 0) {
+      this.logger.log(`synced block ${height}, updated ${rows.length}`);
+    }
   }
 }
 

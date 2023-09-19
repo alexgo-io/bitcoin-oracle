@@ -27,9 +27,13 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const { authorization } = request.headers;
-    const serviceType = Enums.ServiceType.parse(
+    const serviceType = Enums.ServiceType.safeParse(
       request.headers['x-service-type'],
     );
+    if (!serviceType.success) {
+      logger.warn(`Request received without service type.`);
+      return false;
+    }
     const version = request.headers['x-version'];
 
     if (!authorization) {
@@ -45,12 +49,7 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    if (!serviceType) {
-      logger.warn(`Request received without service type.`);
-      return false;
-    }
-
-    if (AUTH_VERSION_MAP[serviceType] !== version) {
+    if (AUTH_VERSION_MAP[serviceType.data] !== version) {
       logger.warn(
         `Request received from outdated version : ${version}, ${serviceType}.`,
       );

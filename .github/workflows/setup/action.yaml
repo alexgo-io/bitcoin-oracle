@@ -9,7 +9,7 @@ runs:
   steps:
     - uses: actions/setup-node@v3
       with:
-        node-version: '18.12.1'
+        node-version: '20.6.1'
     - uses: pnpm/action-setup@v2
       name: Install pnpm
       id: pnpm-install
@@ -28,9 +28,8 @@ runs:
         path: |
           ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           node_modules
-          ~/.cache/hardhat-nodejs/compilers-v2
           ~/.local/bin
-        key: ${{ runner.os }}-deps-cache-${{ hashFiles('pnpm-lock.yaml', '.node-version', '~/.local/bin/direnv') }}
+        key: ${{ runner.os }}-deps-cache-${{ hashFiles('pnpm-lock.yaml', '.tool-versions', '~/.local/bin/direnv') }}
         restore-keys: |
           ${{ runner.os }}-deps-cache-
     - name: install dependencies
@@ -47,7 +46,6 @@ runs:
         fi
         eval "$(direnv hook bash)"
         direnv allow
-        yarn use ci
     - name: NX setup
       id: nx-setup
       shell: bash

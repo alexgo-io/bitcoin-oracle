@@ -1,6 +1,6 @@
 import { SQL } from '@alex-b20/commons';
 import { PersistentService } from '@alex-b20/persistent';
-import { ModelIndexer } from '@alex-b20/types';
+import { BigIntSchema, ModelIndexer } from '@alex-b20/types';
 import { Inject } from '@nestjs/common';
 import { z } from 'zod';
 
@@ -11,7 +11,9 @@ export class BitcoinSyncWorkerRepository {
   ) {}
 
   async upsertBlock(block: ModelIndexer<'blocks'>) {
-    await this.persistentService.pgPool.query(SQL.typeAlias('void')`
+    return await this.persistentService.pgPool.any(SQL.type(
+      z.object({ height: BigIntSchema }),
+    )`
       insert into indexer.blocks (height, header, block_hash, canonical)
       VALUES (${block.height.toString()},
               ${SQL.binary(block.header)},
@@ -19,6 +21,7 @@ export class BitcoinSyncWorkerRepository {
               ${block.canonical.toString()})
       on conflict (height, header) do update
         set canonical = ${block.canonical.toString()}
+      returning height;
     `);
   }
 
