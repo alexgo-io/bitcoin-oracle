@@ -1,8 +1,8 @@
 import { ApiClient } from '@alex-b20/api-client';
 import { getCurrentBitcoinHeader } from '@alex-b20/bitcoin';
 import { noAwait, sleep } from '@alex-b20/commons';
-import { processBlock$ } from '@alex-b20/validator-bis';
-import { Logger } from '@nestjs/common';
+import { ValidatorProcessInterface } from '@alex-b20/validator';
+import { Inject, Logger } from '@nestjs/common';
 import PQueue from 'p-queue';
 import { range } from 'ramda';
 import { firstValueFrom, retry, tap } from 'rxjs';
@@ -11,7 +11,11 @@ import { ValidatorService } from './validator.interface';
 
 export class DefaultValidatorService implements ValidatorService {
   private readonly logger = new Logger(DefaultValidatorService.name);
-  constructor(private readonly api = new ApiClient(env().INDEXER_URL)) {}
+  constructor(
+    @Inject(ValidatorProcessInterface)
+    private readonly processor: ValidatorProcessInterface,
+    private readonly api = new ApiClient(env().INDEXER_URL),
+  ) {}
   async getFromBlockHeight() {
     const latestBlocks = await this.api
       .indexer()
@@ -44,7 +48,7 @@ export class DefaultValidatorService implements ValidatorService {
           queue.add(async () => {
             this.logger.debug(`| processing block ${height}`);
             await firstValueFrom(
-              processBlock$(height).pipe(
+              this.processor.processBlock$(height).pipe(
                 retry(5),
                 tap({
                   error: error => {
