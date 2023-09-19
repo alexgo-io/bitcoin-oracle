@@ -19,13 +19,22 @@ export class RelayerRepository {
                             where not exists (select 1
                                               from indexer.submitted_tx
                                               where txs.id = submitted_tx.id)),
+             qualified_txs as (select target_txs.tx_id
+                               from target_txs
+                               having count(*) >=
+                                      (select minimal_proof_count
+                                       from indexer_config.relayer_configs
+                                       limit 1
+                                       )),
              with_proof as (select target_txs.*,
                                    proofs.type,
                                    proofs.order_hash,
                                    proofs.signer,
                                    proofs.signature
                             from target_txs
-                                   join indexer.proofs on target_txs.id = proofs.id)
+                                   join indexer.proofs on target_txs.id = proofs.id
+                            where target_txs.tx_id in (select tx_id
+                                                        from qualified_txs))
         select *
         from with_proof;
       `);

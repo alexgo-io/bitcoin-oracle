@@ -1,8 +1,17 @@
 import { Indexer } from '@alex-b20/api';
 import { IndexerType, m } from '@alex-b20/types';
-import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
+import { AuthGuard } from '../guards/auth.guard';
 
 export class IndexerTxsCreateInput extends createZodDto(
   m.database('indexer', 'tx_with_proofs'),
@@ -16,6 +25,7 @@ export class IndexerLatestBlockNumberOfProofResponseDto extends createZodDto(
   IndexerLatestBlockNumberOfProofResponseSchema,
 ) {}
 
+@UseGuards(AuthGuard)
 @Controller('/api/v1/indexer')
 export class IndexerController {
   constructor(@Inject(Indexer) private readonly indexer: Indexer) {}
