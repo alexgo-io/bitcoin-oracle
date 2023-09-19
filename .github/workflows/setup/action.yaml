@@ -1,0 +1,63 @@
+name: 'Setup'
+description: 'setup environment'
+outputs:
+  nx-strategy:
+    description: 'nx strategy'
+    value: ${{ steps.nx-setup.outputs.NX_STRATEGY }}
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18.12.1'
+    - uses: pnpm/action-setup@v2
+      name: Install pnpm
+      id: pnpm-install
+      with:
+        version: 8
+        run_install: false
+    - name: Get pnpm store directory
+      id: pnpm-cache
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+    - name: dependencies cache
+      id: deps-cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          node_modules
+          ~/.cache/hardhat-nodejs/compilers-v2
+          ~/.local/bin
+        key: ${{ runner.os }}-deps-cache-${{ hashFiles('pnpm-lock.yaml', '.node-version', '~/.local/bin/direnv') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-cache-
+    - name: install dependencies
+      shell: bash
+      run: pnpm i --frozen-lockfile
+    - name: direnv
+      shell: bash
+      run: |
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        if ! command -v direnv &> /dev/null; then
+          export bin_path="$HOME/.local/bin"
+          mkdir -p "$bin_path"
+          curl -sfL https://direnv.net/install.sh | bash
+        fi
+        eval "$(direnv hook bash)"
+        direnv allow
+        yarn use ci
+    - name: NX setup
+      id: nx-setup
+      shell: bash
+      run: |
+        # nx setup
+        # use docker-compose v2
+        cp -f /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
+        STRATEGY=run-many
+        if [ "$PR_FETCH_DEPTH" -gt 1 ]; then
+          STRATEGY="affected --base=$(git log --reverse --pretty=format:"%H" | head -1 || if [[ $? -eq 141 ]]; then true; else exit $?; fi)"
+        fi
+        echo "NX_STRATEGY=$STRATEGY" >> "${GITHUB_OUTPUT}"
+

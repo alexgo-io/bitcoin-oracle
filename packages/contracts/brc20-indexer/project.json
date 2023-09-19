@@ -42,7 +42,12 @@
       "executor": "nx-stacks:deploy",
       "options": {
         "clarinetPath": "packages/contracts/brc20-indexer/brc20-indexer-v1",
-        "contracts": ["clarity-bitcoin", "indexer", "utils"],
+        "contracts": [
+          "clarity-bitcoin",
+          "utils",
+          "indexer-registry",
+          "indexer"
+        ],
         "deployerSecretKey": "${STACKS_DEPLOYER_ACCOUNT_SECRET}",
         "puppetURL": "${STACKS_PUPPET_URL}",
         "stacksAPIURL": "${STACKS_API_URL}"
@@ -83,7 +88,11 @@
           {
             "name": "indexer",
             "principal": "${STACKS_DEPLOYER_ACCOUNT_ADDRESS}",
-            "contracts": ["clarity-bitcoin", "indexer", "utils"],
+            "contracts": [
+              "clarity-bitcoin",
+              "indexer-dev-preview-4",
+              "indexer-registry-dev-preview-1"
+            ],
             "packageName": "../codegenImport"
           }
         ]

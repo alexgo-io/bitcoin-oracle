@@ -1,3 +1,4 @@
+import { stringifyJSON } from '@alex-b20/commons';
 import { StacksMainnet, StacksMocknet, StacksNetwork } from '@stacks/network';
 import {
   AccountDataResponse,
@@ -83,7 +84,7 @@ export const processOperations =
     const start = Date.now();
     const ts = () => `${start}+${(Date.now() - start) / 1e3}s`;
     logger.info(
-      `Submitting ${operations.length} operations, ${puppetUrl ?? ''}`,
+      `Submitting ${operations.length} operations, puppetURL: ${puppetUrl ?? ''}`,
     );
     const startingNonce = await getAccountNonceV2(stacksAPIURL, senderAddress);
     logger.info(`[${ts()}] starting nonce: ${startingNonce}`);
@@ -128,12 +129,11 @@ export const processOperations =
               { senderKey: privateKey, nonce, fee, minFee },
               network,
               contractAddress,
-            ).then(
-              result =>
-                operation?.onBroadcast?.(result).catch(e => {
-                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
-                  return null;
-                }),
+            ).then(result =>
+              operation?.onBroadcast?.(result).catch(e => {
+                logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                return null;
+              }),
             );
             break;
           case 'deploy':
@@ -141,12 +141,11 @@ export const processOperations =
               operation,
               { senderKey: privateKey, nonce, fee },
               network,
-            ).then(
-              result =>
-                operation?.onBroadcast?.(result).catch(e => {
-                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
-                  return null;
-                }),
+            ).then(result =>
+              operation?.onBroadcast?.(result).catch(e => {
+                logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                return null;
+              }),
             );
             break;
           case 'transfer':
@@ -154,12 +153,11 @@ export const processOperations =
               operation,
               { senderKey: privateKey, nonce, fee },
               network,
-            ).then(
-              result =>
-                operation?.onBroadcast?.(result).catch(e => {
-                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
-                  return null;
-                }),
+            ).then(result =>
+              operation?.onBroadcast?.(result).catch(e => {
+                logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                return null;
+              }),
             );
             break;
           default:
@@ -178,7 +176,11 @@ export const processOperations =
           operations.unshift(operation);
         }
 
-        logger.info(`[${ts()}] operation failed:`, operation, e);
+        logger.warn(
+          `[${ts()}] operation failed:,
+          operation: ${stringifyJSON(operation)},
+          error: ${e}`,
+        );
       }
     }
 

@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export PROJECT_NAME="dev-database"
+
+# shellcheck source=./_dev_utils
+source "$NX_WORKSPACE_ROOT"/tools/bin/_dev_utils
+echo_welcome
+
+HASURA_PORT=${HASURA_GRAPHQL_SERVER_PORT:-'8080'}
+HASURA_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET:-'mysecretkey'}
+HASURA_ENDPOINT=${HASURA_GRAPHQL_ENDPOINT:-"http://localhost:$HASURA_PORT"}
+
+print_usage() {
+  echo "Usage: $0 {up|upd|deploy|down|logs|clean|reset|sync}"
+}
+
+main() {
+  # check if command is passed
+  if [ -z "${1:-}" ]; then
+    print_usage
+    exit 1
+  fi
+
+  local cmd=$1
+  case $cmd in
+  sync)
+    check_remote_artifact_config
+    upload_artifact
+    ;;
+  _up)
+    shift
+    _docker_compose up $@
+    echo_ports
+    ;;
+  up)
+    _docker_compose up -d
+    echo -e "hasura console will be running at \e[32m$HASURA_ENDPOINT/console\e[m"
+
+    echo -e "    with admin secret: \e[32m$HASURA_SECRET\e[m"
+    echo "If you're starting from fresh, run:"
+    echo '    hasura metadata apply && hasura migrate apply --all-databases && hasura metadata reload'
+
+    echo -n "Waiting for hasura to be ready - $HASURA_ENDPOINT"
+    for _ in $(seq 1 999); do
+      echo -n .
+      if curl -so /dev/null "$HASURA_ENDPOINT"/v1/version; then
+        echo
+        echo "Applying migrations..."
+
+        hasura metadata apply &&
+          hasura migrate apply --all-databases &&
+          hasura seed apply --all-databases &&
+          hasura metadata reload
+        exit 0
+      fi
+      sleep 0.5
+    done
+    echo "Failed to connect to local hasura console"
+    ;;
+  down)
+    _docker_compose down
+    ;;
+  logs)
+    _docker_compose logs -f --tail=100
+    ;;
+  clean)
+    _docker_compose down -v -t 0
+    ;;
+  reset)
+    _docker_compose down -v -t 0
+    main up
+    ;;
+  pull)
+    _docker_compose pull
+    ;;
+  *)
+    echo "Usage: $0 {up|down|logs|clean|reset|pull}"
+    exit 1
+    ;;
+  esac
+}
+
+main $@

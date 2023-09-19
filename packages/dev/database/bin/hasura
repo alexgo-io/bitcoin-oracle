@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+export PROJECT_NAME="dev-database"
+# shellcheck source=./../../../../tools/bin/_dev_utils
+source "$NX_WORKSPACE_ROOT"/tools/bin/_dev_utils
+echo_welcome
+
+
+
+CLI_PATH=cli-hasura-$($DIR/osarch)-${HASURA_VERSION}
+
+if [ ! -e "${DIR}/${CLI_PATH}" ]; then
+  rm -f ${DIR}/cli-hasura-*
+  $DIR/download https://github.com/hasura/graphql-engine/releases/download/v${HASURA_VERSION}/cli-hasura-$($DIR/osarch) ${DIR}/${CLI_PATH}
+  chmod +x ${DIR}/${CLI_PATH}
+fi
+
+
+HASURA_PORT=${HASURA_GRAPHQL_SERVER_PORT:-'8080'}
+HASURA_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET:-'mysecretkey'}
+HASURA_ENDPOINT=${HASURA_GRAPHQL_ENDPOINT:-"http://localhost:$HASURA_PORT"}
+
+grey() { echo -e "\033[1;30m$1\033[0m"; }
+
+grey "    run hasrua with endpoint: $HASURA_ENDPOINT, admin secret: $HASURA_SECRET"
+
+pushd ${DIR}/../schema >/dev/null 2>&1 || exit 1
+#echo "version: 3
+#endpoint: $HASURA_ENDPOINT
+#admin_secret: $HASURA_SECRET
+#metadata_directory: metadata
+#" > config.yaml
+unset NODE_OPTIONS
+if [ $1 = "migrate" ] || [ $1 = "metadata" ] || [ $1 = "seed" ]; then
+  $DIR/${CLI_PATH} --skip-update-check --endpoint $HASURA_ENDPOINT --admin-secret $HASURA_SECRET "$@"
+else
+  ${DIR}/${CLI_PATH} --skip-update-check "$@"
+fi
+popd >/dev/null 2>&1 || exit 1

@@ -1,6 +1,7 @@
 import {
   callPublic,
   callReadonlyWith,
+  kIndexerContractName,
   processOperations,
   signTx,
   structuredDataHash,
@@ -8,7 +9,7 @@ import {
 import { envDevelopment } from '@alex-b20/env';
 import { StacksMocknet } from '@stacks/network';
 import { bufferCV, stringCV, tupleCV } from '@stacks/transactions';
-import { numberCV } from 'clarity-codegen';
+import { uintCV } from 'clarity-codegen';
 import { randomBytes } from 'node:crypto';
 
 describe('Indexer', () => {
@@ -32,11 +33,12 @@ describe('Indexer', () => {
   } as const;
 
   it('should get correct order hash', async () => {
-    const hash = await readonlyCall('indexer', 'hash-tx', {
+    const hash = await readonlyCall(kIndexerContractName, 'hash-tx', {
       tx: {
         from: Buffer.from(bisData.old_wallet),
         to: Buffer.from(bisData.new_wallet),
         output: 10n,
+        offset: 0n,
         tick: 'sat',
         amt: 1000n,
         'bitcoin-tx': Buffer.from(
@@ -54,16 +56,16 @@ describe('Indexer', () => {
       tupleCV({
         from: bufferCV(Buffer.from(bisData.old_wallet)),
         to: bufferCV(Buffer.from(bisData.new_wallet)),
-        output: numberCV(10n),
+        output: uintCV(10n),
         tick: stringCV('sat', 'utf8'),
-        amt: numberCV(1000n),
+        amt: uintCV(1000n),
         'bitcoin-tx': bufferCV(
           Buffer.from(
             '000000000000000000037299db1bd5b0872f8379d9971fcca36171825ee9cc83',
           ),
         ),
-        'from-bal': numberCV(BigInt(bisData.amount)),
-        'to-bal': numberCV(BigInt(bisData.amount)),
+        'from-bal': uintCV(BigInt(bisData.amount)),
+        'to-bal': uintCV(BigInt(bisData.amount)),
       }),
     );
     expect(orderHash.toString('hex')).toMatchInlineSnapshot(
@@ -85,14 +87,14 @@ describe('Indexer', () => {
     const amt = BigInt('0x' + randomBytes(10).toString('hex'));
     const bitcoinTx = randomBytes(32);
     const order = tupleCV({
-      from: bufferCV(Buffer.from(bisData.old_wallet)),
-      to: bufferCV(Buffer.from(bisData.new_wallet)),
-      output: numberCV(10n),
+      from: bufferCV(Buffer.from(bisData.old_pkscript, 'hex')),
+      to: bufferCV(Buffer.from(bisData.new_pkscript, 'hex')),
+      output: uintCV(10n),
       tick: stringCV('sat', 'utf8'),
-      amt: numberCV(amt),
+      amt: uintCV(amt),
       'bitcoin-tx': bufferCV(bitcoinTx),
-      'from-bal': numberCV(BigInt(bisData.amount) + amt),
-      'to-bal': numberCV(BigInt(bisData.amount)),
+      'from-bal': uintCV(BigInt(bisData.amount) + amt),
+      'to-bal': uintCV(BigInt(bisData.amount)),
     });
     const orderHash = structuredDataHash(order);
 
@@ -102,7 +104,7 @@ describe('Indexer', () => {
     );
 
     await process([
-      callPublic('indexer', 'index-tx-many', {
+      callPublic(kIndexerContractName, 'index-tx-many', {
         'tx-many': [
           {
             block: {
@@ -118,6 +120,7 @@ describe('Indexer', () => {
               from: Buffer.from(bisData.old_wallet),
               to: Buffer.from(bisData.new_wallet),
               output: 10n,
+              offset: 0n,
               tick: 'sat',
               amt,
               'bitcoin-tx': bitcoinTx,

@@ -1,0 +1,73 @@
+name: Continuous Integration (CI)
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: 'ci-${{ github.ref_name }}'
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: 'PR commits + 1'
+        run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.PR_FETCH_DEPTH }}
+      - name: 'Setup environment'
+        id: 'setup'
+        uses: ./.github/workflows/setup
+      - name: Lint
+        run: |
+          direnv exec . nx ${{ steps.setup.outputs.nx-strategy }} --target=lint
+  test:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: 'PR commits + 1'
+        run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.PR_FETCH_DEPTH }}
+          submodules: true
+      - name: 'Setup environment'
+        id: 'setup'
+        uses: ./.github/workflows/setup
+      - name: Tests
+        run: |
+          direnv exec . nx run-many --target=up --output-style=stream
+          direnv exec . nx run-many --target=setup --output-style=stream
+          direnv exec . nx ${{ steps.setup.outputs.nx-strategy }} --target=test
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: 'PR commits + 1'
+        run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.PR_FETCH_DEPTH }}
+      - name: 'Setup environment'
+        id: 'setup'
+        uses: ./.github/workflows/setup
+      - name: Build
+        run: |
+          direnv exec . nx ${{ steps.setup.outputs.nx-strategy }}  --target=build
+  container:
+    strategy:
+      matrix:
+        project:
+          [
+            api-server,
+            bitcoin-sync,
+            relayer,
+          ]
+    uses: ./.github/workflows/workflow_call_build.yaml
+    with:
+      project: ${{ matrix.project }}
+    secrets: inherit
