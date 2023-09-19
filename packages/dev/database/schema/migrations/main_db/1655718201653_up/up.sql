@@ -90,3 +90,9 @@ create table indexer.submitted_tx
   "created_at"            timestamptz not null default now(),
   "updated_at"            timestamptz not null default now()
 );
+
+create schema indexer_config;
+create table indexer_config.relayer_configs (
+  minimal_proof_count integer not null
+);
+insert into indexer_config.relayer_configs (minimal_proof_count) values (1);
