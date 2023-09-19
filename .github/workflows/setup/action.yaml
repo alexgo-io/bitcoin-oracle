@@ -28,7 +28,6 @@ runs:
         path: |
           ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           node_modules
-          ~/.cache/hardhat-nodejs/compilers-v2
           ~/.local/bin
         key: ${{ runner.os }}-deps-cache-${{ hashFiles('pnpm-lock.yaml', '.node-version', '~/.local/bin/direnv') }}
         restore-keys: |
@@ -47,7 +46,6 @@ runs:
         fi
         eval "$(direnv hook bash)"
         direnv allow
-        yarn use ci
     - name: NX setup
       id: nx-setup
       shell: bash
