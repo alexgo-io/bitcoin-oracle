@@ -15,7 +15,8 @@
         "main": "packages/apps/relayer/src/main.ts",
         "tsConfig": "packages/apps/relayer/tsconfig.app.json",
         "isolatedConfig": true,
-        "webpackConfig": "packages/apps/relayer/webpack.config.js"
+        "webpackConfig": "packages/apps/relayer/webpack.config.js",
+        "generatePackageJson": true
       },
       "configurations": {
         "development": {},
@@ -55,6 +56,25 @@
         "ci": {
           "ci": true,
           "codeCoverage": true
+        }
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "load": true,
+        "metadata": {
+          "images": ["$DOCKER_IMAGE_TAG_GROUP/relayer"],
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=semver,pattern={{version}}",
+            "type=semver,pattern={{major}}.{{minor}}",
+            "type=semver,pattern={{major}}",
+            "type=sha,prefix=sha-"
+          ]
         }
       }
     }

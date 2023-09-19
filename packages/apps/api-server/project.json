@@ -15,6 +15,7 @@
         "main": "packages/apps/api-server/src/main.ts",
         "tsConfig": "packages/apps/api-server/tsconfig.app.json",
         "assets": ["packages/apps/api-server/src/assets"],
+        "generatePackageJson": true,
         "isolatedConfig": true,
         "webpackConfig": "packages/apps/api-server/webpack.config.js"
       },
@@ -56,6 +57,25 @@
         "ci": {
           "ci": true,
           "codeCoverage": true
+        }
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "load": true,
+        "metadata": {
+          "images": ["$DOCKER_IMAGE_TAG_GROUP/api-server"],
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=semver,pattern={{version}}",
+            "type=semver,pattern={{major}}.{{minor}}",
+            "type=semver,pattern={{major}}",
+            "type=sha,prefix=sha-"
+          ]
         }
       }
     }
