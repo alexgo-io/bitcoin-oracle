@@ -1,7 +1,7 @@
 import { getActivityOnBlock, getBalanceOnBlock } from './bis-api';
 
 describe('BiS API', function () {
-  it('should get activity', async function () {
+  it.skip('should get activity', async function () {
     const data = await getActivityOnBlock(802396);
     expect(data).toBeDefined();
     expect(data.data).toMatchInlineSnapshot(`
@@ -35760,7 +35760,7 @@ describe('BiS API', function () {
   //   await queue.onIdle();
   // }, 1200e3);
 
-  it('should get balance', async function () {
+  it.skip('should get balance', async function () {
     const data = await getBalanceOnBlock(
       '0014ad42179475826f3cae94c1c3bae2797c6933a53a',
       802397,
