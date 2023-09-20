@@ -66,6 +66,7 @@ jobs:
             api-server,
             bitcoin-sync,
             relayer,
+            validator
           ]
     uses: ./.github/workflows/workflow_call_build.yaml
     with:
