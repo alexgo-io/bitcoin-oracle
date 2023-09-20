@@ -42,6 +42,7 @@ const mapContractsToDeployTarget = (
     return [...contract.flatMap(findDeps), name];
   }
   const sortedContractNames = uniq(contractsKeys.flatMap(findDeps));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return sortedContractNames.map((contractName: any) => {
     return {
       contractName,

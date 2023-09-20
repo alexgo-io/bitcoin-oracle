@@ -131,6 +131,7 @@ export async function getTransactionList(
     headers: {
       'Ok-Access-Key': env.OK_ACCESS_KEY,
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }).json()) as any;
 
   if (result['code'] !== '0') {

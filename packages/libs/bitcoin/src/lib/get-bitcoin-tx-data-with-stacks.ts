@@ -65,7 +65,7 @@ export type BitcoinTxDataType = {
   height: number;
 };
 
-async function getBitcoinTxDataWithStacks(
+export async function getBitcoinTxDataWithStacks(
   txId: string,
   electrumClient: TypedElectrumClient,
 ): Promise<BitcoinTxDataType> {
@@ -75,7 +75,7 @@ async function getBitcoinTxDataWithStacks(
   }
 
   const burnHeight = await confirmationsToHeight(tx.confirmations);
-  const { header, stacksHeight, prevBlocks } = await findStacksBlockAtHeight(
+  const { header, stacksHeight } = await findStacksBlockAtHeight(
     burnHeight,
     [],
     electrumClient,

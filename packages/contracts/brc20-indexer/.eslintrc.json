@@ -3,7 +3,8 @@
     "../../../.eslintrc.json"
   ],
   "ignorePatterns": [
-    "!**/*"
+    "!**/*",
+    "brc20-indexer-v1/**/*"
   ],
   "overrides": [
     {
