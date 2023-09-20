@@ -74,4 +74,4 @@ jobs:
           GCR_KEY_FILE: ${{ secrets.GCR_KEY_FILE }}
         run: |
           echo "$GCR_KEY_FILE" | docker login -u _json_key --password-stdin https://us-central1-docker.pkg.dev
-          direnv exec . nx run ${{ inputs.project }}:deploy
+          direnv exec . nx run ${{ inputs.project }}:deploy --image ${{ steps.build.outputs.docker_image_tag }}
