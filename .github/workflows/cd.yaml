@@ -1,16 +1,14 @@
 name: Continuous Deployment (CD)
 on:
+  push:
+    branches:
+      - production
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Environment to run CD against'
-        type: environment
-        default: 'testnet'
-        required: true
       projects:
         description: 'Projects to build, (comma separated)'
         required: true
-        default: 'apps-api-server, apps-bridge-worker, apps-ethereum-relayer, apps-ethereum-validator, apps-stacks-relayer, apps-stacks-validator'
+        default: 'api-server'
 
 jobs:
   extract:
@@ -21,10 +19,8 @@ jobs:
     steps:
       - run: |
           echo "Projects: $PROJECTS"
-          echo "Environment: $ENVIRONMENT"
         env:
           PROJECTS: ${{ inputs.projects }}
-          ENVIRONMENT: ${{ inputs.environment }}
       - name: 'Extract projects'
         id: 'extract_projects'
         uses: actions/github-script@v6.4.1
@@ -32,10 +28,17 @@ jobs:
           projects: ${{ inputs.projects }}
         with:
           script: |
-            return process.env.projects.split(',')
+            const { projects } = process.env;
+            const output = process.env.projects.split(',')
               .map((project) => project.trim())
-              .filter((project) => project.length > 0)
-  build:
+              .filter((project) => project.length > 0);
+            if (output.length > 0) {
+              return JSON.stringify(output);
+            }
+            else {
+              return ["api-server"];
+            }
+  deploy:
     needs: extract
     uses: ./.github/workflows/workflow_call_build.yaml
     strategy:
@@ -43,6 +46,6 @@ jobs:
         project: ${{ fromJSON(needs.extract.outputs.projects) }}
     with:
       project: ${{ matrix.project }}
-      env: ${{ inputs.environment }}
+      env: production
       deploy: true
     secrets: inherit
