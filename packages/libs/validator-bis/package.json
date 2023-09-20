@@ -2,7 +2,17 @@
   "name": "@alex-b20/validator-bis",
   "version": "0.0.1",
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zod": "^3.22.2",
+    "memoizee": "^0.4.15",
+    "rxjs": "^7.8.1",
+    "got-cjs": "^12.5.4",
+    "@t3-oss/env-core": "^0.6.1",
+    "@nestjs/common": "^10.2.4",
+    "@alex-b20/validator": "*",
+    "@alex-b20/commons": "*",
+    "@alex-b20/api-client": "*",
+    "@alex-b20/brc20-indexer": "*"
   },
   "type": "commonjs",
   "main": "./src/index.js",

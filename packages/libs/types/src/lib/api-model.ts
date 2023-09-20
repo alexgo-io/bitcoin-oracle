@@ -1,4 +1,4 @@
-import { Enums } from '@alex-b20/types';
+import { Enums } from './enums-model';
 import { z } from 'zod';
 import { BigIntStringSchema, BufferStringSchema } from './basic-model';
 

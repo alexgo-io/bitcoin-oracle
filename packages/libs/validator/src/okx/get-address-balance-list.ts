@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
 https://www.okx.com/web3/build/docs/bitcoin-ecosystem/brc20-api#query-address-balance-list
 Query address balance list

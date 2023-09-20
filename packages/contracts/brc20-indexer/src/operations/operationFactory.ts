@@ -51,6 +51,7 @@ export const callReadonlyWith =
   ): Promise<ReturnTypeOfDescriptor<Descriptor>> => {
     const functionDescriptor = contracts[contractOrType][
       functionName
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ] as any as ReadonlyFunctionDescriptor;
 
     const clarityArgs = functionDescriptor.input.map(a =>
@@ -72,6 +73,7 @@ export const callReadonlyWith =
 export const transferStxTo = (
   address: string,
   amount: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onBroadcast?: (result: any) => Promise<void>,
 ): TransferSTX => ({
   amount,

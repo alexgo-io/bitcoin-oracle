@@ -9,6 +9,7 @@ export class ValidatorModule {
   static withValidator(type: IndexerType): DynamicModule {
     const moduleMapping = {
       [Enums.IndexerType.enum.bis]: ValidatorBisModule,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       [Enums.IndexerType.enum.okx]: null as any,
     };
 
