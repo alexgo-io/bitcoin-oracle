@@ -6,6 +6,9 @@ export function stringifyJSON(obj: any, space = 0) {
       if (typeof v === 'bigint') {
         return `${v}n`;
       }
+      else if (v instanceof Uint8Array) {
+        return '0x' + Buffer.from(v).toString('hex');
+      }
       else if (v?.type == 'Buffer' && Array.isArray(v?.data)) {
         // Buffer.from('').toJSON(); is used to construct this object
         try {
