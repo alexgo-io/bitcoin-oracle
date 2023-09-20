@@ -8,5 +8,9 @@ export const getBISQueue = () => {
   });
 };
 export const getElectrumQueue = () => {
-  return getGlobalPQueue('electrum-queue', { concurrency: 20 });
+  return getGlobalPQueue('electrum-queue', {
+    concurrency: 10,
+    interval: 10e3,
+    intervalCap: 60,
+  });
 };
