@@ -1,4 +1,3 @@
-import { envDevelopment } from '@alex-b20/env';
 import { indexer } from '../generated/contract_indexer';
 import { getDomainHash, signTx, structuredDataHash } from './sign';
 
@@ -20,18 +19,19 @@ describe('sign', () => {
       'bitcoin-tx': Buffer.from('0x03'),
       tick: 'sat',
       output: 99n,
+      offset: 0n,
     });
 
     const hash = structuredDataHash(encodeValue);
     expect(hash.toString('hex')).toMatchInlineSnapshot(
-      '"23fe3e04c4d6b9b6b7e00ddbf30e498dad53778264532b52261a0d0b91ed78ea"',
+      `"9de2e728645f376971b761726f16f9b4c40892dc7e308cb35cf76b6e66e3eb43"`,
     );
     const signature = await signTx(
-      envDevelopment.STACKS_DEPLOYER_ACCOUNT_SECRET,
+      '114dd00b2407eb036aa12c38662ed35ff3ba6c4f743b5a8ae4c984ac0ec7afe301',
       encodeValue,
     );
     expect(signature.toString('hex')).toMatchInlineSnapshot(
-      '"36546f44561c861c51ad0f9f07fbdf144894f84ca362f6f462dcc3a6ab8705383c771a0f387b6ebbc235942e90e4d8f52e039c86d974ea7db1525f0afb18272400"',
+      `"e1f092eb251b180e73f381bf1da0514b86af4aaaadbc626235cb8cb7d3b1fa1877a23797cfc63000f3f0f9acb82fbd581821b25dc84f8370344db58690ccb7e601"`,
     );
   });
 });

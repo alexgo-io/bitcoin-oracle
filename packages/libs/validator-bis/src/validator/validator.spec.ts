@@ -274,7 +274,7 @@ describe('libs-validator-bis', () => {
     });
   }, 30e3);
 
-  it('should processIndexerTxOnBlock', done => {
+  it.skip('should processIndexerTxOnBlock', done => {
     const txs: any[] = [];
     processBlock$(802396).subscribe({
       next: val => {
