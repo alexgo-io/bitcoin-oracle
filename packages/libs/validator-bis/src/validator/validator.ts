@@ -89,7 +89,9 @@ export function getIndexerTxOnBlock$(block: number) {
     mergeMap(tx => {
       const { tx_id, vout, satpoint } = getSatpoint(tx.new_satpoint);
       logger.debug(
-        `getting bitcoin tx: ${tx_id}, queue: ${getElectrumQueue().size}`,
+        `getting bitcoin [${block}] tx: ${tx_id}, queue: ${
+          getElectrumQueue().size
+        }`,
       );
       return getBitcoinTx$(tx_id).pipe(
         map(result => {

@@ -25,8 +25,6 @@ export function indexer(baseURL: string) {
             .post(`${url}/txs`, {
               headers: headers(),
               json: params,
-              parseJson: body =>
-                m.json('indexer', 'txs_with_proofs').parse(JSON.parse(body)),
             })
             .json<DTOIndexer<'txs_post_response'>>();
         },
