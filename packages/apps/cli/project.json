@@ -1,0 +1,32 @@
+{
+  "name": "cli",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/apps/cli/src",
+  "projectType": "application",
+  "targets": {
+    "exec": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "./bin/dev",
+            "forwardAllArgs": true
+          }
+        ],
+        "cwd": "packages/apps/cli",
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "packages/apps/cli/**/*.ts"
+        ]
+      }
+    }
+  }
+}
