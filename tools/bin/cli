@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$NX_WORKSPACE_ROOT/packages/apps/cli"
+./bin/dev "$@"
