@@ -18,8 +18,6 @@ export class ValidatorModule {
       throw new Error(`No validator module for ${type}`);
     }
 
-    console.log(`Using ${type} validator module: ${validatorModule}`);
-
     return {
       module: ValidatorModule,
       imports: [validatorModule, PinoLoggerModule],
