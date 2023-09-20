@@ -25,8 +25,7 @@ export class DefaultRelayerService implements RelayerService {
 
   async startRelayer(): Promise<void> {
     const pendingTxs = await this.relayerRepository.getPendingSubmitTx();
-    // const rows = pendingTxs.rows;
-    const rows = [pendingTxs.rows[0]];
+    const rows = pendingTxs.rows;
 
     const TxManyInputEncoder =
       indexerContracts[kIndexerContractName]['index-tx-many']['input'][0].type
