@@ -78,6 +78,9 @@
           ]
         }
       }
+    },
+    "deploy": {
+      "command": "gcloud run deploy b20-api-server --image {args.image} --region us-west1"
     }
   },
   "tags": []
