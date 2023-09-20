@@ -24,7 +24,6 @@
         "packages/contracts/brc20-indexer/src/index.ts"
       ],
       "@alex-b20/commons": ["packages/libs/commons/src/index.ts"],
-      "@alex-b20/env": ["packages/libs/env/src/index.ts"],
       "@alex-b20/persistent": ["packages/libs/persistent/src/index.ts"],
       "@alex-b20/types": ["packages/libs/types/src/index.ts"],
       "@alex-b20/validator": ["packages/libs/validator/src/index.ts"],

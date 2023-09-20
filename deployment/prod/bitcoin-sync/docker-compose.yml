@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  bitcoin-sync:
+    image: us-central1-docker.pkg.dev/fifth-compiler-334213/alexgo/b20/bitcoin-sync:main
+    environment:
+      - BITCOIN_SYNC_GENESIS_BLOCK_HEIGHT=808478
+      - BITCOIN_SYNC_POLL_INTERVAL=5000
+      - ELECTRUM_HOST=fortress.qtornado.com
+      - ELECTRUM_PORT=443
+      - ELECTRUM_PROTOCOL=ssl
+      - STACKS_API_URL=https://stacks-node-api.mainnet.stacks.co
+      - NODE_DATABASE_URL=${NODE_DATABASE_URL}
