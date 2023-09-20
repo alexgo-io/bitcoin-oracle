@@ -406,6 +406,7 @@ async function broadcastTransactionWithRetryChaining(
   let result;
   for (let i = 0; i < 20; i++) {
     result = await broadcastTransaction(transaction, network);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((result.reason as any) === 'TooMuchChaining') {
       logger.warn(
         `[TooMuchChaining] retrying - ${i}... ${JSON.stringify(result)}`,
@@ -446,6 +447,7 @@ async function getTransaction(
     const response: AddressTransactionsListResponse = await fetch(
       `${stacksAPIURL}/extended/v1/address/${address}/transactions?limit=50&offset=${result.length}`,
     ).then(r => r.json());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const newResults = response.results as any[];
     if (!newResults.length) {
       break;

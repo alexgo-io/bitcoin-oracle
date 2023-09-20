@@ -2,7 +2,6 @@ import { indexer } from '@alex-b20/api-client';
 import { generateOrderHash, signOrderHash } from '@alex-b20/brc20-indexer';
 import { Unobservable } from '@alex-b20/commons';
 import { getBitcoinTx$ } from '@alex-b20/validator';
-import { HiroType } from '@alex-b20/validator-hiro';
 import { Logger } from '@nestjs/common';
 import {
   combineLatest,
@@ -13,8 +12,9 @@ import {
   mergeMap,
   retry,
 } from 'rxjs';
+import { HiroType } from '../api';
 import { getAllActivitiesOnBlock$, getAllBalancesOnBlock$ } from '../api/api';
-import { env } from '../env';
+import { env } from "../env";
 
 const logger = new Logger('hiro', { timestamp: true });
 function getBalance(balances: HiroType<'balance'>[] | null, tick: string) {

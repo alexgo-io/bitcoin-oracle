@@ -15,13 +15,6 @@ import {
 } from 'micro-stacks/transactions';
 import { indexer } from '../generated/contract_indexer';
 
-function toBuffer(input: string) {
-  return Buffer.from(
-    input.length >= 2 && input[1] === 'x' ? input.slice(2) : input,
-    'hex',
-  );
-}
-
 export function getStacksNetwork() {
   if (env.STACKS_NETWORK_TYPE === 'testnet') {
     return new StacksMocknet({ url: env.STACKS_API_URL });

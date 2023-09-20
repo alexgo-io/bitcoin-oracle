@@ -2,7 +2,12 @@
   "name": "@alex-b20/api-client",
   "version": "0.0.1",
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@alex-b20/types": "*",
+    "got-cjs": "^12.5.4",
+    "memoizee": "^0.4.15",
+    "@t3-oss/env-core": "^0.6.1",
+    "zod": "^3.22.2"
   },
   "type": "commonjs",
   "main": "./src/index.js",

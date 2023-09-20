@@ -2,7 +2,22 @@
   "name": "@alex-b20/brc20-indexer",
   "version": "0.0.1",
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "clarity-codegen": "^0.2.6",
+    "@stacks/network": "^6.5.5",
+    "@stacks/transactions": "^6.7.0",
+    "@t3-oss/env-core": "^0.6.1",
+    "memoizee": "^0.4.15",
+    "zod": "^3.22.2",
+    "@nestjs/common": "^10.2.4",
+    "@iarna/toml": "^2.2.5",
+    "lodash": "^4.17.21",
+    "@alex-b20/commons": "*",
+    "@stacks/stacks-blockchain-api-types": "^7.3.0",
+    "got-cjs": "^12.5.4",
+    "pino": "^8.15.0",
+    "@alex-b20/env": "*",
+    "micro-stacks": "^1.2.1"
   },
   "type": "commonjs",
   "main": "./src/index.js",
