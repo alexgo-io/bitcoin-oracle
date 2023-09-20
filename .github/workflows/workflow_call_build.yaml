@@ -17,7 +17,7 @@ on:
         description: 'Environment to build for (testnet/prod)'
         default: 'testnet'
 jobs:
-  build:
+  build_and_deploy:
     runs-on: ubuntu-22.04
     outputs:
       docker_image_tag: ${{ steps.build.outputs.docker_image_tag }}
@@ -54,16 +54,24 @@ jobs:
           export INPUT_CACHE_FROM="type=local,src=/tmp/.buildx-cache-${{ inputs.project }}"
           export INPUT_CACHE_TO="type=local,dest=/tmp/.buildx-cache-${{ inputs.project }},mode=max"
           direnv exec . nx run ${{ inputs.project }}:container
-          echo docker_image_tag=$(jq -r '."image.name"' .nx-container/${{ inputs.project }}/metadata | sed 's/^.*,//g') >> $GITHUB_OUTPUT
-  deploy:
-    if: inputs.deploy == true
-    runs-on: ubuntu-22.04
-    needs: build
-    steps:
+          echo docker_image_tag=$(jq -r '."image.name"' node_modules/.cache/nx-container/${{ inputs.project }}/metadata | sed 's/^.*,//g') >> $GITHUB_OUTPUT
       - name: 'Echo Image Tag'
         run: |
           echo ${{ needs.build.outputs.docker_image_tag }}
           echo project ${{ inputs.project }}
           echo deploy: ${{ inputs.deploy }}
           echo environment: ${{ inputs.environment }}
-      - uses: actions/checkout@v4
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        if: inputs.deploy == true
+        with:
+          credentials_json: '${{ secrets.GCR_KEY_FILE }}'
+      - name: Deploy
+        id: 'deploy'
+        shell: bash
+        if: inputs.deploy == true
+        env:
+          GCR_KEY_FILE: ${{ secrets.GCR_KEY_FILE }}
+        run: |
+          echo "$GCR_KEY_FILE" | docker login -u _json_key --password-stdin https://us-central1-docker.pkg.dev
+          direnv exec . nx run ${{ inputs.project }}:deploy
