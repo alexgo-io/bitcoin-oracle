@@ -74,9 +74,11 @@ export class DefaultValidatorService implements ValidatorService {
     const forceEnd = env().VALIDATOR_FORCE_SYNC_END;
     if (forceStart != null && forceEnd != null) {
       this.logger.warn(`Forcing sync from ${forceStart} to ${forceEnd}`);
-      this.syncBlockHeight(forceStart, forceEnd).subscribe(() => {
-        this.logger.log(`force sync completed, ${forceStart} -> ${forceEnd}`);
-        this.startIntervalSync();
+      this.syncBlockHeight(forceStart, forceEnd).subscribe({
+        complete: () => {
+          this.logger.log(`force sync completed, ${forceStart} -> ${forceEnd}`);
+          this.startIntervalSync();
+        },
       });
     } else {
       this.startIntervalSync();
