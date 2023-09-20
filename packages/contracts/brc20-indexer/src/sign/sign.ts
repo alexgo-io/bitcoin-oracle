@@ -1,4 +1,3 @@
-import { env } from '@alex-b20/env';
 import { StacksMainnet, StacksMocknet } from '@stacks/network';
 import {
   ClarityValue,
@@ -13,15 +12,16 @@ import {
   createStacksPrivateKey,
   signWithKey,
 } from 'micro-stacks/transactions';
+import { env } from '../env';
 import { indexer } from '../generated/contract_indexer';
 
 export function getStacksNetwork() {
-  if (env.STACKS_NETWORK_TYPE === 'testnet') {
-    return new StacksMocknet({ url: env.STACKS_API_URL });
-  } else if (env.STACKS_NETWORK_TYPE === 'mainnet') {
-    return new StacksMainnet({ url: env.STACKS_API_URL });
+  if (env().STACKS_NETWORK_TYPE === 'testnet') {
+    return new StacksMocknet({ url: env().STACKS_API_URL });
+  } else if (env().STACKS_NETWORK_TYPE === 'mainnet') {
+    return new StacksMainnet({ url: env().STACKS_API_URL });
   } else {
-    throw new Error(`Unknown network type: ${env.STACKS_NETWORK_TYPE}`);
+    throw new Error(`Unknown network type: ${env().STACKS_NETWORK_TYPE}`);
   }
 }
 function sha256(data: Buffer): Buffer {

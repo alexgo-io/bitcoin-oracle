@@ -1,17 +1,14 @@
-import { envDevelopment } from '@alex-b20/env';
 import { pubKeyfromPrivKey } from '@stacks/transactions';
 import { kIndexerContractName, kIndexerRegistryName } from '../constants';
+import { env, envTest } from '../env';
 import { callPublic } from '../operations/operationFactory';
 import { processOperations } from '../operations/processOperations';
 
 export async function setupIndexer() {
-  const process = processOperations(
-    envDevelopment.STACKS_DEPLOYER_ACCOUNT_SECRET,
-    {
-      stacksAPIURL: envDevelopment.STACKS_API_URL,
-      puppetURL: envDevelopment.STACKS_PUPPET_URL,
-    },
-  );
+  const process = processOperations(envTest().STACKS_DEPLOYER_ACCOUNT_SECRET, {
+    stacksAPIURL: env().STACKS_API_URL,
+    puppetURL: envTest().STACKS_PUPPET_URL,
+  });
 
   await process([
     callPublic(kIndexerContractName, 'set-paused', { paused: false }),
@@ -19,18 +16,20 @@ export async function setupIndexer() {
       'new-required-validators': 1n,
     }),
     callPublic(kIndexerContractName, 'add-validator', {
-      validator: envDevelopment.STACKS_VALIDATOR_ACCOUNT_ADDRESS,
+      validator: envTest().STACKS_VALIDATOR_ACCOUNT_ADDRESS,
       'validator-pubkey': pubKeyfromPrivKey(
-        envDevelopment.STACKS_VALIDATOR_ACCOUNT_SECRET,
+        envTest().STACKS_VALIDATOR_ACCOUNT_SECRET,
       ).data,
     }),
     callPublic(kIndexerContractName, 'approve-relayer', {
       approved: true,
-      relayer: envDevelopment.STACKS_RELAYER_ACCOUNT_ADDRESS,
+      relayer: envTest().STACKS_RELAYER_ACCOUNT_ADDRESS,
     }),
     callPublic(kIndexerRegistryName, 'approve-operator', {
       approved: true,
-      operator: `${envDevelopment.STACKS_DEPLOYER_ACCOUNT_ADDRESS}.${kIndexerContractName}`,
+      operator: `${
+        envTest().STACKS_DEPLOYER_ACCOUNT_ADDRESS
+      }.${kIndexerContractName}`,
     }),
   ]);
 
