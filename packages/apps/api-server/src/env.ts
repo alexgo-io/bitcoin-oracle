@@ -5,7 +5,7 @@ export const env = createEnv({
   server: {
     ENABLE_DEBUG_INFO: z.coerce.boolean().default(false),
     ALEX_B20_API_CREDENTIALS: z.string().default('{}'),
-    API_PORT: z.number().default(8716),
+    API_PORT: z.coerce.number().default(8716),
     HEARTBEAT_URL: z.string().optional(),
   },
   runtimeEnv: process.env,
