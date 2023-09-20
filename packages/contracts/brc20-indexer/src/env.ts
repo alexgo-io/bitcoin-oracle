@@ -14,6 +14,22 @@ export const env = memoizee(() =>
     runtimeEnv: process.env,
   }),
 );
+
+export const envTest = memoizee(() =>
+  createEnv({
+    server: {
+      STACKS_DEPLOYER_ACCOUNT_SECRET: z.string(),
+      STACKS_DEPLOYER_ACCOUNT_ADDRESS: z.string().min(1),
+      STACKS_PUPPET_URL: z.string(),
+      STACKS_RELAYER_ACCOUNT_ADDRESS: z.string(),
+      STACKS_RELAYER_ACCOUNT_SECRET: z.string(),
+      STACKS_VALIDATOR_ACCOUNT_SECRET: z.string(),
+      STACKS_VALIDATOR_ACCOUNT_ADDRESS: z.string(),
+    },
+    runtimeEnv: process.env,
+  }),
+);
+
 export function getEnvStacksChainID() {
   if (env().STACKS_NETWORK_TYPE === 'mainnet') {
     return ChainID.Mainnet;

@@ -6,17 +6,18 @@ import {
   signTx,
   structuredDataHash,
 } from '@alex-b20/brc20-indexer';
-import { envDevelopment } from '@alex-b20/env';
 import { StacksMocknet } from '@stacks/network';
 import { bufferCV, stringCV, tupleCV } from '@stacks/transactions';
 import { uintCV } from 'clarity-codegen';
 import { randomBytes } from 'node:crypto';
+import { env } from '../env';
+import { envTest } from '../env-test';
 
 describe('Indexer', () => {
   const readonlyCall = callReadonlyWith(
-    envDevelopment.STACKS_DEPLOYER_ACCOUNT_ADDRESS,
-    new StacksMocknet({ url: envDevelopment.STACKS_API_URL }),
-    envDevelopment.STACKS_DEPLOYER_ACCOUNT_ADDRESS,
+    envTest().STACKS_DEPLOYER_ACCOUNT_ADDRESS,
+    new StacksMocknet({ url: env().STACKS_API_URL }),
+    envTest().STACKS_DEPLOYER_ACCOUNT_ADDRESS,
   );
   const bisData = {
     activity_type: 'transfer-transfer',
@@ -74,15 +75,12 @@ describe('Indexer', () => {
   });
 
   it('should index tx', async () => {
-    const process = processOperations(
-      envDevelopment.STACKS_RELAYER_ACCOUNT_SECRET,
-      {
-        contractAddress: envDevelopment.STACKS_DEPLOYER_ACCOUNT_ADDRESS,
-        stacksAPIURL: envDevelopment.STACKS_API_URL,
-        puppetURL: envDevelopment.STACKS_PUPPET_URL,
-        fee: 2e3,
-      },
-    );
+    const process = processOperations(envTest().STACKS_RELAYER_ACCOUNT_SECRET, {
+      contractAddress: envTest().STACKS_DEPLOYER_ACCOUNT_ADDRESS,
+      stacksAPIURL: env().STACKS_API_URL,
+      puppetURL: envTest().STACKS_PUPPET_URL,
+      fee: 2e3,
+    });
 
     const amt = BigInt('0x' + randomBytes(10).toString('hex'));
     const bitcoinTx = randomBytes(32);
@@ -99,7 +97,7 @@ describe('Indexer', () => {
     const orderHash = structuredDataHash(order);
 
     const signature = await signTx(
-      envDevelopment.STACKS_VALIDATOR_ACCOUNT_SECRET,
+      envTest().STACKS_VALIDATOR_ACCOUNT_SECRET,
       order,
     );
 
@@ -130,7 +128,7 @@ describe('Indexer', () => {
             'signature-packs': [
               {
                 signature: signature,
-                signer: envDevelopment.STACKS_VALIDATOR_ACCOUNT_ADDRESS,
+                signer: envTest().STACKS_VALIDATOR_ACCOUNT_ADDRESS,
                 'tx-hash': orderHash,
               },
             ],

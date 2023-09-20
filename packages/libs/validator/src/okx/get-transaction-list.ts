@@ -1,7 +1,7 @@
-import { env } from '@alex-b20/env';
 import got from 'got-cjs';
 import { z } from 'zod';
 import { OKXActionTypeSchema, kOKXBaseURL } from './base';
+import { env } from './env';
 /*
 https://www.okx.com/web3/build/docs/bitcoin-ecosystem/brc20-api#query-token-transaction-list
 Query token transaction list
@@ -129,7 +129,7 @@ export async function getTransactionList(
   const result = (await got(`${kOKXBaseURL}/transaction-list`, {
     searchParams: TransactionListRequestSchema.parse(params),
     headers: {
-      'Ok-Access-Key': env.OK_ACCESS_KEY,
+      'Ok-Access-Key': env().OK_ACCESS_KEY,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }).json()) as any;

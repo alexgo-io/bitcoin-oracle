@@ -16,7 +16,6 @@
     "@stacks/stacks-blockchain-api-types": "^7.3.0",
     "got-cjs": "^12.5.4",
     "pino": "^8.15.0",
-    "@alex-b20/env": "*",
     "micro-stacks": "^1.2.1"
   },
   "type": "commonjs",

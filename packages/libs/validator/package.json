@@ -6,7 +6,6 @@
     "@t3-oss/env-core": "^0.6.1",
     "memoizee": "^0.4.15",
     "zod": "^3.22.2",
-    "@alex-b20/env": "*",
     "got-cjs": "^12.5.4",
     "@alex-b20/commons": "*",
     "@alex-b20/api-client": "*",

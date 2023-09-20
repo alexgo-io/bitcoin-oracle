@@ -49,10 +49,10 @@ curl --location --globoff 'https://www.okx.com/api/v1/endpoints/btc/address-bala
     ]
 }
  */
-import { env } from '@alex-b20/env';
 import got from 'got-cjs';
 import { z } from 'zod';
 import { kOKXBaseURL } from './base';
+import { env } from "./env";
 
 const GetAddressBalanceListRequestSchema = z.object({
   address: z.string(),
@@ -90,7 +90,7 @@ export async function getAddressBalanceList(
   const result = (await got(`${kOKXBaseURL}/address-balance-list`, {
     searchParams: GetAddressBalanceListRequestSchema.parse(params),
     headers: {
-      'Ok-Access-Key': env.OK_ACCESS_KEY,
+      'Ok-Access-Key': env().OK_ACCESS_KEY,
     },
   }).json()) as any;
 
