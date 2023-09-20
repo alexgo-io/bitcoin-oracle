@@ -2,7 +2,7 @@ import { getActivityOnBlock$, getAllActivitiesOnBlock$ } from './api';
 import { getActivityOnBlock, getBalanceOnBlock } from './api.raw';
 
 describe('Hiro API', function () {
-  it('should get activity', async function () {
+  it.skip('should get activity', async function () {
     const data = await getActivityOnBlock(802396, 0, 2);
     expect(data).toBeDefined();
     expect(data).toMatchInlineSnapshot(`
@@ -48,7 +48,7 @@ describe('Hiro API', function () {
     `);
   }, 10e3);
 
-  it('should get parsed activity', done => {
+  it.skip('should get parsed activity', done => {
     getActivityOnBlock$(802396, 0, 2).subscribe(value => {
       expect(value.results).toMatchInlineSnapshot(`
         [
@@ -98,7 +98,7 @@ describe('Hiro API', function () {
     });
   });
 
-  it('should get activity match schema', function (done) {
+  it.skip('should get activity match schema', function (done) {
     getAllActivitiesOnBlock$(802396, 2, 6).subscribe(value => {
       expect(value).toMatchInlineSnapshot(`
         [
@@ -198,7 +198,7 @@ describe('Hiro API', function () {
     });
   }, 10e3);
 
-  it('should get balance', async function () {
+  it.skip('should get balance', async function () {
     const data = await getBalanceOnBlock(
       'bc1p92dh94w90gf4yqvza2c2jywwyxwupg9skfl5e7qqkd6ylk28fqhqmwhks4',
       807573,

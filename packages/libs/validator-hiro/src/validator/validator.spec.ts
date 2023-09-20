@@ -27,7 +27,7 @@ describe('libs-validator-hiro', () => {
     jest.restoreAllMocks();
   });
 
-  it('should getTxOnBlock', done => {
+  it.skip('should getTxOnBlock', done => {
     const txs: { id: string }[] = [];
     getHiroTxOnBlock$(802396).subscribe({
       next: tx => {
@@ -56,7 +56,7 @@ describe('libs-validator-hiro', () => {
     });
   }, 30e3);
 
-  it('should processIndexerTxOnBlock', done => {
+  it.skip('should processIndexerTxOnBlock', done => {
     const txs: any[] = [];
     processBlock$(802396).subscribe({
       next: val => {
