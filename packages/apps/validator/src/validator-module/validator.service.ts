@@ -11,7 +11,7 @@ import { ValidatorService } from './validator.interface';
 
 export class DefaultValidatorService implements ValidatorService {
   private readonly logger = new Logger(DefaultValidatorService.name);
-  private readonly api = new ApiClient(env().INDEXER_URL);
+  private readonly api = new ApiClient(env().INDEXER_API_URL);
   constructor(
     @Inject(ValidatorProcessInterface)
     private readonly processor: ValidatorProcessInterface,
@@ -33,7 +33,7 @@ export class DefaultValidatorService implements ValidatorService {
   }
 
   async start() {
-    this.logger.log(`Starting ValidatorService - ${env().INDEXER_URL}`);
+    this.logger.log(`Starting ValidatorService - ${env().INDEXER_API_URL}`);
 
     const queue = new PQueue({ concurrency: 10 });
     // noinspection InfiniteLoopJS
