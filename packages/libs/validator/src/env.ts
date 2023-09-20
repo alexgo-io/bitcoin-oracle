@@ -5,7 +5,7 @@ import { z } from 'zod';
 export const env = memoizee(() =>
   createEnv({
     server: {
-      INDEXER_URL: z.string().default('http://localhost:8716'),
+      INDEXER_API_URL: z.string().default('http://localhost:8716'),
       STACKS_API_URL: z.string(),
     },
     runtimeEnv: process.env,

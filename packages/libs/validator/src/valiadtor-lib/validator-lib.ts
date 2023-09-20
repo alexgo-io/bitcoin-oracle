@@ -12,7 +12,7 @@ export async function getBitcoinTx(txId: string) {
       throw new Error('Tx is not confirmed');
     }
 
-    const api = new ApiClient(env().INDEXER_URL);
+    const api = new ApiClient(env().INDEXER_API_URL);
 
     const bitcoinBlockHeight = await api
       .indexer()

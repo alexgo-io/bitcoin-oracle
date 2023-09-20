@@ -89,7 +89,7 @@ async function submitIndexerTx(
 
   logger.verbose(`submitting ${tx.tx_id}`);
 
-  return indexer(env().INDEXER_URL)
+  return indexer(env().INDEXER_API_URL)
     .txs()
     .post({
       type: 'bis',

@@ -131,7 +131,7 @@ async function submitIndexerTx(
     order_hash,
   );
 
-  return indexer(env().INDEXER_URL)
+  return indexer(env().INDEXER_API_URL)
     .txs()
     .post({
       type: 'bis',
