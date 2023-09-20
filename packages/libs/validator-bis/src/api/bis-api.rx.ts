@@ -1,3 +1,4 @@
+import { getLogger } from '@alex-b20/commons';
 import memoizee from 'memoizee';
 import { from } from 'rxjs';
 import { getBISQueue } from '../queue';
@@ -8,7 +9,16 @@ const getActivityOnBlockMemoized = memoizee(getActivityOnBlock, {
   maxAge: 300e3,
 });
 export function getActivityOnBlock$(block: number) {
-  return from(getBISQueue().add(() => getActivityOnBlockMemoized(block)));
+  return from(
+    getBISQueue().add(() =>
+      getActivityOnBlockMemoized(block).then(r => {
+        getLogger('bis-queue').debug(
+          `queue size: ${getBISQueue().size}. getActivityOnBlock`,
+        );
+        return r;
+      }),
+    ),
+  );
 }
 
 const getBalanceOnBlockMemoized = memoizee(getBalanceOnBlock, {
@@ -18,6 +28,13 @@ const getBalanceOnBlockMemoized = memoizee(getBalanceOnBlock, {
 
 export function getBalanceOnBlock$(address: string, block: number) {
   return from(
-    getBISQueue().add(() => getBalanceOnBlockMemoized(address, block)),
+    getBISQueue().add(() =>
+      getBalanceOnBlockMemoized(address, block).then(r => {
+        getLogger('bis-queue').debug(
+          `queue size: ${getBISQueue().size}. getBalanceOnBlock`,
+        );
+        return r;
+      }),
+    ),
   );
 }
