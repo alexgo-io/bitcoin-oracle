@@ -1,3 +1,4 @@
+import { expoRetry } from '@alex-b20/commons';
 import {
   DTOIndexer,
   Enums,
@@ -33,13 +34,17 @@ export function indexer(baseURL: string) {
     block() {
       return {
         async get(params: { block_hash: string }) {
-          return got
-            .get(`${url}/block-hash/${params.block_hash}`, {
-              headers: headers(),
-              parseJson: body =>
-                m.database('indexer', 'blocks').parse(JSON.parse(body)),
-            })
-            .json<ModelIndexer<'blocks'>>();
+          return expoRetry(
+            () =>
+              got
+                .get(`${url}/block-hash/${params.block_hash}`, {
+                  headers: headers(),
+                  parseJson: body =>
+                    m.database('indexer', 'blocks').parse(JSON.parse(body)),
+                })
+                .json<ModelIndexer<'blocks'>>(),
+            'get block by block-hash',
+          );
         },
       };
     },
