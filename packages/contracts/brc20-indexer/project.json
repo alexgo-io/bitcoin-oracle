@@ -90,8 +90,8 @@
             "principal": "${STACKS_DEPLOYER_ACCOUNT_ADDRESS}",
             "contracts": [
               "clarity-bitcoin",
-              "indexer-dev-preview-4",
-              "indexer-registry-dev-preview-1"
+              "indexer",
+              "indexer-registry"
             ],
             "packageName": "../codegenImport"
           }
