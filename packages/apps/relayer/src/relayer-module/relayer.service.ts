@@ -8,6 +8,8 @@ import {
 import { toBuffer } from '@alex-b20/commons';
 import { Inject, Logger } from '@nestjs/common';
 import { chunk } from 'lodash';
+import { exhaustMap, from, interval } from 'rxjs';
+import { Transaction } from 'scure-btc-signer-cjs';
 import { env } from '../env';
 import { RelayerService } from './relayer.interface';
 import { RelayerRepository } from './relayer.repository';
@@ -23,7 +25,17 @@ export class DefaultRelayerService implements RelayerService {
     public readonly relayerRepository: RelayerRepository,
   ) {}
 
-  async startRelayer(): Promise<void> {
+  async startRelayer() {
+    interval(env().RELAYER_SYNC_POLL_INTERVAL)
+      .pipe(
+        exhaustMap(() => {
+          return from(this.syncOnce());
+        }),
+      )
+      .subscribe();
+  }
+
+  async syncOnce(): Promise<void> {
     const pendingTxs = await this.relayerRepository.getPendingSubmitTx();
     const rows = pendingTxs.rows;
 
@@ -32,8 +44,16 @@ export class DefaultRelayerService implements RelayerService {
         .encode;
     type TxManyInput = Parameters<typeof TxManyInputEncoder>[0][number];
     const txManyInputs: TxManyInput[] = [];
+    this.logger.log(`processing: ${rows.length} rows transactions`);
 
     for (const tx of rows) {
+      if (tx.tx_id.length > 4096) {
+        const tx_id = Transaction.fromRaw(tx.tx_id).id;
+        this.logger.error(
+          `tx_id too long: ${tx.tx_id.length}, tx_id: ${tx_id}, output: ${tx.output}, satpoint: ${tx.satpoint}`,
+        );
+        continue;
+      }
       const isIndexedTx = await this.stacks.readonlyCaller()(
         kIndexerRegistryName,
         'get-bitcoin-tx-indexed-or-fail',

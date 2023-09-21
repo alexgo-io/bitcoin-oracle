@@ -65,7 +65,7 @@ export class DefaultBitcoinSyncWorkerService
   async syncFrom(fromHeight: number, toHeight: number) {
     this.logger.verbose(`syncing from ${fromHeight} to ${toHeight}`);
     await getBitcoinBlockHeaderByHeights(
-      range(fromHeight, toHeight),
+      range(fromHeight, toHeight + 1),
       async (h, height) => {
         await this.insertBlock(h, height);
       },

@@ -36,7 +36,8 @@ export class RelayerRepository {
                             from target_txs
                                    join indexer.proofs on target_txs.id = proofs.id
                             where target_txs.tx_id in (select tx_id
-                                                        from qualified_txs))
+                                                        from qualified_txs)
+                              and length(target_txs.tx_id) <= 4096)
         select *
         from with_proof;
       `);
