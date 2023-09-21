@@ -1,2 +1,3 @@
 export * from './api';
-export * from './validator'
+export * from './module/validator-hiro.module';
+export * from './validator';
