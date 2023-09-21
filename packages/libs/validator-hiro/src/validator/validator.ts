@@ -1,6 +1,7 @@
 import { indexer } from '@alex-b20/api-client';
 import { generateOrderHash, signOrderHash } from '@alex-b20/brc20-indexer';
 import { Unobservable } from '@alex-b20/commons';
+import { Enums } from '@alex-b20/types';
 import { getBitcoinTx$ } from '@alex-b20/validator';
 import { Logger } from '@nestjs/common';
 import {
@@ -14,7 +15,7 @@ import {
 } from 'rxjs';
 import { HiroType } from '../api';
 import { getAllActivitiesOnBlock$, getAllBalancesOnBlock$ } from '../api/api';
-import { env } from "../env";
+import { env } from '../env';
 
 const logger = new Logger('hiro', { timestamp: true });
 function getBalance(balances: HiroType<'balance'>[] | null, tick: string) {
@@ -92,7 +93,7 @@ async function submitIndexerTx(
   return indexer(env().INDEXER_API_URL)
     .txs()
     .post({
-      type: 'bis',
+      type: Enums.IndexerType.enum.hiro,
       header: tx.header,
       height: tx.height,
       tx_id: tx.tx,
