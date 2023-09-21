@@ -8,6 +8,7 @@ import {
 import { toBuffer } from '@alex-b20/commons';
 import { Inject, Logger } from '@nestjs/common';
 import { chunk } from 'lodash';
+import { Transaction } from 'scure-btc-signer-cjs';
 import { env } from '../env';
 import { RelayerService } from './relayer.interface';
 import { RelayerRepository } from './relayer.repository';
@@ -34,6 +35,14 @@ export class DefaultRelayerService implements RelayerService {
     const txManyInputs: TxManyInput[] = [];
 
     for (const tx of rows) {
+      if (tx.tx_id.length > 4096) {
+        const tx_id = Transaction.fromRaw(tx.tx_id).id;
+        this.logger.error(
+          `tx_id too long: ${tx.tx_id.length}, tx_id: ${tx_id}, output: ${tx.output}, satpoint: ${tx.satpoint}`,
+        );
+        continue;
+      }
+      console.log(`hash size; ${tx.tx_id.length}`);
       const isIndexedTx = await this.stacks.readonlyCaller()(
         kIndexerRegistryName,
         'get-bitcoin-tx-indexed-or-fail',

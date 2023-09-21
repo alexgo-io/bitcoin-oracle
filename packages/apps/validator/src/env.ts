@@ -12,7 +12,7 @@ export const env = memoizee(() =>
       VALIDATOR_FORCE_SYNC_START: z.coerce.number().nullish(),
       VALIDATOR_FORCE_SYNC_END: z.coerce.number().nullish(),
       INDEXER_API_URL: z.string().default('http://localhost:8716'),
-      INDEXER_TYPE: Enums.IndexerType.default('hiro'),
+      INDEXER_TYPE: Enums.IndexerType.default('bis'),
     },
     runtimeEnv: process.env,
   }),
