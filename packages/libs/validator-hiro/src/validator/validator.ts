@@ -13,8 +13,11 @@ import {
   mergeMap,
   retry,
 } from 'rxjs';
-import { HiroType } from '../api';
-import { getAllActivitiesOnBlock$, getAllBalancesOnBlock$ } from '../api/api';
+import {
+  HiroType,
+  getAllActivitiesOnBlock$,
+  getAllBalancesOnBlock$,
+} from '../api';
 import { env } from '../env';
 
 const logger = new Logger('hiro', { timestamp: true });
@@ -25,8 +28,7 @@ function getBalance(balances: HiroType<'balance'>[] | null, tick: string) {
   return balances.find(balance => balance.ticker === tick);
 }
 export function getHiroTxOnBlock$(block: number) {
-  // TODO: remove total limits
-  return getAllActivitiesOnBlock$(block, 60, 240).pipe(
+  return getAllActivitiesOnBlock$(block, 60).pipe(
     retry(10),
     map(result => {
       return result.filter(activity => activity.transfer_send != null);
