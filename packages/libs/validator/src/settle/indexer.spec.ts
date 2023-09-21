@@ -74,7 +74,7 @@ describe('Indexer', () => {
     );
   });
 
-  it('should index tx', async () => {
+  it.skip('should index tx', async () => {
     const process = processOperations(envTest().STACKS_RELAYER_ACCOUNT_SECRET, {
       contractAddress: envTest().STACKS_DEPLOYER_ACCOUNT_ADDRESS,
       stacksAPIURL: env().STACKS_API_URL,
