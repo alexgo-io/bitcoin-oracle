@@ -17,6 +17,13 @@ const HiroAmountBigIntSchema = z.preprocess((val, ctx) => {
 }, z.bigint());
 const HiroAddressToPKScriptSchema = z.preprocess((val, ctx) => {
   if (typeof val === 'string') {
+    if (val.length === 0) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `Invalid HiroAddressToPKScriptSchema: empty string`,
+      });
+      return z.never();
+    }
     try {
       return Buffer.from(OutScript.encode(Address().decode(val))).toString(
         'hex',
@@ -76,7 +83,6 @@ const transfer_send = z.object({
 });
 
 const activity = z.object({
-  address: HiroAddressToPKScriptSchema,
   block_hash: z.string(),
   block_height: z.number(),
   inscription_id: z.string(),
@@ -104,7 +110,6 @@ const balance = z.object({
   overall_balance: HiroAmountBigIntSchema,
 });
 
-/// exports
 export const HiroAPISchema = {
   activity: createPaginationSchema(activity),
   balance: createPaginationSchema(balance),
