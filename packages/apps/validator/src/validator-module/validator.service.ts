@@ -2,7 +2,7 @@ import { ApiClient } from '@alex-b20/api-client';
 import { getCurrentBitcoinHeader } from '@alex-b20/bitcoin';
 import { ValidatorProcessInterface } from '@alex-b20/validator';
 import { Inject, Logger } from '@nestjs/common';
-import { concatMap, exhaustMap, from, interval, map, range, tap } from 'rxjs';
+import { concatMap, exhaustMap, from, interval, map, range } from 'rxjs';
 import { env } from '../env';
 import { ValidatorService } from './validator.interface';
 
@@ -30,16 +30,11 @@ export class DefaultValidatorService implements ValidatorService {
   }
 
   syncBlockHeight(from: number, to: number) {
-    if (to - from > 1000 || to - from < 0) {
-      throw new Error(`invalid from/to: ${from}/${to}`);
-    }
+    // if (to - from > 1000 || to - from < 0) {
+    //   throw new Error(`invalid from/to: ${from}/${to}`);
+    // }
     return range(from, to).pipe(
-      concatMap(height =>
-        this.processor.processBlock$(height).pipe(map(() => height)),
-      ),
-      tap(value => {
-        this.logger.log(`+ processed block ${value}`);
-      }),
+      concatMap(height => this.processor.processBlock$(height)),
     );
   }
 
@@ -68,7 +63,11 @@ export class DefaultValidatorService implements ValidatorService {
   }
 
   async start() {
-    this.logger.log(`Starting ValidatorService - ${env().INDEXER_API_URL}`);
+    this.logger.log(
+      `Starting ValidatorService - ${env().INDEXER_API_URL} - ${
+        env().INDEXER_TYPE
+      }`,
+    );
 
     const forceStart = env().VALIDATOR_FORCE_SYNC_START;
     const forceEnd = env().VALIDATOR_FORCE_SYNC_END;
