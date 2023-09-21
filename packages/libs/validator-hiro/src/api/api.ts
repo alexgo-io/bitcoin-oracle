@@ -1,3 +1,4 @@
+import { getLogger } from '@alex-b20/commons';
 import memoizee from 'memoizee';
 import { EMPTY, expand, from, reduce } from 'rxjs';
 import { getHiroQueue } from '../queue';
@@ -12,9 +13,22 @@ const getActivityOnBlockMemoized = memoizee(getActivityOnBlock, {
 export function getActivityOnBlock$(block: number, offset = 0, limit = 60) {
   return from(
     getHiroQueue().add(() =>
-      getActivityOnBlockMemoized(block, offset, limit).then(
-        HiroAPISchema.activity.parse,
-      ),
+      getActivityOnBlockMemoized(block, offset, limit).then(activity => {
+        const result = HiroAPISchema.activity.safeParse(activity);
+        if (result.success) {
+          return result.data;
+        }
+
+        getLogger('hiro-api-parsing').error(
+          `Failed to parse activity on block ${block} at offset ${offset} with limit ${limit}, activity: ${JSON.stringify(
+            activity,
+          )}`,
+        );
+
+        throw new Error(
+          result.error.issues.map(issue => issue.message).join('\n'),
+        );
+      }),
     ),
   );
 }
