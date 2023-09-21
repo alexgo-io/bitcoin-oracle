@@ -1,7 +1,6 @@
 {
   "name": "validators-e2e",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["validators"],
   "targets": {
     "e2e": {
       "executor": "@nx/jest:jest",
