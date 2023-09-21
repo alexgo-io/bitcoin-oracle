@@ -2,7 +2,9 @@
   "name": "@alex-b20/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "postinstall": "patch-package"
+  },
   "private": true,
   "dependencies": {
     "@iarna/toml": "^2.2.5",
@@ -43,8 +45,11 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@milahu/patch-package": "^6.4.14",
     "@nestjs/schematics": "^10.0.2",
     "@nestjs/testing": "^10.2.4",
+    "@nx-tools/container-metadata": "^5.0.3",
+    "@nx-tools/nx-container": "^5.0.3",
     "@nx/devkit": "^16.7.4",
     "@nx/eslint-plugin": "16.8.0-beta.3",
     "@nx/jest": "16.8.0-beta.3",
@@ -54,8 +59,9 @@
     "@nx/node": "16.8.0-beta.3",
     "@nx/webpack": "16.8.0-beta.3",
     "@nx/workspace": "16.8.0-beta.3",
-    "@nx-tools/container-metadata": "^5.0.3",
-    "@nx-tools/nx-container": "^5.0.3",
+    "@oclif/core": "2.15.0",
+    "@oclif/plugin-help": "5.2.19",
+    "@oclif/plugin-plugins": "3.4.0",
     "@stacks/stacks-blockchain-api-types": "^7.3.0",
     "@swc-node/register": "^1.6.7",
     "@swc/core": "^1.3.82",
@@ -64,10 +70,6 @@
     "@types/fs-extra": "^11.0.1",
     "@types/jest": "^29.5.4",
     "@types/lodash": "^4.14.197",
-    "@oclif/core": "2.15.0",
-    "@oclif/plugin-help": "5.2.19",
-    "@oclif/plugin-plugins": "3.4.0",
-    "oclif": "3.14.0",
     "@types/memoizee": "^0.4.8",
     "@types/node": "20.5.9",
     "@types/ramda": "^0.29.3",
@@ -85,6 +87,7 @@
     "npm-check-updates": "^16.13.2",
     "nx": "16.8.0-beta.3",
     "nx-cloud": "latest",
+    "oclif": "3.14.0",
     "prettier": "^2.8.8",
     "prettier-plugin-organize-imports": "^3.2.3",
     "source-map-support": "^0.5.21",

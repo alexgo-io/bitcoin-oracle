@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const IndexerType = z.enum(['bis', 'okx']);
+const IndexerType = z.enum(['bis', 'okx', 'hiro']);
 const ServiceType = z.enum(['RELAYER', 'VALIDATOR']);
 
 export const Enums = {
