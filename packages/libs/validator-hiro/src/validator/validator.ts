@@ -39,7 +39,7 @@ export function getHiroTxOnBlock$(block: number) {
       ]).pipe(
         retry(5),
         map(([oldBalances, newBalances]) => {
-          logger.verbose(`got data for ${activity.tx_id}`);
+          logger.verbose(`got [getHiroTxOnBlock$] for ${activity.tx_id}`);
 
           const oldBalance = getBalance(oldBalances, activity.ticker);
           const newBalance = getBalance(newBalances, activity.ticker);
