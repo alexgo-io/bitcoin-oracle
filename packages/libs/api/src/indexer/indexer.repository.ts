@@ -1,6 +1,6 @@
 import { SQL } from '@alex-b20/commons';
 import { PersistentService } from '@alex-b20/persistent';
-import { APIOf, IndexerType } from '@alex-b20/types';
+import { APIOf, ValidatorName } from '@alex-b20/types';
 import { Inject } from '@nestjs/common';
 import { Address, OutScript, Transaction } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
@@ -100,7 +100,7 @@ export class IndexerRepository {
     `);
   }
 
-  async getLatestBlockNumberOfProof(type: IndexerType) {
+  async getLatestBlockNumberOfProof(type: ValidatorName) {
     return this.persistentService.pgPool.one(SQL.type(
       z.object({ lasted_block_number: z.bigint().nullable() }),
     )`
@@ -109,7 +109,7 @@ export class IndexerRepository {
     `);
   }
 
-  // async getMissingBlockNumbers(type: IndexerType) {
+  // async getMissingBlockNumbers(type: ValidatorName) {
   //   return this.persistentService.pgPool.query(SQL.type(
   //     z.object({
   //       missing_blocks: z.array(z.bigint()),

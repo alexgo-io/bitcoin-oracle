@@ -1,5 +1,5 @@
 import { expoRetry } from '@alex-b20/commons';
-import { APIOf, Enums, IndexerType, m, ModelIndexer } from '@alex-b20/types';
+import { APIOf, Enums, ValidatorName, m, ModelIndexer } from '@alex-b20/types';
 import got from 'got-cjs';
 import memoizee from 'memoizee';
 import { env } from '../env';
@@ -44,10 +44,10 @@ export function indexer(baseURL: string) {
     },
     latest_block_number() {
       return {
-        async get(params: { type: IndexerType | string }) {
+        async get(params: { type: ValidatorName | string }) {
           return got
             .get(
-              `${url}/latest-block-number/${Enums.IndexerType.parse(
+              `${url}/latest-block-number/${Enums.ValidatorName.parse(
                 params.type,
               )}`,
               {

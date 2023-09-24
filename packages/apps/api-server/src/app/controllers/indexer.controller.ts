@@ -1,5 +1,5 @@
 import { Indexer } from '@alex-b20/api';
-import { IndexerType, m } from '@alex-b20/types';
+import { ValidatorName, m } from '@alex-b20/types';
 import {
   Body,
   Controller,
@@ -44,7 +44,7 @@ export class IndexerController {
   }
 
   @Get('/latest-block-number/:type')
-  async latestBlockNumberOfProof(@Param('type') type: IndexerType) {
+  async latestBlockNumberOfProof(@Param('type') type: ValidatorName) {
     return IndexerLatestBlockNumberOfProofResponseSchema.parse({
       latest_block_number:
         (await this.indexer.getLatestBlockNumberOfProof(type))?.toString() ??

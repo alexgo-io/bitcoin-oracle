@@ -97,7 +97,7 @@ async function submitIndexerTx(
   return indexer(env().INDEXER_API_URL)
     .txs()
     .post({
-      type: Enums.IndexerType.enum.hiro,
+      type: Enums.ValidatorName.enum.hiro,
       header: tx.header,
       height: tx.height,
       tx_hash: tx.tx,
