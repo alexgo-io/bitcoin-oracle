@@ -10,7 +10,7 @@ import { Enums } from './enums-model';
  */
 
 const txs = z.object({
-  type: Enums.IndexerType,
+  type: Enums.ValidatorName,
   header: BufferSchema,
   height: BigIntSchema,
   tx_hash: BufferSchema,
@@ -38,7 +38,7 @@ const txs = z.object({
  */
 
 const proofs = z.object({
-  type: Enums.IndexerType,
+  type: Enums.ValidatorName,
   order_hash: BufferSchema,
   signature: BufferSchema,
   signer: z.string(),
