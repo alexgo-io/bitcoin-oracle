@@ -17,7 +17,7 @@ export default class Decode extends Command {
 
     const cv = hexToCV(hex);
     const val =
-      indexerContracts['indexer-dev-preview-4'][
+      indexerContracts['indexer'][
         'index-tx-many'
       ].input[0].type.decode(cv);
 
