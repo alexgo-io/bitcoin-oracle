@@ -17,7 +17,7 @@ export class DefaultValidatorService implements ValidatorService {
     const latestBlocks = await this.api
       .indexer()
       .latest_block_number()
-      .get({ type: env().INDEXER_TYPE });
+      .get({ type: env().VALIDATOR_NAME });
     this.logger.warn(`got: ${JSON.stringify(latestBlocks)}`);
 
     return latestBlocks.latest_block_number
@@ -65,7 +65,7 @@ export class DefaultValidatorService implements ValidatorService {
   async start() {
     this.logger.log(
       `Starting ValidatorService - ${env().INDEXER_API_URL} - ${
-        env().INDEXER_TYPE
+        env().VALIDATOR_NAME
       }`,
     );
 

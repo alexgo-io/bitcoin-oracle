@@ -6,7 +6,7 @@ import { ValidatorModule } from './validator-module/validator.module';
 
 async function main() {
   const app = await NestFactory.create(
-    ValidatorModule.withValidator(env().INDEXER_TYPE),
+    ValidatorModule.withValidator(env().VALIDATOR_NAME),
     {},
   );
   const logger = app.get(Logger);
