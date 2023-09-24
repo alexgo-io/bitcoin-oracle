@@ -100,7 +100,7 @@ async function submitIndexerTx(
       type: Enums.IndexerType.enum.hiro,
       header: tx.header,
       height: tx.height,
-      tx_id: tx.tx,
+      tx_hash: tx.tx,
       satpoint: tx.location.satpoint.toString(),
       proof_hashes: tx.proof.hashes,
       tx_index: tx.proof['tx-index'].toString(10),

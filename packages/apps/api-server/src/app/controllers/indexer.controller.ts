@@ -14,7 +14,7 @@ import { z } from 'zod';
 import { AuthGuard } from '../guards/auth.guard';
 
 export class IndexerTxsCreateInput extends createZodDto(
-  m.database('indexer', 'tx_with_proofs'),
+  m.api('txs', 'request', 'dto'),
 ) {}
 
 const IndexerLatestBlockNumberOfProofResponseSchema = z.object({
