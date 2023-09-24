@@ -1,7 +1,8 @@
 import { SQL } from '@alex-b20/commons';
 import { PersistentService } from '@alex-b20/persistent';
-import { IndexerType, ModelOf } from '@alex-b20/types';
+import { APIOf, IndexerType } from '@alex-b20/types';
 import { Inject } from '@nestjs/common';
+import { Address, OutScript, Transaction } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
 
 export class IndexerRepository {
@@ -10,12 +11,12 @@ export class IndexerRepository {
     private readonly persistentService: PersistentService,
   ) {}
 
-  async upsertTxWithProof(tx: ModelOf<'indexer', 'tx_with_proofs'>) {
+  async upsertTxWithProof(tx: APIOf<'txs', 'request', 'dto'>) {
     return this.persistentService.pgPool.transaction(async conn => {
       const existing = await conn.maybeOne(SQL.typeAlias('indexer_txs')`
                 select *
                 from indexer.txs
-                where tx_id = ${SQL.binary(tx.tx_id)}
+                where tx_hash = ${SQL.binary(tx.tx_hash)}
                   and header = ${SQL.binary(tx.header)}
                   and output = ${tx.output.toString()}
                 ;
@@ -25,11 +26,18 @@ export class IndexerRepository {
         return;
       }
 
+      const tx_id = Buffer.from(Transaction.fromRaw(tx.tx_hash).id);
+      const from_address = Address().encode(OutScript.decode(tx.from));
+      const to_address = Address().encode(OutScript.decode(tx.to));
+
       await conn.query(SQL.typeAlias('void')`
                 INSERT INTO indexer.txs(type,
                                         header,
                                         height,
+                                        tx_hash,
                                         tx_id,
+                                        from_address,
+                                        to_address,
                                         proof_hashes,
                                         tx_index,
                                         tree_depth,
@@ -44,7 +52,10 @@ export class IndexerRepository {
                 VALUES (${tx.type},
                         ${SQL.binary(tx.header)},
                         ${tx.height.toString()},
-                        ${SQL.binary(tx.tx_id)},
+                        ${SQL.binary(tx.tx_hash)},
+                        ${SQL.binary(tx_id)},
+                        ${from_address},
+                        ${to_address},
                         ${SQL.array(tx.proof_hashes, 'bytea')},
                         ${tx.tx_index.toString()},
                         ${tx.tree_depth.toString()},
@@ -59,14 +70,14 @@ export class IndexerRepository {
             `);
 
       await conn.query(SQL.typeAlias('void')`
-                INSERT INTO indexer.proofs(tx_id,
+                INSERT INTO indexer.proofs(tx_hash,
                                            output,
                                            satpoint,
                                            type,
                                            order_hash,
                                            signature,
                                            signer)
-                VALUES (${SQL.binary(tx.tx_id)},
+                VALUES (${SQL.binary(tx.tx_hash)},
                         ${tx.output.toString()},
                         ${tx.satpoint.toString()},
                         ${tx.type},

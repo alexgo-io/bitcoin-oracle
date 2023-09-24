@@ -7,7 +7,8 @@
     "@alex-b20/persistent": "*",
     "@nestjs/common": "^10.2.4",
     "@alex-b20/commons": "*",
-    "zod": "^3.22.2"
+    "zod": "^3.22.2",
+    "scure-btc-signer-cjs": "^1.0.1"
   },
   "type": "commonjs",
   "main": "./src/index.js",

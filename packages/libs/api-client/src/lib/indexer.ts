@@ -1,11 +1,5 @@
 import { expoRetry } from '@alex-b20/commons';
-import {
-  DTOIndexer,
-  Enums,
-  IndexerType,
-  m,
-  ModelIndexer,
-} from '@alex-b20/types';
+import { APIOf, Enums, IndexerType, m, ModelIndexer } from '@alex-b20/types';
 import got from 'got-cjs';
 import memoizee from 'memoizee';
 import { env } from '../env';
@@ -21,13 +15,13 @@ export function indexer(baseURL: string) {
   return {
     txs() {
       return {
-        async post(params: DTOIndexer<'txs_with_proofs'>) {
+        async post(params: APIOf<'txs', 'request', 'json'>) {
           return got
             .post(`${url}/txs`, {
               headers: headers(),
               json: params,
             })
-            .json<DTOIndexer<'txs_post_response'>>();
+            .json<APIOf<'txs', 'response', 'json'>>();
         },
       };
     },

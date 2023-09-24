@@ -30,12 +30,16 @@ create table indexer.blocks
 
 create table indexer.txs
 (
-  "id"           bytea unique generated always as (digest(lower(encode(tx_id, 'hex')) ||
-                                                         ':' || cast(output as text) ||
-                                                         ':' || cast(satpoint as text), 'sha256')) STORED,
-  "tx_id"        bytea       not null,
+  "id"           bytea unique generated always as (digest(lower(encode(tx_hash, 'hex')) ||
+                                                          ':' || cast(output as text) ||
+                                                          ':' || cast(satpoint as text), 'sha256')) STORED,
+  "tx_hash"      bytea       not null,
   "output"       integer     not null,
   "satpoint"     integer     not null,
+
+  "tx_id"        bytea       not null,
+  "from_address" text        not null,
+  "to_address"   text        not null,
 
   "type"         text        not null,
   "header"       bytea       not null,
@@ -57,10 +61,10 @@ CREATE INDEX tx_height ON indexer.txs (height);
 
 create table indexer.proofs
 (
-  "id"         bytea generated always as (digest(lower(encode(tx_id, 'hex')) ||
-                                                ':' || cast(output as text) ||
-                                                ':' || cast(satpoint as text), 'sha256')) STORED,
-  "tx_id"      bytea       not null,
+  "id"         bytea generated always as (digest(lower(encode(tx_hash, 'hex')) ||
+                                                 ':' || cast(output as text) ||
+                                                 ':' || cast(satpoint as text), 'sha256')) STORED,
+  "tx_hash"    bytea       not null,
   "output"     integer     not null,
   "satpoint"   integer     not null,
 
@@ -76,10 +80,10 @@ CREATE INDEX proof_order_hash ON indexer.proofs (order_hash);
 
 create table indexer.submitted_tx
 (
-  "id"                    bytea generated always as (digest(lower(encode(tx_id, 'hex')) ||
-                                                           ':' || cast(output as text) ||
-                                                           ':' || cast(satpoint as text), 'sha256')) STORED,
-  "tx_id"                 bytea       not null,
+  "id"                    bytea generated always as (digest(lower(encode(tx_hash, 'hex')) ||
+                                                            ':' || cast(output as text) ||
+                                                            ':' || cast(satpoint as text), 'sha256')) STORED,
+  "tx_hash"               bytea       not null,
   "satpoint"              integer     not null,
   "output"                integer     not null,
   "stacks_tx_id"          bytea       null,
@@ -92,7 +96,9 @@ create table indexer.submitted_tx
 );
 
 create schema indexer_config;
-create table indexer_config.relayer_configs (
+create table indexer_config.relayer_configs
+(
   minimal_proof_count integer not null
 );
-insert into indexer_config.relayer_configs (minimal_proof_count) values (1);
+insert into indexer_config.relayer_configs (minimal_proof_count)
+values (1);
