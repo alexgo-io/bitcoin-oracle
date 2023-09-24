@@ -1,9 +1,7 @@
-import { IndexerType, ModelOf } from '@alex-b20/types';
+import { APIOf, IndexerType, ModelOf } from '@alex-b20/types';
 
 export abstract class Indexer {
-  abstract upsertTxWithProof(
-    tx: ModelOf<'indexer', 'tx_with_proofs'>,
-  ): Promise<void>;
+  abstract upsertTxWithProof(tx: APIOf<'txs', 'request', 'dto'>): Promise<void>;
   abstract getBlockByBlockHash(
     header: string,
   ): Promise<ModelOf<'indexer', 'blocks'> | null>;

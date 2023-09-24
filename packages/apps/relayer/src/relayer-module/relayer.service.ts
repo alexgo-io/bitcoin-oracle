@@ -47,7 +47,7 @@ export class DefaultRelayerService implements RelayerService {
     this.logger.log(`processing: ${rows.length} rows transactions`);
 
     for (const tx of rows) {
-      if (tx.tx_id.length > 4096) {
+      if (tx.tx_hash.length > 4096) {
         const tx_id = Transaction.fromRaw(tx.tx_id).id;
         this.logger.error(
           `tx_id too long: ${tx.tx_id.length}, tx_id: ${tx_id}, output: ${tx.output}, satpoint: ${tx.satpoint}`,
@@ -114,7 +114,7 @@ export class DefaultRelayerService implements RelayerService {
           result => {
             return this.relayerRepository.upsertSubmittedTx(
               inputs.map(input => ({
-                tx_id: Buffer.from(input.tx['bitcoin-tx']),
+                tx_hash: Buffer.from(input.tx['bitcoin-tx']),
                 satpoint: input.tx.offset,
                 output: input.tx.output,
                 stacks_tx_id:

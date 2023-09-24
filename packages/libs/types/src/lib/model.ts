@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ZodType } from 'zod';
-import { indexerJSON } from './api-model';
+import { indexerAPI } from './api-model';
 import { Enums } from './enums-model';
 import { indexer } from './indexer-model';
 
@@ -8,10 +9,13 @@ export const Models = {
     indexer,
   },
   json: {
-    indexer: indexerJSON,
+    indexer: indexerAPI,
   },
   enums: {
     ...Enums,
+  },
+  api: {
+    txs: indexerAPI.txs,
   },
 };
 
@@ -36,6 +40,12 @@ export type DTOIndexer<T extends keyof (typeof Models.json)['indexer']> = DTO<
   T
 >;
 
+export type APIOf<
+  M extends keyof typeof Models.api,
+  R extends keyof (typeof Models.api)[M],
+  T extends keyof (typeof Models.api)[M][R],
+> = (typeof Models.api)[M][R][T] extends ZodType<infer O, any, any> ? O : never;
+
 export const m = {
   json<
     S extends keyof typeof Models.json,
@@ -52,5 +62,27 @@ export const m = {
   enums<T extends keyof typeof Models.enums>(type: T) {
     return Models.enums[type];
   },
-};
+  api3<
+    M extends keyof typeof Models.api,
+    R extends keyof (typeof Models.api)[M],
+    T extends keyof (typeof Models.api)[M][R],
+    N extends `${M}:${R extends string ? R : never}:${T extends string
+      ? T
+      : never}`,
+  >(
+    name: N,
+  ): (typeof Models.api)[M][R][T] extends ZodType<infer O, any, any>
+    ? O
+    : never {
+    const [schema, request, type] = name.split(':') as [M, R, T];
+    return Models.api[schema][request][type] as any;
+  },
 
+  api<
+    M extends keyof typeof Models.api,
+    R extends keyof (typeof Models.api)[M],
+    T extends keyof (typeof Models.api)[M][R],
+  >(schema: M, request: R, type: T) {
+    return Models.api[schema][request][type];
+  },
+};
