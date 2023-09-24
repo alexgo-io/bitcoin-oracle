@@ -17,7 +17,7 @@ function createResponseSchema<ItemType extends z.ZodTypeAny>(
   });
 }
 
-const blocks = z.object({
+const blocks_response_json = z.object({
   height: BigIntStringSchema,
   header: BufferStringSchema,
   block_hash: BufferStringSchema,
@@ -60,7 +60,11 @@ function makeTxs<T extends 'json' | 'dto'>(type: T) {
 }
 
 export const indexerAPI = {
-  blocks,
+  blocks: {
+    response: {
+      json: blocks_response_json,
+    },
+  },
   txs: {
     request: {
       json: makeTxs('json'),
