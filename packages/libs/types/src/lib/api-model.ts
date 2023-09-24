@@ -38,7 +38,7 @@ function makeBigInt<T extends 'json' | 'dto'>(
 
 function makeTxs<T extends 'json' | 'dto'>(type: T) {
   return z.object({
-    type: Enums.IndexerType,
+    type: Enums.ValidatorName,
     header: makeBuffer(type),
     height: makeBigInt(type),
     tx_hash: makeBuffer(type),

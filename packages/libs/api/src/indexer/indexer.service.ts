@@ -1,4 +1,4 @@
-import { APIOf, IndexerType } from '@alex-b20/types';
+import { APIOf, ValidatorName } from '@alex-b20/types';
 import { Inject } from '@nestjs/common';
 import { Indexer } from './indexer.interface';
 import { IndexerRepository } from './indexer.repository';
@@ -19,7 +19,7 @@ export class DefaultIndexer implements Indexer {
     );
   }
 
-  async getLatestBlockNumberOfProof(type: IndexerType) {
+  async getLatestBlockNumberOfProof(type: ValidatorName) {
     return (await this.indexerRepository.getLatestBlockNumberOfProof(type))
       .lasted_block_number;
   }
