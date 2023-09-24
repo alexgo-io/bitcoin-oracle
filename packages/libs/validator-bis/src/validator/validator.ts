@@ -139,7 +139,7 @@ async function submitIndexerTx(
       type: 'bis',
       header: tx.header,
       height: tx.height,
-      tx_id: tx.tx,
+      tx_hash: tx.tx,
       satpoint: tx.satpoint,
       proof_hashes: tx.proof.hashes,
       tx_index: tx.proof['tx-index'].toString(10),

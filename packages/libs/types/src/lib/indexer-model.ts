@@ -13,7 +13,10 @@ const txs = z.object({
   type: Enums.IndexerType,
   header: BufferSchema,
   height: BigIntSchema,
+  tx_hash: BufferSchema,
   tx_id: BufferSchema,
+  from_address: z.string(),
+  to_address: z.string(),
   output: BigIntSchema,
   satpoint: BigIntSchema,
   proof_hashes: z.array(BufferSchema),
@@ -44,7 +47,7 @@ const proofs = z.object({
 const tx_with_proofs = txs.merge(proofs);
 
 const submitted_tx = z.object({
-  tx_id: BufferSchema,
+  tx_hash: BufferSchema,
   satpoint: BigIntSchema,
   output: BigIntSchema,
   stacks_tx_id: BufferSchema.nullable(),

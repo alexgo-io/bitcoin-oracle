@@ -14,7 +14,7 @@ import { z } from 'zod';
 import { AuthGuard } from '../guards/auth.guard';
 
 export class IndexerTxsCreateInput extends createZodDto(
-  m.database('indexer', 'tx_with_proofs'),
+  m.api('txs', 'request', 'dto'),
 ) {}
 
 const IndexerLatestBlockNumberOfProofResponseSchema = z.object({
@@ -33,13 +33,13 @@ export class IndexerController {
   @Post('/txs')
   async txs(@Body() tx: IndexerTxsCreateInput) {
     await this.indexer.upsertTxWithProof(tx);
-    return m.json('indexer', 'txs_post_response').parse({ message: 'ok' });
+    return m.api('txs', 'response', 'json').parse({ message: 'ok' });
   }
 
   @Get('/block-hash/:block_hash')
   async blockNumberOfHeader(@Param('block_hash') block_hash: string) {
     return m
-      .json('indexer', 'blocks')
+      .api('blocks', 'response', 'json')
       .parse(await this.indexer.getBlockByBlockHash(block_hash));
   }
 

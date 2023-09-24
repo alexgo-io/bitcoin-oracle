@@ -19,9 +19,9 @@ export class RelayerRepository {
                             where not exists (select 1
                                               from indexer.submitted_tx
                                               where txs.id = submitted_tx.id)),
-             qualified_txs as (select target_txs.tx_id, count(*)
+             qualified_txs as (select target_txs.tx_hash, count(*)
                                from target_txs
-                               group by target_txs.tx_id
+                               group by target_txs.tx_hash
                                having count(*) >=
                                       (select minimal_proof_count
                                        from indexer_config.relayer_configs
@@ -35,9 +35,9 @@ export class RelayerRepository {
                                    proofs.signature
                             from target_txs
                                    join indexer.proofs on target_txs.id = proofs.id
-                            where target_txs.tx_id in (select tx_id
+                            where target_txs.tx_hash in (select tx_hash
                                                         from qualified_txs)
-                              and length(target_txs.tx_id) <= 4096)
+                              and length(target_txs.tx_hash) <= 4096)
         select *
         from with_proof;
       `);
@@ -51,14 +51,14 @@ export class RelayerRepository {
     return this.persistent.pgPool.transaction(async conn => {
       for (const tx of params) {
         await conn.query(SQL.typeAlias('indexer_submitted_tx')`
-          insert into indexer.submitted_tx (tx_id,
+          insert into indexer.submitted_tx (tx_hash,
                                             satpoint,
                                             output,
                                             stacks_tx_id,
                                             broadcast_result_type,
                                             error,
                                             submitted_by)
-          VALUES (${SQL.binary(tx.tx_id)},
+          VALUES (${SQL.binary(tx.tx_hash)},
                   ${tx.satpoint.toString()},
                   ${tx.output.toString()},
                   ${
