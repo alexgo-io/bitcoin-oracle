@@ -54,8 +54,14 @@ export class IndexerController {
         null,
     });
   }
+}
 
-  @Get('/debug/query')
+@Controller('/debug')
+export class DebugIndexerController {
+  private readonly logger = new Logger(DebugIndexerController.name);
+  constructor(@Inject(Indexer) private readonly indexer: Indexer) {}
+
+  @Get('/query')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async debugQuery(@Query() params: APIOf<'debug_txs', 'request', 'json'>) {
     this.logger.debug(`debugQuery: ${JSON.stringify(params)}`);
