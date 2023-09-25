@@ -94,5 +94,5 @@ volumes:
   stacks_blockchain_chaindata: {}
 #networks:
 #  default:
-#    name: alex_b20_network
+#    name: brc20_oracle_network
 #    external: true
