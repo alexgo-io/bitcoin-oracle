@@ -7,6 +7,7 @@ export const env = createEnv({
     ALEX_B20_API_CREDENTIALS: z.string().default('{}'),
     API_PORT: z.coerce.number().default(8716),
     HEARTBEAT_URL: z.string().optional(),
+    DISABLE_AUTH: z.coerce.boolean().default(false),
   },
   runtimeEnv: process.env,
 });
