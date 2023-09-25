@@ -102,3 +102,27 @@ Services that implements the validator process interface:
 
 - [validator-bis](packages/libs/validator-bis/src/module/validator-bis.service.ts)
 - [validator-hiro](packages/libs/validator-hiro/src/module/validator-hiro.service.ts)
+
+## DEBUG API
+
+Debug API is used for getting the debug information. The endpoint is `${HOST}/debug/query`. The query parameter is defined in [RequestQuery](packages/libs/types/src/lib/api-model.ts) as follow:
+
+```
+  tx_id: Buffer;
+  tx_hash: Buffer;
+  output: bigint;
+  satpoint: bigint;
+  from_address: string;
+  to_address: string;
+  from: Buffer;
+  to: Buffer;
+  tick: string;
+  amt: bigint;
+  order_hash: Buffer;
+  signature: Buffer;
+  signer: string;
+  height: bigint;
+  stacks_tx_id: Buffer;
+  block_hash: Buffer;
+  block_header: Buffer;
+```
