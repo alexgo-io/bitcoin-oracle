@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 import { env } from '../../env';
 
 const getSecretKeys: () => { [key: string]: string } = memoizee(() => {
-  return JSON.parse(env.ALEX_B20_API_CREDENTIALS);
+  return JSON.parse(env.BRC20_ORACLE_API_CREDENTIALS);
 });
 
 const logger = new Logger('api-server', { timestamp: true });
