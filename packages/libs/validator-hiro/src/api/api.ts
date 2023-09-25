@@ -1,4 +1,4 @@
-import { getLogger } from '@alex-b20/commons';
+import { getLogger } from '@brc20-oracle/commons';
 import memoizee from 'memoizee';
 import { EMPTY, expand, from, reduce } from 'rxjs';
 import { getHiroQueue } from '../queue';

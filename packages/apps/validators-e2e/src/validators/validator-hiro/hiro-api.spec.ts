@@ -3,7 +3,7 @@ import {
   getActivityOnBlock,
   getAllActivitiesOnBlock$,
   getBalanceOnBlock,
-} from '@alex-b20/validator-hiro';
+} from '@brc20-oracle/validator-hiro';
 
 describe('Hiro API', function () {
   it('should get activity', async function () {

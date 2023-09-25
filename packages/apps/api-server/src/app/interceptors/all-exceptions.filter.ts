@@ -2,7 +2,7 @@ import {
   parseErrorDetail,
   stringifyJSON,
   toErrorDetailsHttpException,
-} from '@alex-b20/commons';
+} from '@brc20-oracle/commons';
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { env } from '../../env';

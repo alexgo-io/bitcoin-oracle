@@ -1,4 +1,4 @@
-import { m } from '@alex-b20/types';
+import { m } from '@brc20-oracle/types';
 import { createSqlTag } from 'slonik';
 import z from 'zod';
 

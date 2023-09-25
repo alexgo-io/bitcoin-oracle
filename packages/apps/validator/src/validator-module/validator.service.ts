@@ -1,6 +1,6 @@
-import { ApiClient } from '@alex-b20/api-client';
-import { getCurrentBitcoinHeader } from '@alex-b20/bitcoin';
-import { ValidatorProcessInterface } from '@alex-b20/validator';
+import { ApiClient } from '@brc20-oracle/api-client';
+import { getCurrentBitcoinHeader } from '@brc20-oracle/bitcoin';
+import { ValidatorProcessInterface } from '@brc20-oracle/validator';
 import { Inject, Logger } from '@nestjs/common';
 import { concatMap, exhaustMap, from, interval, map, range } from 'rxjs';
 import { env } from '../env';

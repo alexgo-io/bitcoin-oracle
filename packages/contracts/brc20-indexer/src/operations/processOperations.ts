@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { stringifyJSON } from '@alex-b20/commons';
+import { stringifyJSON } from '@brc20-oracle/commons';
 import { StacksMainnet, StacksMocknet, StacksNetwork } from '@stacks/network';
 import {
   AccountDataResponse,

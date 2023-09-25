@@ -12,7 +12,7 @@ import {
   RetryInfo,
   StatusCode,
   TypedErrorInfo,
-} from '@alex-b20/types';
+} from '@brc20-oracle/types';
 import {
   BadRequestException,
   ForbiddenException,

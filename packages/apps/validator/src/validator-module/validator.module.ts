@@ -1,7 +1,7 @@
-import { PinoLoggerModule } from '@alex-b20/commons';
-import { Enums, ValidatorName } from '@alex-b20/types';
-import { ValidatorBisModule } from '@alex-b20/validator-bis';
-import { ValidatorHiroModule } from '@alex-b20/validator-hiro';
+import { PinoLoggerModule } from '@brc20-oracle/commons';
+import { Enums, ValidatorName } from '@brc20-oracle/types';
+import { ValidatorBisModule } from '@brc20-oracle/validator-bis';
+import { ValidatorHiroModule } from '@brc20-oracle/validator-hiro';
 import { DynamicModule, Module } from '@nestjs/common';
 import ValidatorServiceProvider from './validator.service';
 

@@ -1,5 +1,5 @@
 {
-  "name": "@alex-b20/cli",
+  "name": "@brc20-oracle/cli",
   "version": "0.1.0",
   "oclif": {
     "commands": "src/commands",
