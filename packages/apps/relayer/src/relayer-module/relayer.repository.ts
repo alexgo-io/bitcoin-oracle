@@ -1,7 +1,7 @@
-import { SQL } from '@alex-b20/commons';
+import { SQL } from '@brc20-oracle/commons';
 
-import { PersistentService } from '@alex-b20/persistent';
-import { ModelIndexer } from '@alex-b20/types';
+import { PersistentService } from '@brc20-oracle/persistent';
+import { ModelIndexer } from '@brc20-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
 
 export class RelayerRepository {

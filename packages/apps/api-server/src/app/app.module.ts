@@ -1,5 +1,5 @@
-import { IndexerModule } from '@alex-b20/api';
-import { PinoLoggerModule } from '@alex-b20/commons';
+import { IndexerModule } from '@brc20-oracle/api';
+import { PinoLoggerModule } from '@brc20-oracle/commons';
 import { Module } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';

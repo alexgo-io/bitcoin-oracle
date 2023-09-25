@@ -1,4 +1,4 @@
-import { expoRetry, noAwait } from '@alex-b20/commons';
+import { expoRetry, noAwait } from '@brc20-oracle/commons';
 import got from 'got-cjs';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
 import PQueue from 'p-queue';

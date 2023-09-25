@@ -1,5 +1,5 @@
-import { Indexer } from '@alex-b20/api';
-import { APIOf, ValidatorName, m } from '@alex-b20/types';
+import { Indexer } from '@brc20-oracle/api';
+import { APIOf, ValidatorName, m } from '@brc20-oracle/types';
 import {
   Body,
   Controller,

@@ -1,4 +1,4 @@
-import { BigIntSchema } from '@alex-b20/types';
+import { BigIntSchema } from '@brc20-oracle/types';
 import { Address, OutScript } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
 

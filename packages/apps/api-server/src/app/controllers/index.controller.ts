@@ -6,7 +6,7 @@ export class IndexController {
   @ApiExcludeEndpoint()
   @Get()
   index(): string {
-    return 'ALEX-B20 API';
+    return 'brc20-oracle API';
   }
 
   @ApiExcludeEndpoint()

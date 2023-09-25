@@ -1,4 +1,4 @@
-import { APIOf, ValidatorName } from '@alex-b20/types';
+import { APIOf, ValidatorName } from '@brc20-oracle/types';
 import { Inject } from '@nestjs/common';
 import { Indexer } from './indexer.interface';
 import { IndexerRepository } from './indexer.repository';

@@ -1,4 +1,4 @@
-import { PersistentModule } from '@alex-b20/persistent';
+import { PersistentModule } from '@brc20-oracle/persistent';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
@@ -20,7 +20,7 @@ describe('IndexController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('ALEX-B20 API');
+      .expect('brc20-oracle API');
   });
 
   it('should /healthz (GET)', () => {
