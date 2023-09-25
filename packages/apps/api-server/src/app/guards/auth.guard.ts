@@ -25,6 +25,9 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
+    if (env.DISABLE_AUTH) {
+      return true;
+    }
     const request = context.switchToHttp().getRequest();
     const { authorization } = request.headers;
     const serviceType = Enums.ServiceType.safeParse(

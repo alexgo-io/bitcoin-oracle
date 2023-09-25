@@ -1,4 +1,5 @@
-import { APIOf, ValidatorName, ModelOf } from '@alex-b20/types';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { APIOf, ModelOf, ValidatorName } from '@alex-b20/types';
 
 export abstract class Indexer {
   abstract upsertTxWithProof(tx: APIOf<'txs', 'request', 'dto'>): Promise<void>;
@@ -8,4 +9,8 @@ export abstract class Indexer {
   abstract getLatestBlockNumberOfProof(
     type: ValidatorName,
   ): Promise<bigint | null>;
+
+  abstract findDebugInfo(
+    params: APIOf<'debug_txs', 'request', 'dto'>,
+  ): Promise<readonly APIOf<'debug_txs', 'response', 'dto'>[]>;
 }

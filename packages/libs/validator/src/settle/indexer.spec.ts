@@ -27,51 +27,56 @@ describe('Indexer', () => {
       '6d5ba7f257f634ee7ec3220263dc3c5c6df13e6d5f3f61957250ceed1c43666ai0',
     tx_id: randomBytes(32).toString('hex'),
     new_pkscript: '0014ad42179475826f3cae94c1c3bae2797c6933a53a',
-    new_wallet: 'bc1q44pp09r4sfhnet55c8pm4cne035n8ff6t0lhgz',
     old_pkscript: '0014870dba15d6b5a0563b6df472359a7ef75d21f26c',
-    old_wallet: 'bc1qsuxm59wkkks9vwmd73ertxn77awjrunv8x0nv6',
     tick: 'rdex',
   } as const;
 
-  it.skip('should get correct order hash', async () => {
+  it('should get correct order hash', async () => {
     const hash = await readonlyCall(kIndexerContractName, 'hash-tx', {
       tx: {
-        from: Buffer.from(bisData.old_wallet),
-        to: Buffer.from(bisData.new_wallet),
+        from: Buffer.from(bisData.old_pkscript),
+        to: Buffer.from(bisData.new_pkscript),
         output: 10n,
         offset: 0n,
         tick: 'sat',
         amt: 1000n,
         'bitcoin-tx': Buffer.from(
           '000000000000000000037299db1bd5b0872f8379d9971fcca36171825ee9cc83',
+          'hex',
         ),
         'from-bal': BigInt(bisData.amount),
         'to-bal': BigInt(bisData.amount),
       },
     });
-    expect(Buffer.from(hash).toString('hex')).toMatchInlineSnapshot(
-      `"dbb25a3f54069f8a64abc88bc423547ae7fb4338b1dca1733a591705e97b8184"`,
+    const hashFromContract = Buffer.from(hash).toString('hex');
+    expect(hashFromContract).toMatchInlineSnapshot(
+      `"52e242a0caeab30b78e4eea88a4ab6afab0383d4f4207a9865ee9e4d48d8b7cd"`,
     );
 
     const orderHash = structuredDataHash(
       tupleCV({
-        from: bufferCV(Buffer.from(bisData.old_wallet)),
-        to: bufferCV(Buffer.from(bisData.new_wallet)),
+        from: bufferCV(Buffer.from(bisData.old_pkscript)),
+        to: bufferCV(Buffer.from(bisData.new_pkscript)),
         output: uintCV(10n),
+        offset: uintCV(0n),
         tick: stringCV('sat', 'utf8'),
         amt: uintCV(1000n),
         'bitcoin-tx': bufferCV(
           Buffer.from(
             '000000000000000000037299db1bd5b0872f8379d9971fcca36171825ee9cc83',
+            'hex',
           ),
         ),
         'from-bal': uintCV(BigInt(bisData.amount)),
         'to-bal': uintCV(BigInt(bisData.amount)),
       }),
     );
-    expect(orderHash.toString('hex')).toMatchInlineSnapshot(
-      `"dbb25a3f54069f8a64abc88bc423547ae7fb4338b1dca1733a591705e97b8184"`,
+    const hashLocal = orderHash.toString('hex');
+    expect(hashLocal).toMatchInlineSnapshot(
+      `"52e242a0caeab30b78e4eea88a4ab6afab0383d4f4207a9865ee9e4d48d8b7cd"`,
     );
+
+    expect(hashFromContract).toEqual(hashLocal);
   });
 
   it.skip('should index tx', async () => {
@@ -115,8 +120,8 @@ describe('Indexer', () => {
               'tx-index': 0n,
             },
             tx: {
-              from: Buffer.from(bisData.old_wallet),
-              to: Buffer.from(bisData.new_wallet),
+              from: Buffer.from(bisData.old_pkscript),
+              to: Buffer.from(bisData.new_pkscript),
               output: 10n,
               offset: 0n,
               tick: 'sat',
