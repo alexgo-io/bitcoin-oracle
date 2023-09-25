@@ -1,7 +1,7 @@
-import { indexerContracts } from '@alex-b20/brc20-indexer';
+import { indexerContracts } from '@brc20-oracle/brc20-indexer';
 import { Args, Command } from '@oclif/core';
 import { hexToCV } from '@stacks/transactions';
-import { stringifyJSON } from "@alex-b20/commons";
+import { stringifyJSON } from "@brc20-oracle/commons";
 
 export default class Decode extends Command {
   static description = 'Say hello world';

@@ -1,7 +1,7 @@
-import { indexer } from '@alex-b20/api-client';
-import { generateOrderHash, signOrderHash } from '@alex-b20/brc20-indexer';
-import { Unobservable } from '@alex-b20/commons';
-import { getBitcoinTx$ } from '@alex-b20/validator';
+import { indexer } from '@brc20-oracle/api-client';
+import { generateOrderHash, signOrderHash } from '@brc20-oracle/brc20-indexer';
+import { Unobservable } from '@brc20-oracle/commons';
+import { getBitcoinTx$ } from '@brc20-oracle/validator';
 import { Logger } from '@nestjs/common';
 import assert from 'assert';
 import {

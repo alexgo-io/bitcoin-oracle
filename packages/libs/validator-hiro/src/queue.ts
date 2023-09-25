@@ -1,4 +1,4 @@
-import { getGlobalPQueue } from '@alex-b20/commons';
+import { getGlobalPQueue } from '@brc20-oracle/commons';
 
 export const getHiroQueue = () => {
   return getGlobalPQueue('bis-queue', {});

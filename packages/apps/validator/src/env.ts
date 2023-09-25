@@ -1,4 +1,4 @@
-import { Enums } from '@alex-b20/types';
+import { Enums } from '@brc20-oracle/types';
 import { createEnv } from '@t3-oss/env-core';
 import memoizee from 'memoizee';
 import { z } from 'zod';

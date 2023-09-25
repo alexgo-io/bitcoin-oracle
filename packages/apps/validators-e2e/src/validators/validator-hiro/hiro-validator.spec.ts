@@ -4,9 +4,9 @@ import {
   getHiroTxOnBlock$,
   getIndexerTxOnBlock$,
   processBlock$,
-} from '@alex-b20/validator-hiro';
+} from '@brc20-oracle/validator-hiro';
 
-jest.mock('@alex-b20/api-client', () => {
+jest.mock('@brc20-oracle/api-client', () => {
   return {
     indexer: () => {
       return {

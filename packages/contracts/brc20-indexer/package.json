@@ -1,5 +1,5 @@
 {
-  "name": "@alex-b20/brc20-indexer",
+  "name": "@brc20-oracle/brc20-indexer",
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
@@ -12,7 +12,7 @@
     "@nestjs/common": "^10.2.4",
     "@iarna/toml": "^2.2.5",
     "lodash": "^4.17.21",
-    "@alex-b20/commons": "*",
+    "@brc20-oracle/commons": "*",
     "@stacks/stacks-blockchain-api-types": "^7.3.0",
     "got-cjs": "^12.5.4",
     "pino": "^8.15.0",

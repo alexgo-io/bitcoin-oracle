@@ -1,5 +1,5 @@
-import { expoRetry } from '@alex-b20/commons';
-import { APIOf, Enums, ValidatorName, m, ModelIndexer } from '@alex-b20/types';
+import { expoRetry } from '@brc20-oracle/commons';
+import { APIOf, Enums, ValidatorName, m, ModelIndexer } from '@brc20-oracle/types';
 import got from 'got-cjs';
 import memoizee from 'memoizee';
 import { env } from '../env';
