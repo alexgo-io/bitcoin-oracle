@@ -10,7 +10,7 @@ export const env = memoizee(() =>
       INDEXER_API_URL: z.string().default('http://localhost:8716'),
       STACKS_VALIDATOR_ACCOUNT_ADDRESS: z.string().min(1),
       STACKS_VALIDATOR_ACCOUNT_SECRET: z.string().min(1),
-      VALIDATOR_GENESIS_BLOCK_NUMBER: z.number().default(806108),
+      VALIDATOR_GENESIS_BLOCK_HEIGHT: z.coerce.number(),
     },
     runtimeEnv: process.env,
   }),
