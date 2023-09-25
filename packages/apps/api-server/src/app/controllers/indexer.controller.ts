@@ -1,12 +1,14 @@
 import { Indexer } from '@alex-b20/api';
-import { ValidatorName, m } from '@alex-b20/types';
+import { APIOf, ValidatorName, m } from '@alex-b20/types';
 import {
   Body,
   Controller,
   Get,
   Inject,
+  Logger,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { createZodDto } from 'nestjs-zod';
@@ -28,6 +30,7 @@ export class IndexerLatestBlockNumberOfProofResponseDto extends createZodDto(
 @UseGuards(AuthGuard)
 @Controller('/api/v1/indexer')
 export class IndexerController {
+  private readonly logger = new Logger(IndexerController.name);
   constructor(@Inject(Indexer) private readonly indexer: Indexer) {}
 
   @Post('/txs')
@@ -50,5 +53,16 @@ export class IndexerController {
         (await this.indexer.getLatestBlockNumberOfProof(type))?.toString() ??
         null,
     });
+  }
+
+  @Get('/debug/query')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async debugQuery(@Query() params: APIOf<'debug_txs', 'request', 'json'>) {
+    this.logger.debug(`debugQuery: ${JSON.stringify(params)}`);
+
+    const dto = m.api('debug_txs', 'request', 'dto').parse(params);
+    const txs = await this.indexer.findDebugInfo(dto);
+
+    return txs.map(t => m.api('debug_txs', 'response', 'json').parse(t));
   }
 }

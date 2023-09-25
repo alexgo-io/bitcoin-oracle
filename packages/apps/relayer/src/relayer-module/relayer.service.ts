@@ -80,7 +80,7 @@ export class DefaultRelayerService implements RelayerService {
           tx: {
             output: tx.output,
             offset: tx.satpoint,
-            'bitcoin-tx': tx.tx_id,
+            'bitcoin-tx': tx.tx_hash,
             from: tx.from,
             tick: tx.tick,
             'from-bal': tx.from_bal,

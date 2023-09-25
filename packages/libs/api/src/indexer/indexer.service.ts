@@ -23,6 +23,10 @@ export class DefaultIndexer implements Indexer {
     return (await this.indexerRepository.getLatestBlockNumberOfProof(type))
       .lasted_block_number;
   }
+
+  async findDebugInfo(params: APIOf<'debug_txs', 'request', 'dto'>) {
+    return await this.indexerRepository.findDebugInfo(params);
+  }
 }
 
 const IndexerProvider = {

@@ -118,15 +118,15 @@ async function submitIndexerTx(
   );
 
   const order_hash = generateOrderHash({
-    amt: BigInt(tx.amount),
     from: Buffer.from(tx.old_pkscript, 'hex'),
-    offset: BigInt(tx.satpoint),
-    'from-bal': BigInt(tx.from_bal),
     to: Buffer.from(tx.new_pkscript, 'hex'),
-    'to-bal': BigInt(tx.to_bal),
-    'bitcoin-tx': Buffer.from(tx.tx, 'hex'),
-    tick: tx.tick,
     output: BigInt(tx.vout),
+    offset: BigInt(tx.satpoint),
+    tick: tx.tick,
+    amt: BigInt(tx.amount),
+    'bitcoin-tx': Buffer.from(tx.tx, 'hex'),
+    'from-bal': BigInt(tx.from_bal),
+    'to-bal': BigInt(tx.to_bal),
   });
   const signature = await signOrderHash(
     env().STACKS_VALIDATOR_ACCOUNT_SECRET,
