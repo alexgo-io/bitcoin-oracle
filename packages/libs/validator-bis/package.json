@@ -1,5 +1,5 @@
 {
-  "name": "@brc20-oracle/validator-bis",
+  "name": "@bitcoin-oracle/validator-bis",
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
@@ -9,10 +9,10 @@
     "got-cjs": "^12.5.4",
     "@t3-oss/env-core": "^0.6.1",
     "@nestjs/common": "^10.2.4",
-    "@brc20-oracle/validator": "*",
-    "@brc20-oracle/commons": "*",
-    "@brc20-oracle/api-client": "*",
-    "@brc20-oracle/brc20-indexer": "*"
+    "@bitcoin-oracle/validator": "*",
+    "@bitcoin-oracle/commons": "*",
+    "@bitcoin-oracle/api-client": "*",
+    "@bitcoin-oracle/brc20-indexer": "*"
   },
   "type": "commonjs",
   "main": "./src/index.js",

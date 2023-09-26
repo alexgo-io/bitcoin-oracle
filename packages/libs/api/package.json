@@ -1,12 +1,12 @@
 {
-  "name": "@brc20-oracle/api",
+  "name": "@bitcoin-oracle/api",
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
-    "@brc20-oracle/types": "*",
-    "@brc20-oracle/persistent": "*",
+    "@bitcoin-oracle/types": "*",
+    "@bitcoin-oracle/persistent": "*",
     "@nestjs/common": "^10.2.4",
-    "@brc20-oracle/commons": "*",
+    "@bitcoin-oracle/commons": "*",
     "zod": "^3.22.2",
     "scure-btc-signer-cjs": "^1.0.1"
   },

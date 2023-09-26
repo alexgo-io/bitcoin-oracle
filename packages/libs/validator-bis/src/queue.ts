@@ -1,4 +1,4 @@
-import { getGlobalPQueue } from '@brc20-oracle/commons';
+import { getGlobalPQueue } from '@bitcoin-oracle/commons';
 
 export const getBISQueue = () => {
   return getGlobalPQueue('bis-queue', {

@@ -1,4 +1,4 @@
-import { stringifyJSON } from '@brc20-oracle/commons';
+import { stringifyJSON } from '@bitcoin-oracle/commons';
 import { Logger } from '@nestjs/common';
 import {
   SchemaValidationError,

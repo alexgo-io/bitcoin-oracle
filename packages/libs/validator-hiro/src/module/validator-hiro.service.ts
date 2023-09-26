@@ -1,4 +1,4 @@
-import { ValidatorProcessInterface } from '@brc20-oracle/validator';
+import { ValidatorProcessInterface } from '@bitcoin-oracle/validator';
 import { Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { processBlock$ } from '../validator/validator';

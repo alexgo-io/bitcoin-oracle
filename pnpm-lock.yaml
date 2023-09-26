@@ -332,13 +332,13 @@ importers:
 
   packages/libs/api:
     dependencies:
-      '@brc20-oracle/commons':
+      '@bitcoin-oracle/commons':
         specifier: '*'
         version: link:../commons
-      '@brc20-oracle/persistent':
+      '@bitcoin-oracle/persistent':
         specifier: '*'
         version: link:../persistent
-      '@brc20-oracle/types':
+      '@bitcoin-oracle/types':
         specifier: '*'
         version: link:../types
       '@nestjs/common':
@@ -356,10 +356,10 @@ importers:
 
   packages/libs/api-client:
     dependencies:
-      '@brc20-oracle/commons':
+      '@bitcoin-oracle/commons':
         specifier: '*'
         version: link:../commons
-      '@brc20-oracle/types':
+      '@bitcoin-oracle/types':
         specifier: '*'
         version: link:../types
       '@t3-oss/env-core':
@@ -380,7 +380,7 @@ importers:
 
   packages/libs/bitcoin:
     dependencies:
-      '@brc20-oracle/commons':
+      '@bitcoin-oracle/commons':
         specifier: '*'
         version: link:../commons
       '@t3-oss/env-core':
@@ -413,7 +413,7 @@ importers:
 
   packages/libs/brc20-indexer:
     dependencies:
-      '@brc20-oracle/commons':
+      '@bitcoin-oracle/commons':
         specifier: '*'
         version: link:../commons
       '@iarna/toml':
@@ -467,13 +467,13 @@ importers:
 
   packages/libs/validator:
     dependencies:
-      '@brc20-oracle/api-client':
+      '@bitcoin-oracle/api-client':
         specifier: '*'
         version: link:../api-client
-      '@brc20-oracle/bitcoin':
+      '@bitcoin-oracle/bitcoin':
         specifier: '*'
         version: link:../bitcoin
-      '@brc20-oracle/commons':
+      '@bitcoin-oracle/commons':
         specifier: '*'
         version: link:../commons
       '@t3-oss/env-core':
@@ -500,16 +500,16 @@ importers:
 
   packages/libs/validator-bis:
     dependencies:
-      '@brc20-oracle/api-client':
+      '@bitcoin-oracle/api-client':
         specifier: '*'
         version: link:../api-client
-      '@brc20-oracle/brc20-indexer':
+      '@bitcoin-oracle/brc20-indexer':
         specifier: '*'
         version: link:../brc20-indexer
-      '@brc20-oracle/commons':
+      '@bitcoin-oracle/commons':
         specifier: '*'
         version: link:../commons
-      '@brc20-oracle/validator':
+      '@bitcoin-oracle/validator':
         specifier: '*'
         version: link:../validator
       '@nestjs/common':
@@ -536,19 +536,19 @@ importers:
 
   packages/libs/validator-hiro:
     dependencies:
-      '@brc20-oracle/api-client':
+      '@bitcoin-oracle/api-client':
         specifier: '*'
         version: link:../api-client
-      '@brc20-oracle/brc20-indexer':
+      '@bitcoin-oracle/brc20-indexer':
         specifier: '*'
         version: link:../brc20-indexer
-      '@brc20-oracle/commons':
+      '@bitcoin-oracle/commons':
         specifier: '*'
         version: link:../commons
-      '@brc20-oracle/types':
+      '@bitcoin-oracle/types':
         specifier: '*'
         version: link:../types
-      '@brc20-oracle/validator':
+      '@bitcoin-oracle/validator':
         specifier: '*'
         version: link:../validator
       '@nestjs/common':

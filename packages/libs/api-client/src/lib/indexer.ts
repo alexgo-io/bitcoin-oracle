@@ -1,5 +1,5 @@
-import { expoRetry } from '@brc20-oracle/commons';
-import { APIOf, Enums, ValidatorName, m, ModelIndexer } from '@brc20-oracle/types';
+import { expoRetry } from '@bitcoin-oracle/commons';
+import { APIOf, Enums, ValidatorName, m, ModelIndexer } from '@bitcoin-oracle/types';
 import got from 'got-cjs';
 import memoizee from 'memoizee';
 import { env } from '../env';
