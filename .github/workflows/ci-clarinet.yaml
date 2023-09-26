@@ -4,7 +4,7 @@ name: CI Clarinet
 on:
   push:
     paths:
-      - 'packages/contracts/brc20-indexer-v1'
+      - 'packages/contracts/brc20-indexer-v1/**'
 
 concurrency:
   group: 'ci-clarinet-${{ github.ref }}'
