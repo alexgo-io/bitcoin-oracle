@@ -3,10 +3,11 @@ name: CI Clarinet
 # Controls when the action will run.
 on:
   push:
-
+    paths:
+      - 'packages/contracts/brc20-indexer-v1'
 
 concurrency:
-  group: 'ci-${{ github.ref }}'
+  group: 'ci-clarinet-${{ github.ref }}'
   cancel-in-progress: true
 
 jobs:
@@ -20,11 +21,11 @@ jobs:
       # - name: Install Deps
       #   run: |
       #     ./scripts/clarinet_manager.sh install
-      - name: "Check contract"
+      - name: 'Check contract'
         uses: docker://hirosystems/clarinet:1.5.4
         with:
-          entrypoint: "bash"
-          args: -c "clarinet check"
+          entrypoint: 'bash'
+          args: -c "cd packages/contracts/brc20-indexer-v1; clarinet check"
   test:
     name: test - ${{ github.ref_name }}
     runs-on: ubuntu-22.04
@@ -35,8 +36,8 @@ jobs:
       # - name: Install Deps
       #   run: |
       #     ./scripts/clarinet_manager.sh install
-      - name: "Execute test suite"
+      - name: 'Execute test suite'
         uses: docker://hirosystems/clarinet:1.5.4
         with:
-          entrypoint: "bash"
-          args: -c "clarinet test"
+          entrypoint: 'bash'
+          args: -c "cd packages/contracts/brc20-indexer-v1; clarinet test"
