@@ -1,11 +1,11 @@
-import ElectrumClient from "electrum-client-sl";
-import { StacksMainnet } from "@stacks/network";
-import { hexToBytes, bytesToHex } from "@stacks/common";
-import { btcToSats, outputToAddress, reverseBuffer } from "./utils";
-import { Transaction } from "micro-btc-signer";
+import { bytesToHex, hexToBytes } from '@stacks/common';
+import { StacksMainnet } from '@stacks/network';
+import ElectrumClient from 'electrum-client-sl';
+import { Transaction } from 'scure-btc-signer-cjs';
+import { reverseBuffer } from './utils';
 
 export const network = new StacksMainnet();
-export const STACKS_API_URL = "https://api.hiro.so"
+export const STACKS_API_URL = 'https://api.hiro.so';
 
 export async function getCurrentStackNodeInfo() {
   return fetch(`${STACKS_API_URL}/v2/info`).then(r => r.json());
@@ -16,11 +16,15 @@ export async function getCurrentBurnBlock() {
 }
 
 export async function getCurrentBlock() {
-  return getCurrentStackNodeInfo().then(r => Number(r['stacks_tip_height'] + 1));
+  return getCurrentStackNodeInfo().then(r =>
+    Number(r['stacks_tip_height'] + 1),
+  );
 }
 
 export async function getStackNodeInfoByBurnHeight(burnHeight: number) {
-  return fetch(`${STACKS_API_URL}/extended/v1/block/by_burn_block_height/${burnHeight}`).then(r => r.json());
+  return fetch(
+    `${STACKS_API_URL}/extended/v1/block/by_burn_block_height/${burnHeight}`,
+  ).then(r => r.json());
 }
 
 export async function getStacksHeightByBurnHeight(burnHeight: number) {
@@ -29,9 +33,9 @@ export async function getStacksHeightByBurnHeight(burnHeight: number) {
 
 export function getElectrumConfig() {
   return {
-    host: "fortress.qtornado.com",
+    host: 'fortress.qtornado.com',
     port: 443,
-    protocol: "ssl",
+    protocol: 'ssl',
   };
 }
 
@@ -40,12 +44,12 @@ export function getElectrumClient() {
   return new ElectrumClient(
     electrumConfig.host,
     electrumConfig.port,
-    electrumConfig.protocol
+    electrumConfig.protocol,
   );
 }
 
 export async function withElectrumClient<T = void>(
-  cb: (client: ElectrumClient) => Promise<T>
+  cb: (client: ElectrumClient) => Promise<T>,
 ): Promise<T> {
   const electrumClient = getElectrumClient();
   const client = electrumClient;
@@ -69,13 +73,13 @@ interface StacksBlockByHeight {
 export async function findStacksBlockAtHeight(
   height: number,
   prevBlocks: string[],
-  electrumClient: ElectrumClient
+  electrumClient: ElectrumClient,
 ): Promise<StacksBlockByHeight> {
   const [header, stacksHeight] = await Promise.all([
     electrumClient.blockchain_block_header(height),
     getStacksHeight(height),
   ]);
-  if (typeof stacksHeight !== "undefined") {
+  if (typeof stacksHeight !== 'undefined') {
     return {
       header,
       prevBlocks,
@@ -105,29 +109,29 @@ export async function fetchTx(txid: string, client: ElectrumClient) {
 }
 
 export async function getTxPending(txid: string) {
-  return withElectrumClient(async (client) => {
+  return withElectrumClient(async client => {
     const tx = await fetchTx(txid, client);
     return tx;
   });
 }
 
 export async function getTxData(txid: string) {
-  return withElectrumClient(async (electrumClient) => {
+  return withElectrumClient(async electrumClient => {
     const tx = await electrumClient.blockchain_transaction_get(txid, true);
-    if (typeof tx.confirmations === "undefined" || tx.confirmations < 1) {
-      throw new Error("Tx is not confirmed");
+    if (typeof tx.confirmations === 'undefined' || tx.confirmations < 1) {
+      throw new Error('Tx is not confirmed');
     }
 
     const burnHeight = await confirmationsToHeight(tx.confirmations);
     const { header, stacksHeight, prevBlocks } = await findStacksBlockAtHeight(
       burnHeight,
       [],
-      electrumClient
+      electrumClient,
     );
 
     const merkle = await electrumClient.blockchain_transaction_getMerkle(
       txid,
-      burnHeight
+      burnHeight,
     );
     const hashes = merkle.merkle.map((hash: any) => {
       return reverseBuffer(hexToBytes(hash));
@@ -160,11 +164,16 @@ export async function getTxData(txid: string) {
       height: stacksHeight,
       tx: tx.hex,
       header: header,
-      prevTxidVout: tx.vin.map((e: any) => { return { txid: e.txid, vout: e.vout } }),
+      prevTxidVout: tx.vin.map((e: any) => {
+        return { txid: e.txid, vout: e.vout };
+      }),
       scriptPubKey: tx.vout.map((e: any) => e.scriptPubKey.hex),
-      proof: { "tx-index": proofArg.txIndex, "hashes": proofArg.hashes.map((h) => bytesToHex(h)), "tree-depth": proofArg.treeDepth }
-    }
-
+      proof: {
+        'tx-index': proofArg.txIndex,
+        hashes: proofArg.hashes.map(h => bytesToHex(h)),
+        'tree-depth': proofArg.treeDepth,
+      },
+    };
   });
 }
 
@@ -175,20 +184,15 @@ export async function confirmationsToHeight(confirmations: number) {
 }
 
 if (require.main === module) {
-
   if (process.argv.length < 3) {
-    console.log(
-      `Usage: pnpm tsx scripts/extract-tx-data.ts "[txID]"`,
-    );
+    console.log(`Usage: pnpm tsx scripts/extract-tx-data.ts "[txID]"`);
     process.exit(0);
   }
 
-  const [
-    _runner,
-    _binaryFilePath,
-    txID
-  ] = process.argv;
+  const [_runner, _binaryFilePath, txID] = process.argv;
 
   //2e951004175cbc4a0a421efbb5a42aaa4e4708c1bc15a08ab03e41020336603b
-  getTxData(txID).then((output) => { console.log(output) });
+  getTxData(txID).then(output => {
+    console.log(output);
+  });
 }
