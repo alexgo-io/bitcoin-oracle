@@ -29,9 +29,9 @@ runs:
           ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           node_modules
           ~/.local/bin
-        key: ${{ runner.os }}-deps-cache-${{ hashFiles('pnpm-lock.yaml', '.tool-versions', '~/.local/bin/direnv') }}
+        key: ${{ runner.os }}-deps-cache-0-${{ hashFiles('pnpm-lock.yaml', '.tool-versions', '~/.local/bin/direnv') }}
         restore-keys: |
-          ${{ runner.os }}-deps-cache-
+          ${{ runner.os }}-deps-cache-0-
     - name: install dependencies
       shell: bash
       run: pnpm i --frozen-lockfile

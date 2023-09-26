@@ -38,9 +38,9 @@ jobs:
         with:
           path: |
             /tmp/.buildx-cache-${{ inputs.project }}
-          key: ${{ runner.os }}-buildx-cache-0-${{ inputs.project }}-${{ hashFiles('pnpm-lock.yaml', '.node-version', 'package.json', 'patches/**') }}
+          key: ${{ runner.os }}-buildx-cache-1-${{ inputs.project }}-${{ hashFiles('pnpm-lock.yaml', '.node-version', 'package.json', 'patches/**') }}
           restore-keys: |
-            ${{ runner.os }}-buildx-cache-0-${{ inputs.project }}-
+            ${{ runner.os }}-buildx-cache-1-${{ inputs.project }}-
       - name: Build And Push
         id: 'build'
         shell: bash

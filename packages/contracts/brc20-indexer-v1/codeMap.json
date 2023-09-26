@@ -1,167 +1,167 @@
 {
-  "377555009": {
+  "377555010": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:107"
+    "comment": "clarity-bitcoin.clar:108"
   },
-  "377555038": {
+  "377555039": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:115"
-  },
-  "377555066": {
-    "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:122"
+    "comment": "clarity-bitcoin.clar:116"
   },
   "377555067": {
-    "code": "ERR-VARSLICE-TOO-LONG",
+    "code": "ERR-OUT-OF-BOUNDS",
     "comment": "clarity-bitcoin.clar:123"
   },
   "377555068": {
-    "code": "ERR-TOO-MANY-TXINS",
+    "code": "ERR-VARSLICE-TOO-LONG",
     "comment": "clarity-bitcoin.clar:124"
   },
-  "377555189": {
-    "code": "ERR-VARSLICE-TOO-LONG",
-    "comment": "clarity-bitcoin.clar:161"
-  },
-  "377555192": {
+  "377555069": {
     "code": "ERR-TOO-MANY-TXINS",
-    "comment": "clarity-bitcoin.clar:164"
+    "comment": "clarity-bitcoin.clar:125"
   },
-  "377555220": {
-    "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:171"
+  "377555190": {
+    "code": "ERR-VARSLICE-TOO-LONG",
+    "comment": "clarity-bitcoin.clar:162"
+  },
+  "377555193": {
+    "code": "ERR-TOO-MANY-TXINS",
+    "comment": "clarity-bitcoin.clar:165"
   },
   "377555221": {
-    "code": "ERR-VARSLICE-TOO-LONG",
+    "code": "ERR-OUT-OF-BOUNDS",
     "comment": "clarity-bitcoin.clar:172"
   },
   "377555222": {
-    "code": "ERR-TOO-MANY-TXINS",
+    "code": "ERR-VARSLICE-TOO-LONG",
     "comment": "clarity-bitcoin.clar:173"
   },
-  "377555250": {
+  "377555223": {
     "code": "ERR-TOO-MANY-TXINS",
-    "comment": "clarity-bitcoin.clar:180"
+    "comment": "clarity-bitcoin.clar:174"
   },
-  "377555255": {
-    "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:185"
+  "377555251": {
+    "code": "ERR-TOO-MANY-TXINS",
+    "comment": "clarity-bitcoin.clar:181"
   },
   "377555256": {
-    "code": "ERR-VARSLICE-TOO-LONG",
+    "code": "ERR-OUT-OF-BOUNDS",
     "comment": "clarity-bitcoin.clar:186"
   },
   "377555257": {
-    "code": "ERR-TOO-MANY-TXOUTS",
+    "code": "ERR-VARSLICE-TOO-LONG",
     "comment": "clarity-bitcoin.clar:187"
   },
-  "377555970": {
-    "code": "ERR-VARSLICE-TOO-LONG",
-    "comment": "clarity-bitcoin.clar:207"
-  },
-  "377555972": {
+  "377555258": {
     "code": "ERR-TOO-MANY-TXOUTS",
-    "comment": "clarity-bitcoin.clar:209"
+    "comment": "clarity-bitcoin.clar:188"
   },
-  "377555998": {
-    "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:214"
+  "377555971": {
+    "code": "ERR-VARSLICE-TOO-LONG",
+    "comment": "clarity-bitcoin.clar:208"
+  },
+  "377555994": {
+    "code": "ERR-TOO-MANY-TXOUTS",
+    "comment": "clarity-bitcoin.clar:210"
   },
   "377555999": {
-    "code": "ERR-VARSLICE-TOO-LONG",
+    "code": "ERR-OUT-OF-BOUNDS",
     "comment": "clarity-bitcoin.clar:215"
   },
   "377556000": {
-    "code": "ERR-TOO-MANY-TXOUTS",
+    "code": "ERR-VARSLICE-TOO-LONG",
     "comment": "clarity-bitcoin.clar:216"
   },
-  "377556028": {
+  "377556001": {
     "code": "ERR-TOO-MANY-TXOUTS",
-    "comment": "clarity-bitcoin.clar:223"
+    "comment": "clarity-bitcoin.clar:217"
   },
-  "377556087": {
+  "377556029": {
+    "code": "ERR-TOO-MANY-TXOUTS",
+    "comment": "clarity-bitcoin.clar:224"
+  },
+  "377556088": {
     "code": "ERR-VARSLICE-TOO-LONG",
-    "comment": "clarity-bitcoin.clar:240"
+    "comment": "clarity-bitcoin.clar:241"
   },
-  "377556089": {
+  "377556090": {
     "code": "ERR-TOO-MANY-TXOUTS",
-    "comment": "clarity-bitcoin.clar:242"
-  },
-  "377556247": {
-    "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:295"
+    "comment": "clarity-bitcoin.clar:243"
   },
   "377556248": {
-    "code": "ERR-VARSLICE-TOO-LONG",
+    "code": "ERR-OUT-OF-BOUNDS",
     "comment": "clarity-bitcoin.clar:296"
   },
   "377556249": {
-    "code": "ERR-TOO-MANY-TXOUTS",
+    "code": "ERR-VARSLICE-TOO-LONG",
     "comment": "clarity-bitcoin.clar:297"
   },
   "377556250": {
-    "code": "ERR-TOO-MANY-TXINS",
+    "code": "ERR-TOO-MANY-TXOUTS",
     "comment": "clarity-bitcoin.clar:298"
   },
-  "377558049": {
+  "377556251": {
+    "code": "ERR-TOO-MANY-TXINS",
+    "comment": "clarity-bitcoin.clar:299"
+  },
+  "377558071": {
     "code": "ERR-PROOF-TOO-SHORT",
-    "comment": "clarity-bitcoin.clar:459"
+    "comment": "clarity-bitcoin.clar:460"
   },
-  "377558073": {
+  "377558074": {
     "code": "ERR-PROOF-TOO-SHORT",
-    "comment": "clarity-bitcoin.clar:462"
+    "comment": "clarity-bitcoin.clar:463"
   },
-  "377558141": {
+  "377558142": {
     "code": "ERR-PROOF-TOO-SHORT",
-    "comment": "clarity-bitcoin.clar:488"
+    "comment": "clarity-bitcoin.clar:489"
   },
-  "2090389178": {
+  "2090389179": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:14"
+    "comment": "clarity-bitcoin.clar:15"
   },
-  "2090389183": {
+  "2090389205": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:19"
+    "comment": "clarity-bitcoin.clar:20"
   },
-  "2090389208": {
+  "2090389209": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:23"
+    "comment": "clarity-bitcoin.clar:24"
   },
-  "2090389213": {
+  "2090389214": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:28"
+    "comment": "clarity-bitcoin.clar:29"
   },
-  "2090389238": {
+  "2090389239": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:32"
+    "comment": "clarity-bitcoin.clar:33"
   },
-  "2090389243": {
+  "2090389244": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:37"
+    "comment": "clarity-bitcoin.clar:38"
   },
-  "2090389268": {
+  "2090389269": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:41"
+    "comment": "clarity-bitcoin.clar:42"
   },
-  "2090389273": {
+  "2090389274": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:46"
+    "comment": "clarity-bitcoin.clar:47"
   },
-  "2090389298": {
+  "2090389299": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:50"
+    "comment": "clarity-bitcoin.clar:51"
   },
-  "2090389303": {
+  "2090389304": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:55"
+    "comment": "clarity-bitcoin.clar:56"
   },
-  "2090389366": {
+  "2090389367": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:76"
+    "comment": "clarity-bitcoin.clar:77"
   },
-  "2090389395": {
+  "2090389396": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:84"
+    "comment": "clarity-bitcoin.clar:85"
   },
   "2894909906": {
     "code": "ERR-VALIDATOR-ALREADY-REGISTERED",
