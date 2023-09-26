@@ -13,8 +13,8 @@ optionalT,
 noneT
 } from "../codegenImport"
 
-export const indexerDevPreview3 = defineContract({
-"indexer-dev-preview-4": {
+export const indexerDevPreview6 = defineContract({
+"indexer-dev-preview-6": {
   'add-validator': {
     input: [
       { name: 'validator-pubkey', type: bufferT },
