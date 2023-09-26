@@ -1,4 +1,4 @@
-import { getLogger } from '@brc20-oracle/commons';
+import { getLogger } from '@bitcoin-oracle/commons';
 import memoizee from 'memoizee';
 import { from } from 'rxjs';
 import { getBISQueue } from '../queue';

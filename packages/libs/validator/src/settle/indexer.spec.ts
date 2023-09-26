@@ -5,7 +5,7 @@ import {
   processOperations,
   signTx,
   structuredDataHash,
-} from '@brc20-oracle/brc20-indexer';
+} from '@bitcoin-oracle/brc20-indexer';
 import { StacksMocknet } from '@stacks/network';
 import { bufferCV, stringCV, tupleCV } from '@stacks/transactions';
 import { uintCV } from 'clarity-codegen';

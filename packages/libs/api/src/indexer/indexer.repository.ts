@@ -1,6 +1,6 @@
-import { SQL } from '@brc20-oracle/commons';
-import { PersistentService } from '@brc20-oracle/persistent';
-import { APIOf, m, ValidatorName } from '@brc20-oracle/types';
+import { SQL } from '@bitcoin-oracle/commons';
+import { PersistentService } from '@bitcoin-oracle/persistent';
+import { APIOf, m, ValidatorName } from '@bitcoin-oracle/types';
 import { Inject } from '@nestjs/common';
 import { Address, OutScript, Transaction } from 'scure-btc-signer-cjs';
 import { z } from 'zod';

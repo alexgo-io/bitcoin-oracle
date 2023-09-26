@@ -1,4 +1,4 @@
-import { m } from '@brc20-oracle/types';
+import { m } from '@bitcoin-oracle/types';
 import { createSqlTag } from 'slonik';
 import z from 'zod';
 

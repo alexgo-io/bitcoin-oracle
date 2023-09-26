@@ -1,5 +1,5 @@
 {
-  "name": "@brc20-oracle/source",
+  "name": "@bitcoin-oracle/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {

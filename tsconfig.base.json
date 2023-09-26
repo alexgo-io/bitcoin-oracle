@@ -17,20 +17,20 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@brc20-oracle/api": ["packages/libs/api/src/index.ts"],
-      "@brc20-oracle/api-client": ["packages/libs/api-client/src/index.ts"],
-      "@brc20-oracle/bitcoin": ["packages/libs/bitcoin/src/index.ts"],
-      "@brc20-oracle/brc20-indexer": [
+      "@bitcoin-oracle/api": ["packages/libs/api/src/index.ts"],
+      "@bitcoin-oracle/api-client": ["packages/libs/api-client/src/index.ts"],
+      "@bitcoin-oracle/bitcoin": ["packages/libs/bitcoin/src/index.ts"],
+      "@bitcoin-oracle/brc20-indexer": [
         "packages/libs/brc20-indexer/src/index.ts"
       ],
-      "@brc20-oracle/commons": ["packages/libs/commons/src/index.ts"],
-      "@brc20-oracle/persistent": ["packages/libs/persistent/src/index.ts"],
-      "@brc20-oracle/types": ["packages/libs/types/src/index.ts"],
-      "@brc20-oracle/validator": ["packages/libs/validator/src/index.ts"],
-      "@brc20-oracle/validator-bis": [
+      "@bitcoin-oracle/commons": ["packages/libs/commons/src/index.ts"],
+      "@bitcoin-oracle/persistent": ["packages/libs/persistent/src/index.ts"],
+      "@bitcoin-oracle/types": ["packages/libs/types/src/index.ts"],
+      "@bitcoin-oracle/validator": ["packages/libs/validator/src/index.ts"],
+      "@bitcoin-oracle/validator-bis": [
         "packages/libs/validator-bis/src/index.ts"
       ],
-      "@brc20-oracle/validator-hiro": [
+      "@bitcoin-oracle/validator-hiro": [
         "packages/libs/validator-hiro/src/index.ts"
       ],
       "nx-stacks": ["packages/plugins/nx-stacks/src/index.ts"]

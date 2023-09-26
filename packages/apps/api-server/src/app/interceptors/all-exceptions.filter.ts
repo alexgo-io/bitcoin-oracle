@@ -2,7 +2,7 @@ import {
   parseErrorDetail,
   stringifyJSON,
   toErrorDetailsHttpException,
-} from '@brc20-oracle/commons';
+} from '@bitcoin-oracle/commons';
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { env } from '../../env';

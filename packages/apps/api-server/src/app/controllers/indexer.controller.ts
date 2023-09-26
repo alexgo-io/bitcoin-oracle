@@ -1,5 +1,5 @@
-import { Indexer } from '@brc20-oracle/api';
-import { APIOf, ValidatorName, m } from '@brc20-oracle/types';
+import { Indexer } from '@bitcoin-oracle/api';
+import { APIOf, ValidatorName, m } from '@bitcoin-oracle/types';
 import {
   Body,
   Controller,

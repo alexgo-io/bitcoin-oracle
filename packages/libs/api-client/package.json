@@ -1,14 +1,14 @@
 {
-  "name": "@brc20-oracle/api-client",
+  "name": "@bitcoin-oracle/api-client",
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
-    "@brc20-oracle/types": "*",
+    "@bitcoin-oracle/types": "*",
     "got-cjs": "^12.5.4",
     "memoizee": "^0.4.15",
     "@t3-oss/env-core": "^0.6.1",
     "zod": "^3.22.2",
-    "@brc20-oracle/commons": "*"
+    "@bitcoin-oracle/commons": "*"
   },
   "type": "commonjs",
   "main": "./src/index.js",

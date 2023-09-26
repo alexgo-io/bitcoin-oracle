@@ -1,4 +1,4 @@
-import { PersistentModule } from '@brc20-oracle/persistent';
+import { PersistentModule } from '@bitcoin-oracle/persistent';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
@@ -20,7 +20,7 @@ describe('IndexController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('brc20-oracle API');
+      .expect('bitcoin-oracle API');
   });
 
   it('should /healthz (GET)', () => {

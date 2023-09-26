@@ -1,8 +1,8 @@
-import { indexer } from '@brc20-oracle/api-client';
-import { generateOrderHash, signOrderHash } from '@brc20-oracle/brc20-indexer';
-import { Unobservable } from '@brc20-oracle/commons';
-import { Enums } from '@brc20-oracle/types';
-import { getBitcoinTx$ } from '@brc20-oracle/validator';
+import { indexer } from '@bitcoin-oracle/api-client';
+import { generateOrderHash, signOrderHash } from '@bitcoin-oracle/brc20-indexer';
+import { Unobservable } from '@bitcoin-oracle/commons';
+import { Enums } from '@bitcoin-oracle/types';
+import { getBitcoinTx$ } from '@bitcoin-oracle/validator';
 import { Logger } from '@nestjs/common';
 import {
   combineLatest,
