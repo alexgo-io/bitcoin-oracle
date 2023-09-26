@@ -1,8 +1,8 @@
-import { PersistentModule } from '@brc20-oracle/persistent';
+import { PersistentModule } from '@bitcoin-oracle/persistent';
 import { Module } from '@nestjs/common';
 import RelayerServiceProvider from './relayer.service';
 import { RelayerRepository } from "./relayer.repository";
-import { PinoLoggerModule } from "@brc20-oracle/commons";
+import { PinoLoggerModule } from "@bitcoin-oracle/commons";
 
 @Module({
   imports: [PersistentModule, PinoLoggerModule],

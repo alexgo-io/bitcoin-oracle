@@ -4,8 +4,8 @@ import {
   kIndexerContractName,
   kIndexerRegistryName,
   StacksCaller,
-} from '@brc20-oracle/brc20-indexer';
-import { toBuffer } from '@brc20-oracle/commons';
+} from '@bitcoin-oracle/brc20-indexer';
+import { toBuffer } from '@bitcoin-oracle/commons';
 import { Inject, Logger } from '@nestjs/common';
 import { chunk } from 'lodash';
 import { exhaustMap, from, interval } from 'rxjs';

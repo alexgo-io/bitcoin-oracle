@@ -1,5 +1,5 @@
 {
-  "name": "@brc20-oracle/validator",
+  "name": "@bitcoin-oracle/validator",
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
@@ -7,9 +7,9 @@
     "memoizee": "^0.4.15",
     "zod": "^3.22.2",
     "got-cjs": "^12.5.4",
-    "@brc20-oracle/commons": "*",
-    "@brc20-oracle/api-client": "*",
-    "@brc20-oracle/bitcoin": "*",
+    "@bitcoin-oracle/commons": "*",
+    "@bitcoin-oracle/api-client": "*",
+    "@bitcoin-oracle/bitcoin": "*",
     "micro-stacks": "^1.2.1",
     "rxjs": "^7.8.1"
   },

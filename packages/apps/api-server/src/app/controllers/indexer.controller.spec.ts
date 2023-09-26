@@ -1,6 +1,6 @@
-import { SQL } from '@brc20-oracle/commons';
-import { PersistentService } from '@brc20-oracle/persistent';
-import { APIOf, Enums } from '@brc20-oracle/types';
+import { SQL } from '@bitcoin-oracle/commons';
+import { PersistentService } from '@bitcoin-oracle/persistent';
+import { APIOf, Enums } from '@bitcoin-oracle/types';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { randomBytes } from 'node:crypto';

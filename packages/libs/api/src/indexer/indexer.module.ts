@@ -1,4 +1,4 @@
-import { PersistentModule } from '@brc20-oracle/persistent';
+import { PersistentModule } from '@bitcoin-oracle/persistent';
 import { Module } from '@nestjs/common';
 import { Indexer } from './indexer.interface';
 import { IndexerRepository } from './indexer.repository';

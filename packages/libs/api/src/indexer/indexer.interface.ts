@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { APIOf, ModelOf, ValidatorName } from '@brc20-oracle/types';
+import { APIOf, ModelOf, ValidatorName } from '@bitcoin-oracle/types';
 
 export abstract class Indexer {
   abstract upsertTxWithProof(tx: APIOf<'txs', 'request', 'dto'>): Promise<void>;

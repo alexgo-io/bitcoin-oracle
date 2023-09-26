@@ -12,7 +12,7 @@ import {
   RetryInfo,
   StatusCode,
   TypedErrorInfo,
-} from '@brc20-oracle/types';
+} from '@bitcoin-oracle/types';
 import {
   BadRequestException,
   ForbiddenException,

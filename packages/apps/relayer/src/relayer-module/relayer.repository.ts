@@ -1,7 +1,7 @@
-import { SQL } from '@brc20-oracle/commons';
+import { SQL } from '@bitcoin-oracle/commons';
 
-import { PersistentService } from '@brc20-oracle/persistent';
-import { ModelIndexer } from '@brc20-oracle/types';
+import { PersistentService } from '@bitcoin-oracle/persistent';
+import { ModelIndexer } from '@bitcoin-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
 
 export class RelayerRepository {

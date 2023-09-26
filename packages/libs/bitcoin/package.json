@@ -1,12 +1,12 @@
 {
-  "name": "@brc20-oracle/bitcoin",
+  "name": "@bitcoin-oracle/bitcoin",
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
     "@t3-oss/env-core": "^0.6.1",
     "zod": "^3.22.2",
     "electrum-client-sl": "^0.1.4",
-    "@brc20-oracle/commons": "*",
+    "@bitcoin-oracle/commons": "*",
     "got-cjs": "^12.5.4",
     "micro-stacks": "^1.2.1",
     "p-queue": "^6.6.2",

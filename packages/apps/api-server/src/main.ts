@@ -1,4 +1,4 @@
-import { startHeartBeat } from '@brc20-oracle/commons';
+import { startHeartBeat } from '@bitcoin-oracle/commons';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import assert from 'assert';
