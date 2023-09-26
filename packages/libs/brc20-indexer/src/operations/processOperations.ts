@@ -85,7 +85,9 @@ export const processOperations =
     const start = Date.now();
     const ts = () => `${start}+${(Date.now() - start) / 1e3}s`;
     logger.info(
-      `Submitting ${operations.length} operations, puppetURL: ${puppetUrl ?? ''}`,
+      `Submitting ${operations.length} operations, puppetURL: ${
+        puppetUrl ?? ''
+      }`,
     );
     const startingNonce = await getAccountNonceV2(stacksAPIURL, senderAddress);
     logger.info(`[${ts()}] starting nonce: ${startingNonce}`);
@@ -177,9 +179,15 @@ export const processOperations =
           operations.unshift(operation);
         }
 
+        const operationJSON = stringifyJSON(operation);
+
         logger.warn(
           `[${ts()}] operation failed:,
-          operation: ${stringifyJSON(operation)},
+          operation: ${
+            operationJSON.length < 4096
+              ? operationJSON
+              : operationJSON.slice(0, 4096)
+          }... truncated,
           error: ${e}`,
         );
       }

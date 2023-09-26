@@ -5,9 +5,10 @@ import {
   kIndexerRegistryName,
   StacksCaller,
 } from '@bitcoin-oracle/brc20-indexer';
-import { toBuffer } from '@bitcoin-oracle/commons';
+import { fastRetry, noAwait, toBuffer } from '@bitcoin-oracle/commons';
 import { Inject, Logger } from '@nestjs/common';
 import { chunk } from 'lodash';
+import PQueue from 'p-queue';
 import { exhaustMap, from, interval } from 'rxjs';
 import { Transaction } from 'scure-btc-signer-cjs';
 import { env } from '../env';
@@ -46,6 +47,7 @@ export class DefaultRelayerService implements RelayerService {
     const txManyInputs: TxManyInput[] = [];
     this.logger.log(`processing: ${rows.length} rows transactions`);
 
+    const queue = new PQueue({ concurrency: 25 });
     for (const tx of rows) {
       if (tx.tx_hash.length > 4096) {
         const tx_id = Transaction.fromRaw(tx.tx_id).id;
@@ -54,50 +56,60 @@ export class DefaultRelayerService implements RelayerService {
         );
         continue;
       }
-      const isIndexedTx = await this.stacks.readonlyCaller()(
-        kIndexerRegistryName,
-        'get-bitcoin-tx-indexed-or-fail',
-        {
-          'bitcoin-tx': tx.tx_id,
-          offset: tx.satpoint,
-          output: tx.output,
-        },
-      );
+      noAwait(
+        queue.add(async () => {
+          const isIndexedTx = await fastRetry(
+            () =>
+              this.stacks.readonlyCaller()(
+                kIndexerRegistryName,
+                'get-bitcoin-tx-indexed-or-fail',
+                {
+                  'bitcoin-tx': tx.tx_hash,
+                  offset: tx.satpoint,
+                  output: tx.output,
+                },
+              ),
+            'get-bitcoin-tx-indexed-or-fail',
+          );
 
-      // TODO: check error code in mainnet
-      if (isIndexedTx.type === 'error') {
-        // TODO: bundle proofs
-        txManyInputs.push({
-          block: {
-            height: tx.height,
-            header: tx.header,
-          },
-          proof: {
-            'tx-index': tx.tx_index,
-            'tree-depth': tx.tree_depth,
-            hashes: tx.proof_hashes,
-          },
-          tx: {
-            output: tx.output,
-            offset: tx.satpoint,
-            'bitcoin-tx': tx.tx_hash,
-            from: tx.from,
-            tick: tx.tick,
-            'from-bal': tx.from_bal,
-            'to-bal': tx.to_bal,
-            to: tx.to,
-            amt: tx.amt,
-          },
-          'signature-packs': [
-            {
-              signature: tx.signature,
-              signer: tx.signer,
-              'tx-hash': tx.order_hash,
-            },
-          ],
-        });
-      }
+          // TODO: check error code in mainnet
+          if (isIndexedTx.type === 'error') {
+            // TODO: bundle proofs
+            txManyInputs.push({
+              block: {
+                height: tx.height,
+                header: tx.header,
+              },
+              proof: {
+                'tx-index': tx.tx_index,
+                'tree-depth': tx.tree_depth,
+                hashes: tx.proof_hashes,
+              },
+              tx: {
+                output: tx.output,
+                offset: tx.satpoint,
+                'bitcoin-tx': tx.tx_hash,
+                from: tx.from,
+                tick: tx.tick,
+                'from-bal': tx.from_bal,
+                'to-bal': tx.to_bal,
+                to: tx.to,
+                amt: tx.amt,
+              },
+              'signature-packs': [
+                {
+                  signature: tx.signature,
+                  signer: tx.signer,
+                  'tx-hash': tx.order_hash,
+                },
+              ],
+            });
+          }
+        }),
+      );
     }
+
+    await queue.onIdle();
 
     const kChunkSize = 25;
 
