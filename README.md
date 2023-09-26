@@ -1,10 +1,12 @@
-# BRC20 Oracle
+# Bitcoin Oracle
 
 ## Introduction
 
-This is a monorepo for BRC20 Oracle project. 
+This is a monorepo for Bitcoin Oracle project, which aims to provide a tamper-proof, censorship-resistant, on-chain oracle for meta-protocols on Bitcoin.
 
-For the backgound on the project, please refer to our [Medium article](https://medium.com/alexgobtc/building-a-on-chain-brc20-indexer-of-indexers-aca0cea86ab2).
+For the backgound on the project, you may want to read our efforts to build an ["Indexer of Indexers" for BRC20](https://medium.com/alexgobtc/building-a-on-chain-brc20-indexer-of-indexers-aca0cea86ab2), the leading meta-protocol on Bitcoin.
+
+## Structure
 
 The repo contains following apps:
 
@@ -15,7 +17,7 @@ The repo contains following apps:
 - [relayer](./packages/apps/relayer/)
   - `relayer` is a used for submitting the proofs from `validator` to stacks-node.
 - [validator](./packages/apps/validator/)
-  - `validator` is a worker that validates BRC20 events, bitcoin headers and submits the proofs to `api-server`.
+  - `validator` is a worker that validates meta-protocol events, bitcoin headers and submits the proofs to `api-server`.
 
 ## Run Validator in Docker
 
@@ -86,7 +88,7 @@ nx serve relayer
 
 ## Validator
 
-`Validator` under [packages/apps/validator](./packages/apps/validator) folder is a worker that validates BRC20 events, bitcoin headers and submits the proofs to `api-server`.
+`Validator` under [packages/apps/validator](./packages/apps/validator) folder is a worker that validates meta-protocol events, bitcoin headers and submits the proofs to `api-server`.
 It dynamically loads the module which implements the [`ValidatorProcessInterface`](packages/libs/validator/src/validator-module/validator-process.interface.ts) interface.
 
 ### Validator Process
