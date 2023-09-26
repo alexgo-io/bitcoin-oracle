@@ -1,15 +1,5 @@
 {
   "private": true,
-  "scripts": {
-    "use": "./env/use.sh",
-    "devenv": "./dev-stack/devenv",
-    "gen:list": "yarn ts-node --swc bootstrap/contracts/generateContractList.ts",
-    "deploy": "yarn ts-node --swc bootstrap/deploy.ts",
-    "gen": "yarn ts-node --swc bootstrap/contracts/generateContracts.ts",
-    "setup": "yarn ts-node --swc bootstrap/setup.ts",
-    "faucet": "yarn ts-node --swc bootstrap/faucet.ts",
-    "reset-dev": "yarn devenv reset && yarn gen:list && yarn deploy && yarn gen && yarn setup"
-  },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
     "@noble/hashes": "^1.3.2",
