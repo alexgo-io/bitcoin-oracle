@@ -30,7 +30,7 @@ export class StacksCaller {
       chainID: getEnvStacksChainID(),
       contractAddress,
       fee: options?.fee,
-      minFee: options?.minFee ?? 0.0525e6,
+      minFee: options?.minFee ?? 0.0825e6,
       puppetURL: env().STACKS_PUPPET_URL,
     });
   }
