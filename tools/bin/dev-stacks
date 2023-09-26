@@ -62,7 +62,7 @@ main() {
         echo
         echo 'stacks blockchain node started'
         echo 'setup contracts'
-        nx run contracts-brc20-indexer:setup
+        nx run libs-brc20-indexer:setup
         exit 0
       fi
       sleep 0.5

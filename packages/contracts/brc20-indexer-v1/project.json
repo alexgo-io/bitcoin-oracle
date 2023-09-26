@@ -1,0 +1,25 @@
+{
+  "name": "contracts-brc20-indexer-v1",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/contracts/brc20-indexer-v1/src",
+  "projectType": "library",
+  "targets": {
+    "clarinet-test": {
+      "command": "clarinet test",
+      "options": {
+        "cwd": "packages/contracts/brc20-indexer-v1",
+        "color": true
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/contracts/brc20-indexer-v1/**/*.ts",
+          "packages/contracts/brc20-indexer-v1/package.json"
+        ]
+      }
+    }
+  }
+}
