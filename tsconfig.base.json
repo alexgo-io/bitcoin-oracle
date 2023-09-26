@@ -22,7 +22,7 @@
       "@brc20-oracle/api-client": ["packages/libs/api-client/src/index.ts"],
       "@brc20-oracle/bitcoin": ["packages/libs/bitcoin/src/index.ts"],
       "@brc20-oracle/brc20-indexer": [
-        "packages/contracts/brc20-indexer/src/index.ts"
+        "packages/libs/brc20-indexer/src/index.ts"
       ],
       "@brc20-oracle/commons": ["packages/libs/commons/src/index.ts"],
       "@brc20-oracle/persistent": ["packages/libs/persistent/src/index.ts"],
@@ -37,7 +37,7 @@
     "node_modules",
     "tmp",
     ".git-modules",
-    "packages/contracts/brc20-indexer/brc20-indexer-v1"
+    "packages/libs/brc20-indexer/brc20-indexer-v1"
   ],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
