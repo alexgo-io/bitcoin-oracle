@@ -15,29 +15,32 @@
     "lib": ["es2022", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-
     "baseUrl": ".",
     "paths": {
       "@brc20-oracle/api": ["packages/libs/api/src/index.ts"],
       "@brc20-oracle/api-client": ["packages/libs/api-client/src/index.ts"],
       "@brc20-oracle/bitcoin": ["packages/libs/bitcoin/src/index.ts"],
       "@brc20-oracle/brc20-indexer": [
-        "packages/contracts/brc20-indexer/src/index.ts"
+        "packages/libs/brc20-indexer/src/index.ts"
       ],
       "@brc20-oracle/commons": ["packages/libs/commons/src/index.ts"],
       "@brc20-oracle/persistent": ["packages/libs/persistent/src/index.ts"],
       "@brc20-oracle/types": ["packages/libs/types/src/index.ts"],
       "@brc20-oracle/validator": ["packages/libs/validator/src/index.ts"],
-      "@brc20-oracle/validator-bis": ["packages/libs/validator-bis/src/index.ts"],
-      "@brc20-oracle/validator-hiro": ["packages/libs/validator-hiro/src/index.ts"],
-      "nx-stacks": ["packages/plugins/nx-stacks/src/index.ts"],
+      "@brc20-oracle/validator-bis": [
+        "packages/libs/validator-bis/src/index.ts"
+      ],
+      "@brc20-oracle/validator-hiro": [
+        "packages/libs/validator-hiro/src/index.ts"
+      ],
+      "nx-stacks": ["packages/plugins/nx-stacks/src/index.ts"]
     }
   },
   "exclude": [
     "node_modules",
     "tmp",
     ".git-modules",
-    "packages/contracts/brc20-indexer/brc20-indexer-v1"
+    "packages/libs/brc20-indexer/brc20-indexer-v1"
   ],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
