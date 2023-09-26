@@ -4,28 +4,11 @@
   "sourceRoot": "packages/contracts/brc20-indexer-v1/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
+    "clarinet-test": {
+      "command": "clarinet test",
       "options": {
-        "outputPath": "dist/packages/contracts/brc20-indexer-v1",
-        "main": "packages/contracts/brc20-indexer-v1/src/index.ts",
-        "tsConfig": "packages/contracts/brc20-indexer-v1/tsconfig.lib.json",
-        "assets": ["packages/contracts/brc20-indexer-v1/*.md"]
-      }
-    },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "options": {
-        "jestConfig": "packages/contracts/brc20-indexer-v1/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
+        "cwd": "packages/contracts/brc20-indexer-v1",
+        "color": true
       }
     },
     "lint": {

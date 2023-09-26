@@ -1,5 +1,5 @@
 {
-  "deno.enablePaths": ["./tests"],
+  "deno.enablePaths": ["./tests", "packages/apps/deno-works"],
   "editor.formatOnSave": true,
   "files.insertFinalNewline": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",

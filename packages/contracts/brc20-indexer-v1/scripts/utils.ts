@@ -1,9 +1,9 @@
-import { Address, OutScript } from "micro-btc-signer";
-import { IntegerType, bytesToBigInt, intToBigInt as _intToBigInt } from "micro-stacks/common";
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
 import { address as bAddress, networks, payments } from 'bitcoinjs-lib';
+import { IntegerType, bytesToBigInt } from 'micro-stacks/common';
 import { base58checkEncode, hashRipemd160 } from 'micro-stacks/crypto';
 import { hashSha256 } from 'micro-stacks/crypto-sha';
+import { Address, OutScript } from 'scure-btc-signer-cjs';
 
 export let btcNetwork: networks.Network;
 
@@ -23,7 +23,7 @@ export function outputToAddress(output: Uint8Array) {
  */
 export function decodeOrdId(id: string) {
   if (id.length !== 66) {
-    throw new Error("Invalid Ord ID: expected 66 chars");
+    throw new Error('Invalid Ord ID: expected 66 chars');
   }
   const txid = id.slice(0, 64);
   const idx = id.slice(65);
@@ -49,13 +49,13 @@ export function reverseBuffer(buffer: Uint8Array): Uint8Array {
 export type IntegerOrBN = IntegerType | BigNumber;
 
 export function intToString(int: IntegerOrBN) {
-  const str = typeof int === "bigint" ? int.toString() : String(int);
+  const str = typeof int === 'bigint' ? int.toString() : String(int);
   return str;
 }
 
 export function satsToBtc(sats: IntegerOrBN, minDecimals?: number) {
   const n = new BigNumber(intToString(sats)).shiftedBy(-8).decimalPlaces(8);
-  if (typeof minDecimals === "undefined") return n.toFormat();
+  if (typeof minDecimals === 'undefined') return n.toFormat();
   const rounded = n.toFormat(minDecimals);
   const normal = n.toFormat();
   return rounded.length > normal.length ? rounded : normal;
@@ -83,7 +83,9 @@ export const addressVersionToMainnetVersion: Record<number, number> = {
 
 export function parseBtcAddress(address: string) {
   const b58 = bAddress.fromBase58Check(address);
-  const version = addressVersionToMainnetVersion[b58.version] as number | undefined;
+  const version = addressVersionToMainnetVersion[b58.version] as
+    | number
+    | undefined;
   if (typeof version !== 'number') throw new Error('Invalid address version.');
   return {
     version,
@@ -93,7 +95,10 @@ export function parseBtcAddress(address: string) {
 
 export function getBtcAddress(hash: Uint8Array, versionBytes: Uint8Array) {
   const version = Number(bytesToBigInt(versionBytes));
-  const address = version === networks.bitcoin.pubKeyHash ? payments.p2pkh({ network: btcNetwork, hash: Buffer.from(hash) }) : payments.p2sh({ network: btcNetwork, hash: Buffer.from(hash) });
+  const address =
+    version === networks.bitcoin.pubKeyHash
+      ? payments.p2pkh({ network: btcNetwork, hash: Buffer.from(hash) })
+      : payments.p2sh({ network: btcNetwork, hash: Buffer.from(hash) });
   if (!address) throw new Error('Invalid BTC payment');
   return address;
 }

@@ -4,6 +4,7 @@
   },
   "files": [],
   "include": [],
+  "exclude": ["tests/**/*"],
   "references": [
     {
       "path": "./tsconfig.lib.json"

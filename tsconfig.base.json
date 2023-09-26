@@ -15,7 +15,6 @@
     "lib": ["es2022", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-
     "baseUrl": ".",
     "paths": {
       "@brc20-oracle/api": ["packages/libs/api/src/index.ts"],
@@ -28,9 +27,13 @@
       "@brc20-oracle/persistent": ["packages/libs/persistent/src/index.ts"],
       "@brc20-oracle/types": ["packages/libs/types/src/index.ts"],
       "@brc20-oracle/validator": ["packages/libs/validator/src/index.ts"],
-      "@brc20-oracle/validator-bis": ["packages/libs/validator-bis/src/index.ts"],
-      "@brc20-oracle/validator-hiro": ["packages/libs/validator-hiro/src/index.ts"],
-      "nx-stacks": ["packages/plugins/nx-stacks/src/index.ts"],
+      "@brc20-oracle/validator-bis": [
+        "packages/libs/validator-bis/src/index.ts"
+      ],
+      "@brc20-oracle/validator-hiro": [
+        "packages/libs/validator-hiro/src/index.ts"
+      ],
+      "nx-stacks": ["packages/plugins/nx-stacks/src/index.ts"]
     }
   },
   "exclude": [
