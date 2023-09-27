@@ -10,6 +10,7 @@ export const env = memoizee(() =>
       STACKS_PUPPET_URL: z.string().optional(),
       STACKS_NETWORK_TYPE: z.string().default('testnet'),
       STACKS_API_URL: z.string(),
+      ALERT_URL: z.string().optional(),
     },
     runtimeEnv: process.env,
   }),

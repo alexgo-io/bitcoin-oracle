@@ -48,6 +48,9 @@ export class DefaultRelayerService implements RelayerService {
     this.logger.log(`processing: ${rows.length} rows transactions`);
 
     const queue = new PQueue({ concurrency: 25 });
+    const indexed: { 'bitcoin-tx': Buffer; offset: bigint; output: bigint }[] =
+      [];
+
     for (const tx of rows) {
       if (tx.tx_hash.length > 4096) {
         const tx_id = Transaction.fromRaw(tx.tx_id).id;
@@ -104,12 +107,25 @@ export class DefaultRelayerService implements RelayerService {
                 },
               ],
             });
+          } else {
+            indexed.push({
+              'bitcoin-tx': tx.tx_hash,
+              offset: tx.satpoint,
+              output: tx.output,
+            });
           }
         }),
       );
     }
 
     await queue.onIdle();
+
+    if (indexed.length > 0) {
+      this.logger.log(
+        `setAlreadyIndexed: ${indexed.length} txs indexed by others`,
+      );
+      await this.relayerRepository.setAlreadyIndexed(indexed);
+    }
 
     const kChunkSize = 25;
 
@@ -123,20 +139,30 @@ export class DefaultRelayerService implements RelayerService {
           {
             'tx-many': inputs,
           },
-          result => {
-            return this.relayerRepository.upsertSubmittedTx(
-              inputs.map(input => ({
-                tx_hash: Buffer.from(input.tx['bitcoin-tx']),
-                satpoint: input.tx.offset,
-                output: input.tx.output,
-                stacks_tx_id:
-                  result.txid == null ? null : toBuffer(result.txid),
-                broadcast_result_type: result.error == null ? 'ok' : 'error',
-                error: result.error == null ? null : result.error,
-                submitted_by: env().STACKS_RELAYER_ACCOUNT_ADDRESS,
-                submitted_at: new Date(),
-              })),
-            );
+          {
+            onSettled: () =>
+              this.relayerRepository.upsertSubmittedTx(
+                inputs.map(input => ({
+                  tx_hash: Buffer.from(input.tx['bitcoin-tx']),
+                  satpoint: input.tx.offset,
+                  output: input.tx.output,
+                  broadcast_result_type: 'settled',
+                })),
+              ),
+            onBroadcast: result =>
+              this.relayerRepository.upsertSubmittedTx(
+                inputs.map(input => ({
+                  tx_hash: Buffer.from(input.tx['bitcoin-tx']),
+                  satpoint: input.tx.offset,
+                  output: input.tx.output,
+                  stacks_tx_id:
+                    result.txid == null ? null : toBuffer(result.txid),
+                  broadcast_result_type: result.error == null ? 'ok' : 'error',
+                  error: result.error == null ? null : result.error,
+                  submitted_by: env().STACKS_RELAYER_ACCOUNT_ADDRESS,
+                  submitted_at: new Date(),
+                })),
+              ),
           },
         ),
       ]);

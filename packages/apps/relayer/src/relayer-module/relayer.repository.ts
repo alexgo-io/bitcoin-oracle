@@ -3,6 +3,7 @@ import { SQL } from '@bitcoin-oracle/commons';
 import { PersistentService } from '@bitcoin-oracle/persistent';
 import { ModelIndexer } from '@bitcoin-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
+import { env } from '../env';
 
 export class RelayerRepository {
   private readonly logger = new Logger(RelayerRepository.name);
@@ -39,7 +40,9 @@ export class RelayerRepository {
                                                         from qualified_txs)
                               and length(target_txs.tx_hash) <= 4096)
         select *
-        from with_proof;
+        from with_proof
+        limit 2000
+        ;
       `);
       this.logger.verbose(`getPendingSubmitTx: ${pendingTxs.rows.length}`);
 
@@ -47,10 +50,64 @@ export class RelayerRepository {
     });
   }
 
+  async setAlreadyIndexed(
+    params: { 'bitcoin-tx': Buffer; offset: bigint; output: bigint }[],
+  ) {
+    return this.persistent.pgPool.transaction(async conn => {
+      for (const tx of params) {
+        await conn.query(SQL.typeAlias('indexer_txs')`
+        insert into indexer.submitted_tx (tx_hash,
+                                          satpoint,
+                                          output,
+                                          stacks_tx_id,
+                                          broadcast_result_type,
+                                          error,
+                                          submitted_by)
+        VALUES (${SQL.binary(tx['bitcoin-tx'])},
+                ${tx.offset.toString()},
+                ${tx.output.toString()},
+                null,
+                'settled',
+                null,
+                ${env().STACKS_RELAYER_ACCOUNT_ADDRESS})
+
+        `);
+      }
+    });
+  }
+
   async upsertSubmittedTx(params: ModelIndexer<'submitted_tx'>[]) {
     return this.persistent.pgPool.transaction(async conn => {
       for (const tx of params) {
-        await conn.query(SQL.typeAlias('indexer_submitted_tx')`
+        const existing = await conn.maybeOne(SQL.typeAlias(
+          'indexer_submitted_tx',
+        )`
+          select *
+          from indexer.submitted_tx
+          where tx_hash = ${SQL.binary(tx.tx_hash)}
+            and satpoint = ${tx.satpoint.toString()}
+            and output = ${tx.output.toString()}
+            `);
+        if (existing != null) {
+          if (
+            existing.broadcast_result_type != tx.broadcast_result_type ||
+            existing.stacks_tx_id != tx.stacks_tx_id ||
+            existing.error != tx.error
+          ) {
+            await conn.query(SQL.typeAlias('indexer_submitted_tx')`
+            update indexer.submitted_tx
+            set stacks_tx_id = ${
+              tx.stacks_tx_id == null ? null : SQL.binary(tx.stacks_tx_id)
+            },
+                broadcast_result_type = ${tx.broadcast_result_type},
+                error = ${tx.error ?? null}
+            where tx_hash = ${SQL.binary(tx.tx_hash)}
+              and satpoint = ${tx.satpoint.toString()}
+              and output = ${tx.output.toString()}
+            `);
+          }
+        } else {
+          await conn.query(SQL.typeAlias('indexer_submitted_tx')`
           insert into indexer.submitted_tx (tx_hash,
                                             satpoint,
                                             output,
@@ -66,8 +123,9 @@ export class RelayerRepository {
                   },
                   ${tx.broadcast_result_type},
                   ${tx.error ?? null},
-                  ${tx.submitted_by});
+                  ${tx.submitted_by ?? null})
         `);
+        }
       }
     });
   }

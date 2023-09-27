@@ -10,20 +10,30 @@ export type TransferSTX = {
   type: 'transfer';
   amount: number;
   address: string;
-  onBroadcast?: (result: TxBroadcastResult) => Promise<void>;
-};
+  options?: {
+    fee?: number;
+    onBroadcast?: (result: TxBroadcastResult) => Promise<void>;
+    onSettled?: (op: TransferSTX) => Promise<void>;
+  };};
 
 export type DeployContract = {
   type: 'deploy';
   name: string;
   path: string;
-  onBroadcast?: (result: TxBroadcastResult) => Promise<void>;
-};
+  options?: {
+    fee?: number;
+    onBroadcast?: (result: TxBroadcastResult) => Promise<void>;
+    onSettled?: (op: DeployContract) => Promise<void>;
+  };};
 
 export type PublicCall = {
   type: 'publicCall';
   contract: string;
   function: string;
   args: ClarityValue[];
-  onBroadcast?: (result: TxBroadcastResult) => Promise<void>;
+  options?: {
+    fee?: number;
+    onBroadcast?: (result: TxBroadcastResult) => Promise<void>;
+    onSettled?: (op: PublicCall) => Promise<void>;
+  };
 };
