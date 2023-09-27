@@ -1,29 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { stringifyJSON } from '@bitcoin-oracle/commons';
+import { getLogger, stringifyJSON } from '@bitcoin-oracle/commons';
 import { StacksMainnet, StacksMocknet, StacksNetwork } from '@stacks/network';
 import {
   AccountDataResponse,
-  AddressNonces,
   AddressTransactionsListResponse,
+  MempoolTransaction,
   Transaction,
 } from '@stacks/stacks-blockchain-api-types';
 import {
   AnchorMode,
   ChainID,
   PostConditionMode,
-  StacksTransaction,
   TransactionVersion,
   broadcastTransaction,
   estimateContractFunctionCall,
   getAddressFromPrivateKey,
+  hexToCV,
   makeContractCall,
   makeContractDeploy,
   makeSTXTokenTransfer,
 } from '@stacks/transactions';
-import assert from 'assert';
 import * as fs from 'fs';
 import got from 'got-cjs';
-import pino from 'pino';
+import { alertToTelegram } from '../alert';
 import {
   DeployContract,
   Operation,
@@ -32,7 +31,7 @@ import {
 } from './operation';
 import { assertNever, sleep } from './utils';
 
-const logger = pino();
+const logger = getLogger('stacks-caller');
 
 function chainIDToTransactionVersion(chainID: ChainID) {
   if (chainID === ChainID.Mainnet) {
@@ -61,17 +60,17 @@ export const processOperations =
       stacksAPIURL: string;
       puppetURL?: string;
       fee?: number;
-      minFee?: number;
+      feeMultiplier?: number;
       contractAddress?: string;
       chainID?: ChainID;
     },
   ) =>
   async (operations: Operation[]) => {
     const kStacksMaxTxPerBlockPerAccount = 18;
+    let currentMaxTxPerBlockPerAccount = kStacksMaxTxPerBlockPerAccount;
     const stacksAPIURL = options.stacksAPIURL;
     const chainID = options.chainID ?? ChainID.Testnet;
-    const fee = options.fee ?? 0.031e6;
-    const minFee = options.minFee;
+    const fee = options.fee;
     const transactionVersion = chainIDToTransactionVersion(chainID);
     const puppetUrl = options.puppetURL ?? '';
     const senderAddress = getAddressFromPrivateKey(
@@ -80,17 +79,17 @@ export const processOperations =
     );
     const contractAddress = options.contractAddress ?? senderAddress;
     const network = stackNetworkFrom(chainID, stacksAPIURL);
-    logger.info(`network: ${JSON.stringify(network)}, ${senderAddress}`);
+    logger.log(`network: ${JSON.stringify(network)}, ${senderAddress}`);
 
     const start = Date.now();
     const ts = () => `${start}+${(Date.now() - start) / 1e3}s`;
-    logger.info(
+    logger.log(
       `Submitting ${operations.length} operations, puppetURL: ${
         puppetUrl ?? ''
       }`,
     );
     const startingNonce = await getAccountNonceV2(stacksAPIURL, senderAddress);
-    logger.info(`[${ts()}] starting nonce: ${startingNonce}`);
+    logger.log(`[${ts()}] starting nonce: ${startingNonce}`);
     if (operations.length === 0) return startingNonce;
     let lastExecutedNonce = await getAccountNonceV2(
       stacksAPIURL,
@@ -102,7 +101,7 @@ export const processOperations =
     let operation: undefined | Operation;
 
     while ((operation = operations.shift())) {
-      while (nonce > lastExecutedNonce + kStacksMaxTxPerBlockPerAccount) {
+      while (nonce > lastExecutedNonce + currentMaxTxPerBlockPerAccount) {
         if (puppetUrl.length > 0) {
           await got(`${puppetUrl}/kick`, { method: 'POST' });
           await sleep(30);
@@ -116,12 +115,20 @@ export const processOperations =
           stacksAPIURL,
           senderAddress,
         );
+
+        if (nonce > lastExecutedNonce + currentMaxTxPerBlockPerAccount) {
+          await RBFIfNeeded(senderAddress, lastExecutedNonce, privateKey, {
+            stacksAPIURL,
+            chainID,
+            contractAddress,
+          });
+        }
       }
 
       logger.debug(
         `[${ts()}] processing #${
           nonce - startingNonce
-        }, nonce: ${nonce}, serverNonce: ${lastExecutedNonce}, perBlock: ${kStacksMaxTxPerBlockPerAccount}`,
+        }, nonce: ${nonce}, serverNonce: ${lastExecutedNonce}, perBlock: ${currentMaxTxPerBlockPerAccount}`,
       );
 
       try {
@@ -129,15 +136,22 @@ export const processOperations =
           case 'publicCall':
             await publicCall(
               operation,
-              { senderKey: privateKey, nonce, fee, minFee },
+              { senderKey: privateKey, nonce, fee },
               network,
               contractAddress,
-            ).then(result =>
-              operation?.onBroadcast?.(result).catch(e => {
+            ).then(result => {
+              logger.log(
+                `[public call] broadcast: ${JSON.stringify(
+                  result.txid,
+                )}, nonce: ${nonce}`,
+              );
+
+              return operation?.options?.onBroadcast?.(result).catch(e => {
                 logger.error(`operation.onBroadcast failed: ${e.message}`, e);
                 return null;
-              }),
-            );
+              });
+            });
+
             break;
           case 'deploy':
             await deployContract(
@@ -145,7 +159,7 @@ export const processOperations =
               { senderKey: privateKey, nonce, fee },
               network,
             ).then(result =>
-              operation?.onBroadcast?.(result).catch(e => {
+              operation?.options?.onBroadcast?.(result).catch(e => {
                 logger.error(`operation.onBroadcast failed: ${e.message}`, e);
                 return null;
               }),
@@ -157,7 +171,7 @@ export const processOperations =
               { senderKey: privateKey, nonce, fee },
               network,
             ).then(result =>
-              operation?.onBroadcast?.(result).catch(e => {
+              operation?.options?.onBroadcast?.(result).catch(e => {
                 logger.error(`operation.onBroadcast failed: ${e.message}`, e);
                 return null;
               }),
@@ -173,10 +187,29 @@ export const processOperations =
         }
         if ((e as Error).message.includes('ConflictingNonceInMempool')) {
           logger.warn(
-            `[${ts()}] ConflictingNonceInMempool, increase the nonce and retrying...`,
+            `[${ts()}] ConflictingNonceInMempool, increase the nonce from ${nonce} to ${
+              nonce + 1
+            } and retrying..., per block: ${currentMaxTxPerBlockPerAccount}`,
           );
           nonce++;
           operations.unshift(operation);
+
+          await RBFIfNeeded(senderAddress, nonce - 1, privateKey, {
+            stacksAPIURL,
+            chainID,
+            contractAddress,
+          });
+          continue;
+        }
+        if ((e as Error).message === 'TooMuchChaining') {
+          logger.log(
+            `[${ts()}] TooMuchChaining on nonce: ${nonce}, decreasing the max per block to ${
+              currentMaxTxPerBlockPerAccount - 1
+            }`,
+          );
+          operations.unshift(operation);
+          currentMaxTxPerBlockPerAccount--;
+          continue;
         }
 
         const operationJSON = stringifyJSON(operation);
@@ -201,16 +234,29 @@ export const processOperations =
         await got(`${puppetUrl}/kick`, { method: 'POST' });
         await sleep(100);
       } else {
-        logger.trace(
+        logger.verbose(
           `1.[${ts()}] waiting for last executed nonce to catch up...${nonce} > ${lastExecutedNonce}`,
         );
-        await sleep(3 * 1000);
+        await sleep(5 * 1000);
       }
       lastExecutedNonce = await getAccountNonceV2(stacksAPIURL, senderAddress);
+      if (nonce > lastExecutedNonce) {
+        await RBFIfNeeded(senderAddress, lastExecutedNonce, privateKey, {
+          stacksAPIURL,
+          chainID,
+          contractAddress,
+        });
+      }
+
+      currentMaxTxPerBlockPerAccount = kStacksMaxTxPerBlockPerAccount;
     }
 
     logger.debug(
       `[${ts()}] server nonce has caught up. nonce: ${nonce}, serverNonce: ${lastExecutedNonce}`,
+    );
+
+    await Promise.all(
+      operations.map(a => a.options?.onSettled?.(a as any)).filter(Boolean),
     );
 
     if (nonce > startingNonce) {
@@ -231,13 +277,98 @@ export const processOperations =
         );
       }
     }
-    logger.info(
+    logger.log(
       `Finished ${nonce - startingNonce} transactions in ${
         Date.now() - start
       }ms. serverNonce is: ${lastExecutedNonce}, nonce is: ${nonce}, startingNonce: ${startingNonce}`,
     );
     return nonce;
   };
+
+const maxFeeReachedNonce: number[] = [];
+
+const RBF_DURATION_IN_SECONDS = () => 30 * 60; // 30 mins
+export async function fetchMemPoolTransactions(
+  address: string,
+  options: {
+    stacksAPIURL: string;
+  },
+): Promise<MempoolTransaction[]> {
+  const response = await fetch(
+    `${options.stacksAPIURL}/extended/v1/address/${address}/mempool?limit=50`,
+  ).then(r => (r.ok ? r.json() : Promise.reject(new Error(r.statusText))));
+  return response.results;
+}
+
+export async function RBFIfNeeded(
+  address: string,
+  serverNonce: number,
+  senderKey: string,
+  options: {
+    stacksAPIURL: string;
+    chainID?: ChainID;
+    contractAddress: string;
+  },
+) {
+  const chainID = options.chainID ?? ChainID.Testnet;
+  const contractAddress = options.contractAddress;
+  const network = stackNetworkFrom(chainID, options.stacksAPIURL);
+  // get tx from mem pool
+  const memPoolTxs = await fetchMemPoolTransactions(address, options);
+  const tx = memPoolTxs.find(x => x.nonce == serverNonce);
+  if (tx == null || tx.tx_type !== 'contract_call') {
+    return;
+  }
+  const secondsPassed = new Date().getTime() / 1000 - tx.receipt_time;
+  if (secondsPassed < RBF_DURATION_IN_SECONDS()) {
+    return;
+  }
+  const fee = Number(tx.fee_rate);
+  const feeLevels = [0.08, 0.12, 0.24, 0.48].map(x => x * 1e6);
+  const newFee = feeLevels.find(x => x > fee);
+  if (!newFee) {
+    if (maxFeeReachedNonce.includes(tx.nonce)) {
+      return;
+    }
+    await alertToTelegram('RBF', 'Max fee reached', {
+      tx_id: tx.tx_id,
+      nonce: tx.nonce.toString(),
+    });
+    logger.warn(
+      `${tx.nonce} already at MAX RBF rate of [${
+        feeLevels[feeLevels.length - 1] / 1e6
+      }]}`,
+    );
+    maxFeeReachedNonce.push(tx.nonce);
+    return;
+  }
+  logger.log(
+    `RBFIng tx ${tx.tx_id} : ${tx.nonce} from ${fee / 1e6} to ${
+      newFee / 1e6
+    }, after ${secondsPassed / 60} mins`,
+  );
+  await publicCall(
+    {
+      type: 'publicCall',
+      contract: tx.contract_call.contract_id.split('.')[1],
+      function: tx.contract_call.function_name,
+      args: tx.contract_call.function_args!.map(x => hexToCV(x.hex)),
+      options: {
+        fee: newFee,
+      },
+    },
+    {
+      nonce: tx.nonce,
+      senderKey,
+    },
+    network,
+    contractAddress,
+  );
+  await alertToTelegram('RBF', 'Tx RBFed', {
+    tx_id: tx.tx_id,
+    nonce: tx.nonce.toString(),
+  });
+}
 
 function hashCode(str: string) {
   let hash = 0,
@@ -356,7 +487,7 @@ type OperationOptions = {
   senderKey: string;
   nonce: number;
   fee?: number;
-  minFee?: number;
+  feeMultiplier?: number;
 };
 
 async function publicCall(
@@ -377,56 +508,27 @@ async function publicCall(
     postConditionMode: PostConditionMode.Allow,
     senderKey: options.senderKey,
   };
-  let fee =
-    options.fee ??
-    (await estimateContractFunctionCall(
+
+  txOptions.fee = operation.options?.fee ?? options.fee;
+
+  if (txOptions.fee == null) {
+    delete txOptions['fee'];
+    const estimatedFee = await estimateContractFunctionCall(
       await makeContractCall(txOptions),
       network,
-    )
-      .then(fee => Number(fee))
-      .catch(() => 0.003e6)) ??
-    0;
+    ).catch(() => BigInt(0.004e6));
 
-  if (options.minFee && fee < options.minFee) {
-    fee = options.minFee;
+    txOptions.fee = Number(estimatedFee) * (options.feeMultiplier ?? 1);
   }
 
-  const transaction = await makeContractCall({
-    ...txOptions,
-    fee,
-  });
+  const transaction = await makeContractCall(txOptions);
 
-  const result = await broadcastTransactionWithRetryChaining(
-    transaction,
-    network,
-  );
+  const result = await broadcastTransaction(transaction, network);
 
   if (result.error) {
-    logger.info(`[public call] failed: ${JSON.stringify(result)}`);
+    logger.log(`[public call] failed: ${JSON.stringify(result)}`);
     throw new Error(result.reason!);
   }
-
-  return result;
-}
-
-async function broadcastTransactionWithRetryChaining(
-  transaction: StacksTransaction,
-  network: StacksNetwork,
-) {
-  let result;
-  for (let i = 0; i < 20; i++) {
-    result = await broadcastTransaction(transaction, network);
-    if ((result.reason as any) === 'TooMuchChaining') {
-      logger.warn(
-        `[TooMuchChaining] retrying - ${i}... ${JSON.stringify(result)}`,
-      );
-      await new Promise(resolve => setTimeout(resolve, 3000));
-    } else {
-      return result;
-    }
-  }
-
-  assert(result, `Failed to broadcast transaction: ${transaction.txid()}`);
 
   return result;
 }
@@ -463,12 +565,4 @@ async function getTransaction(
     result.push(...newResults);
   }
   return result.filter(a => a.nonce >= untilNonce);
-}
-
-export async function _getAccountNonce(
-  apiURL: string,
-  address: string,
-): Promise<AddressNonces> {
-  const url = `${apiURL}/extended/v1/address/${address}/nonces`;
-  return got(url).json();
 }

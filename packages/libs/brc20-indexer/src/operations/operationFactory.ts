@@ -7,7 +7,7 @@ import {
 } from 'clarity-codegen';
 import { ReadonlyFunctionDescriptor } from 'clarity-codegen/lib/runtime/contractBase';
 import { indexerContracts } from '../generated/contracts_indexer';
-import { PublicCall, TransferSTX } from './operation';
+import { PublicCall } from './operation';
 
 const contracts = indexerContracts;
 export type Contracts = typeof indexerContracts;
@@ -22,7 +22,10 @@ export const callPublic = <
   args: Contracts[T][F] extends OpenCallFunctionDescriptor
     ? ParameterObjOfDescriptor<Contracts[T][F]>
     : never,
-  onBroadcast?: (result: TxBroadcastResult) => Promise<void>,
+  options?: {
+    onBroadcast?: (result: TxBroadcastResult) => Promise<void>;
+    onSettled?: (op: PublicCall) => Promise<void>;
+  },
 ): PublicCall => {
   const descriptor = contracts[contractOrType][
     functionName
@@ -32,7 +35,7 @@ export const callPublic = <
     contract: contractOrType as string,
     function: functionName as string,
     args: descriptor.input.map(a => a.type.encode(args[a.name])),
-    onBroadcast,
+    options,
   };
 };
 
@@ -69,15 +72,3 @@ export const callReadonlyWith =
 
     return functionDescriptor.output.decode(res);
   };
-
-export const transferStxTo = (
-  address: string,
-  amount: number,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onBroadcast?: (result: any) => Promise<void>,
-): TransferSTX => ({
-  amount,
-  address,
-  type: 'transfer',
-  onBroadcast,
-});
