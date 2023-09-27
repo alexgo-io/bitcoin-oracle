@@ -106,7 +106,7 @@ export const processOperations =
           await got(`${puppetUrl}/kick`, { method: 'POST' });
           await sleep(30);
         } else {
-          await sleep(3 * 1000);
+          await sleep(30 * 1000);
         }
         logger.debug(
           `0.waiting for server nonce to catch up... nonce: ${nonce} - serverNonce: ${lastExecutedNonce}`,
