@@ -19,7 +19,6 @@ export class StacksCaller {
   constructor(
     private readonly privateKey: string,
     readonly contractAddress: string,
-    options?: { fee?: number; minFee?: number },
   ) {
     this.address = getAddressFromPrivateKey(
       privateKey,
@@ -29,8 +28,7 @@ export class StacksCaller {
       stacksAPIURL: env().STACKS_API_URL,
       chainID: getEnvStacksChainID(),
       contractAddress,
-      fee: options?.fee,
-      minFee: options?.minFee ?? 0.0825e6,
+      feeMultiplier: 2,
       puppetURL: env().STACKS_PUPPET_URL,
     });
   }

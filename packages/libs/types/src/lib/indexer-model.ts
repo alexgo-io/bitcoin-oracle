@@ -60,11 +60,11 @@ const submitted_tx = z.object({
   tx_hash: BufferHexSchema,
   satpoint: BigIntSchema,
   output: BigIntSchema,
-  stacks_tx_id: BufferHexSchema.nullable(),
-  broadcast_result_type: z.enum(['ok', 'error']),
+  stacks_tx_id: BufferHexSchema.nullish(),
+  broadcast_result_type: z.enum(['ok', 'error', 'settled']),
   error: z.string().nullish(),
-  submitted_by: z.string(),
-  submitted_at: z.date(),
+  submitted_by: z.string().nullish(),
+  submitted_at: z.date().nullish(),
 });
 
 const blocks = z.object({
