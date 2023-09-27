@@ -330,9 +330,9 @@
 	(let (
 			(ctx { txbuff: tx, index: u0})
 			(parsed-version (try! (read-uint32 ctx)))
-			(parsed-txins (unwrap! (read-txins (get ctx parsed-version)) (err u1)))
-			(parsed-txouts (unwrap! (read-txouts (get ctx parsed-txins)) (err u2)))
-			(parsed-locktime (unwrap! (read-uint32 (get ctx parsed-txouts)) (err u3))))
+			(parsed-txins (try! (read-txins (get ctx parsed-version))))
+			(parsed-txouts (try! (read-txouts (get ctx parsed-txins))))
+			(parsed-locktime (try! (read-uint32 (get ctx parsed-txouts)))))
 		(ok {
 			version: (get uint32 parsed-version),
 			ins: (get txins parsed-txins),
