@@ -449,9 +449,6 @@ importers:
       micro-stacks:
         specifier: ^1.2.1
         version: 1.2.1
-      pino:
-        specifier: ^8.15.0
-        version: 8.15.0
       tslib:
         specifier: ^2.3.0
         version: 2.6.2
