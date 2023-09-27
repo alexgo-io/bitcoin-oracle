@@ -111,7 +111,10 @@
 
 (define-read-only (verify-mined (tx (buff 4096)) (block { header: (buff 80), height: uint }) (proof { tx-index: uint, hashes: (list 14 (buff 32)), tree-depth: uint }))
 	(if (is-eq chain-id u1)
-		(contract-call? .clarity-bitcoin was-segwit-tx-mined? block tx proof)
+		(if (try! (contract-call? .clarity-bitcoin is-segwit-tx tx))
+			(contract-call? .clarity-bitcoin was-segwit-tx-mined? block tx proof)
+			(contract-call? .clarity-bitcoin was-tx-mined? block tx proof)
+		)
 		(ok true) ;; if not mainnet, assume verified
 	)
 )
