@@ -270,6 +270,17 @@
 		(unwrap-panic (slice? (list true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true) u0 num-txins))
 		(ok { ctx: ctx, witnesses: (list) })))
 
+;; Helper function to check if tx is a segwit tx
+;; if the 5th byte is 0x00 then it is segwit.
+(define-read-only (is-segwit-tx (tx (buff 4096)))
+	(let (
+			(ctx { txbuff: tx, index: u0})
+			(parsed-version (try! (read-uint32 ctx)))
+			(parsed-segwit-marker (try! (read-uint8 (get ctx parsed-version)))))
+			(ok (is-eq (get uint8 parsed-segwit-marker) u0))
+	)
+)
+
 ;; Helper functions for smart contract that want to use information of a Bitcoin transaction
 ;;
 ;; Parses a Bitcoin transaction, with up to 32 inputs and 32 outputs, with scriptSigs of up to 256 bytes each, and with scriptPubKeys up to 128 bytes.
@@ -487,7 +498,7 @@
 ;; Returns (ok false) if not.
 ;; Returns ERR-PROOF-TOO-SHORT if the proof doesn't contain enough intermediate hash nodes in the merkle tree.
 
-(define-read-only (was-tx-mined? (block { header: (buff 80), height: uint }) (tx (buff 1024)) (proof { tx-index: uint, hashes: (list 14 (buff 32)), tree-depth: uint }))
+(define-read-only (was-tx-mined? (block { header: (buff 80), height: uint }) (tx (buff 4096)) (proof { tx-index: uint, hashes: (list 14 (buff 32)), tree-depth: uint }))
 	(let (
 			(header-valid (verify-block-header (get header block) (get height block)))
 			(reversed-txid (get-reversed-txid tx))
