@@ -136,7 +136,12 @@ export const processOperations =
           case 'publicCall':
             await publicCall(
               operation,
-              { senderKey: privateKey, nonce, fee },
+              {
+                senderKey: privateKey,
+                nonce,
+                fee,
+                feeMultiplier: options.feeMultiplier,
+              },
               network,
               contractAddress,
             ).then(result => {
@@ -156,7 +161,12 @@ export const processOperations =
           case 'deploy':
             await deployContract(
               operation,
-              { senderKey: privateKey, nonce, fee },
+              {
+                senderKey: privateKey,
+                nonce,
+                fee,
+                feeMultiplier: options.feeMultiplier,
+              },
               network,
             ).then(result =>
               operation?.options?.onBroadcast?.(result).catch(e => {
@@ -168,7 +178,12 @@ export const processOperations =
           case 'transfer':
             await transferSTX(
               operation,
-              { senderKey: privateKey, nonce, fee },
+              {
+                senderKey: privateKey,
+                nonce,
+                fee,
+                feeMultiplier: options.feeMultiplier,
+              },
               network,
             ).then(result =>
               operation?.options?.onBroadcast?.(result).catch(e => {
