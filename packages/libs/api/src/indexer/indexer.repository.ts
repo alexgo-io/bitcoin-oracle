@@ -170,6 +170,7 @@ export class IndexerRepository {
                                 st.stacks_tx_id          as stacks_tx_id,
                                 st.submitted_by          as stacks_submitted_by,
                                 st.submitted_at          as stacks_submitted_at,
+                                st.submitter_nonce       as stacks_submitter_nonce,
                                 st.broadcast_result_type as stacks_broadcast_result,
                                 st.error                 as stacks_error,
                                 b.header                 as block_header,

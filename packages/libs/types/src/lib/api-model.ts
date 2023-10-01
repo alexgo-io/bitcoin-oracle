@@ -79,6 +79,7 @@ function makeDebugRequestQuery<T extends DataType>(type: T) {
     signer: z.string().optional(),
     height: makeBigInt(type).optional(),
     stacks_tx_id: makeBuffer(type).optional(),
+    stacks_submitter_nonce: makeBigInt(type).optional(),
     block_hash: makeBuffer(type).optional(),
     block_header: makeBuffer(type).optional(),
   });
@@ -117,6 +118,7 @@ function makeDebugResponseQuery<T extends DataType>(type: T) {
     stacks_tx_id: makeBuffer(type).nullable(),
     stacks_submitted_by: z.string().nullable(),
     stacks_submitted_at: DateSchema.nullable(),
+    stacks_submitter_nonce: makeBigInt(type).nullable(),
     stacks_broadcast_result: z.string().nullable(),
     stacks_error: z.string().nullable(),
     block_hash: makeBuffer(type),
