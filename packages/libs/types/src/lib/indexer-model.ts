@@ -65,6 +65,7 @@ const submitted_tx = z.object({
   error: z.string().nullish(),
   submitted_by: z.string().nullish(),
   submitted_at: z.date().nullish(),
+  submitter_nonce: BigIntSchema.nullish(),
 });
 
 const blocks = z.object({

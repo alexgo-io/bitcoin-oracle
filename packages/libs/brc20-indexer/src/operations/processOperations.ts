@@ -12,6 +12,7 @@ import {
   ChainID,
   PostConditionMode,
   TransactionVersion,
+  TxBroadcastResult,
   broadcastTransaction,
   estimateContractFunctionCall,
   getAddressFromPrivateKey,
@@ -63,6 +64,13 @@ export const processOperations =
       feeMultiplier?: number;
       contractAddress?: string;
       chainID?: ChainID;
+      didRBFBroadcast?: (params: {
+        originalTxId: string;
+        nonce: number;
+        newTxId: string;
+        fee?: number;
+        broadcastResult: TxBroadcastResult;
+      }) => Promise<void>;
     },
   ) =>
   async (operations: Operation[]) => {
@@ -77,6 +85,7 @@ export const processOperations =
       privateKey,
       transactionVersion,
     );
+    const didRBFBroadcast = options.didRBFBroadcast;
     const contractAddress = options.contractAddress ?? senderAddress;
     const network = stackNetworkFrom(chainID, stacksAPIURL);
     logger.log(`network: ${JSON.stringify(network)}, ${senderAddress}`);
@@ -121,6 +130,7 @@ export const processOperations =
             stacksAPIURL,
             chainID,
             contractAddress,
+            didRBFBroadcast
           });
         }
       }
@@ -151,10 +161,12 @@ export const processOperations =
                 )}, nonce: ${nonce}`,
               );
 
-              return operation?.options?.onBroadcast?.(result).catch(e => {
-                logger.error(`operation.onBroadcast failed: ${e.message}`, e);
-                return null;
-              });
+              return operation?.options
+                ?.onBroadcast?.(result, { fee, nonce })
+                .catch(e => {
+                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                  return null;
+                });
             });
 
             break;
@@ -169,10 +181,12 @@ export const processOperations =
               },
               network,
             ).then(result =>
-              operation?.options?.onBroadcast?.(result).catch(e => {
-                logger.error(`operation.onBroadcast failed: ${e.message}`, e);
-                return null;
-              }),
+              operation?.options
+                ?.onBroadcast?.(result, { fee, nonce })
+                .catch(e => {
+                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                  return null;
+                }),
             );
             break;
           case 'transfer':
@@ -186,10 +200,12 @@ export const processOperations =
               },
               network,
             ).then(result =>
-              operation?.options?.onBroadcast?.(result).catch(e => {
-                logger.error(`operation.onBroadcast failed: ${e.message}`, e);
-                return null;
-              }),
+              operation?.options
+                ?.onBroadcast?.(result, { fee, nonce })
+                .catch(e => {
+                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                  return null;
+                }),
             );
             break;
           default:
@@ -213,6 +229,7 @@ export const processOperations =
             stacksAPIURL,
             chainID,
             contractAddress,
+            didRBFBroadcast
           });
           continue;
         }
@@ -260,6 +277,7 @@ export const processOperations =
           stacksAPIURL,
           chainID,
           contractAddress,
+          didRBFBroadcast
         });
       }
 
@@ -323,6 +341,13 @@ export async function RBFIfNeeded(
     stacksAPIURL: string;
     chainID?: ChainID;
     contractAddress: string;
+    didRBFBroadcast?: (params: {
+      originalTxId: string;
+      nonce: number;
+      newTxId: string;
+      fee?: number;
+      broadcastResult: TxBroadcastResult;
+    }) => Promise<void>;
   },
 ) {
   const chainID = options.chainID ?? ChainID.Testnet;
@@ -362,6 +387,7 @@ export async function RBFIfNeeded(
       newFee / 1e6
     }, after ${secondsPassed / 60} mins`,
   );
+
   await publicCall(
     {
       type: 'publicCall',
@@ -370,6 +396,15 @@ export async function RBFIfNeeded(
       args: tx.contract_call.function_args!.map(x => hexToCV(x.hex)),
       options: {
         fee: newFee,
+        onBroadcast: async (result, options_) => {
+          await options.didRBFBroadcast?.({
+            broadcastResult: result,
+            newTxId: result.txid,
+            originalTxId: tx.tx_id,
+            nonce: tx.nonce,
+            fee: options_.fee,
+          });
+        },
       },
     },
     {

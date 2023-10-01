@@ -24,7 +24,15 @@ export class DefaultRelayerService implements RelayerService {
   constructor(
     @Inject(RelayerRepository)
     public readonly relayerRepository: RelayerRepository,
-  ) {}
+  ) {
+    this.stacks.didRBFBroadcast = async ({ newTxId, nonce }) => {
+      await this.relayerRepository.onRBFTx({
+        newTxId: Buffer.from(newTxId),
+        nonce,
+        submitted_by: env().STACKS_RELAYER_ACCOUNT_ADDRESS,
+      });
+    };
+  }
 
   async startRelayer() {
     interval(env().RELAYER_SYNC_POLL_INTERVAL)
