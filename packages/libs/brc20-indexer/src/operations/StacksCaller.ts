@@ -1,5 +1,8 @@
 import { Logger } from '@nestjs/common';
-import { getAddressFromPrivateKey } from '@stacks/transactions';
+import {
+  getAddressFromPrivateKey,
+  TxBroadcastResult,
+} from '@stacks/transactions';
 import {
   env,
   getEnvStacksChainID,
@@ -30,8 +33,17 @@ export class StacksCaller {
       contractAddress,
       feeMultiplier: 2,
       puppetURL: env().STACKS_PUPPET_URL,
+      didRBFBroadcast: this.didRBFBroadcast,
     });
   }
+
+  public didRBFBroadcast: (params: {
+    originalTxId: string;
+    nonce: number;
+    newTxId: string;
+    fee?: number;
+    broadcastResult: TxBroadcastResult;
+  }) => Promise<void> = async () => {};
 
   readonlyCaller(): ReturnType<typeof callReadonlyWith> {
     return callReadonlyWith(

@@ -6,15 +6,21 @@ export type OperationCallbackInput =
 
 export type Operation = DeployContract | PublicCall | TransferSTX;
 
+export type CallbackOptions = { nonce: number; fee?: number };
+
 export type TransferSTX = {
   type: 'transfer';
   amount: number;
   address: string;
   options?: {
     fee?: number;
-    onBroadcast?: (result: TxBroadcastResult) => Promise<void>;
+    onBroadcast?: (
+      result: TxBroadcastResult,
+      options: CallbackOptions,
+    ) => Promise<void>;
     onSettled?: (op: TransferSTX) => Promise<void>;
-  };};
+  };
+};
 
 export type DeployContract = {
   type: 'deploy';
@@ -22,9 +28,13 @@ export type DeployContract = {
   path: string;
   options?: {
     fee?: number;
-    onBroadcast?: (result: TxBroadcastResult) => Promise<void>;
+    onBroadcast?: (
+      result: TxBroadcastResult,
+      options: CallbackOptions,
+    ) => Promise<void>;
     onSettled?: (op: DeployContract) => Promise<void>;
-  };};
+  };
+};
 
 export type PublicCall = {
   type: 'publicCall';
@@ -33,7 +43,10 @@ export type PublicCall = {
   args: ClarityValue[];
   options?: {
     fee?: number;
-    onBroadcast?: (result: TxBroadcastResult) => Promise<void>;
+    onBroadcast?: (
+      result: TxBroadcastResult,
+      options: CallbackOptions,
+    ) => Promise<void>;
     onSettled?: (op: PublicCall) => Promise<void>;
   };
 };

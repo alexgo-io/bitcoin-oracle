@@ -76,6 +76,22 @@ export class RelayerRepository {
     });
   }
 
+  async onRBFTx(params: {
+    nonce: number;
+    newTxId: Buffer;
+    submitted_by: string;
+  }) {
+    return this.persistent.pgPool.transaction(async conn => {
+      await conn.query(SQL.typeAlias('indexer_txs')`
+        update indexer.submitted_tx
+        set stacks_tx_id = ${SQL.binary(params.newTxId)}
+        where submitted_by = ${params.submitted_by}
+          and broadcast_result_type = 'ok'
+          and submitter_nonce = ${params.nonce}
+        `);
+    });
+  }
+
   async upsertSubmittedTx(params: ModelIndexer<'submitted_tx'>[]) {
     return this.persistent.pgPool.transaction(async conn => {
       for (const tx of params) {
