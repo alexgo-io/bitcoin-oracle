@@ -157,7 +157,7 @@ export class DefaultRelayerService implements RelayerService {
                   broadcast_result_type: 'settled',
                 })),
               ),
-            onBroadcast: result =>
+            onBroadcast: (result, options) =>
               this.relayerRepository.upsertSubmittedTx(
                 inputs.map(input => ({
                   tx_hash: Buffer.from(input.tx['bitcoin-tx']),
@@ -168,6 +168,7 @@ export class DefaultRelayerService implements RelayerService {
                   broadcast_result_type: result.error == null ? 'ok' : 'error',
                   error: result.error == null ? null : result.error,
                   submitted_by: env().STACKS_RELAYER_ACCOUNT_ADDRESS,
+                  submitter_nonce: BigInt(options.nonce),
                   submitted_at: new Date(),
                 })),
               ),

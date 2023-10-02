@@ -115,6 +115,7 @@ export class RelayerRepository {
             set stacks_tx_id = ${
               tx.stacks_tx_id == null ? null : SQL.binary(tx.stacks_tx_id)
             },
+                submitter_nonce = COALESCE(${tx.submitter_nonce?.toString() ?? null}, submitter_nonce),
                 broadcast_result_type = ${tx.broadcast_result_type},
                 error = ${tx.error ?? null}
             where tx_hash = ${SQL.binary(tx.tx_hash)}
@@ -130,7 +131,8 @@ export class RelayerRepository {
                                             stacks_tx_id,
                                             broadcast_result_type,
                                             error,
-                                            submitted_by)
+                                            submitted_by,
+                                            submitter_nonce)
           VALUES (${SQL.binary(tx.tx_hash)},
                   ${tx.satpoint.toString()},
                   ${tx.output.toString()},
@@ -139,7 +141,9 @@ export class RelayerRepository {
                   },
                   ${tx.broadcast_result_type},
                   ${tx.error ?? null},
-                  ${tx.submitted_by ?? null})
+                  ${tx.submitted_by ?? null},
+                  ${tx.submitter_nonce?.toString() ?? 0}
+                  )
         `);
         }
       }
