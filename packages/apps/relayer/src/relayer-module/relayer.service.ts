@@ -63,7 +63,7 @@ export class DefaultRelayerService implements RelayerService {
       if (tx.tx_hash.length > 4096) {
         const tx_id = Transaction.fromRaw(tx.tx_id).id;
         this.logger.error(
-          `tx_id too long: ${tx.tx_id.length}, tx_id: ${tx_id}, output: ${tx.output}, satpoint: ${tx.satpoint}`,
+          `tx_hash too long: ${tx.tx_hash.length}, tx_id: ${tx_id}, output: ${tx.output}, satpoint: ${tx.satpoint}`,
         );
         continue;
       }
@@ -85,7 +85,11 @@ export class DefaultRelayerService implements RelayerService {
 
           // TODO: check error code in mainnet
           if (isIndexedTx.type === 'error') {
-            // TODO: bundle proofs
+            const signaturePacks = tx.proofs.map(proof => ({
+              signature: proof.signature,
+              signer: proof.signer,
+              'tx-hash': proof.order_hash,
+            }));
             txManyInputs.push({
               block: {
                 height: tx.height,
@@ -107,13 +111,7 @@ export class DefaultRelayerService implements RelayerService {
                 to: tx.to,
                 amt: tx.amt,
               },
-              'signature-packs': [
-                {
-                  signature: tx.signature,
-                  signer: tx.signer,
-                  'tx-hash': tx.order_hash,
-                },
-              ],
+              'signature-packs': signaturePacks,
             });
           } else {
             indexed.push({
