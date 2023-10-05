@@ -2,8 +2,9 @@
 import {
   getActivityOnBlock,
   getAllActivitiesOnBlock$,
-  getBalanceOnBlock,
+  getAllBalancesOnBlock$,
 } from '@bitcoin-oracle/validator-hiro';
+import { firstValueFrom } from 'rxjs';
 
 describe('Hiro API', function () {
   it('should get activity', async function () {
@@ -146,104 +147,83 @@ describe('Hiro API', function () {
   }, 10e3);
 
   it('should get balance', async function () {
-    const data = await getBalanceOnBlock(
-      'bc1p92dh94w90gf4yqvza2c2jywwyxwupg9skfl5e7qqkd6ylk28fqhqmwhks4',
-      807573,
+    const data = await firstValueFrom(
+      getAllBalancesOnBlock$(
+        810713,
+        'bc1pj5f2vsnqruej22edmnefq2t43fqa5aw7v7y25legxffyk5pssjzqthex8r',
+      ),
     );
 
     expect(data).toBeDefined();
     expect(data).toMatchInlineSnapshot(`
-      {
-        "limit": 60,
-        "offset": 0,
-        "results": [
-          {
-            "available_balance": "500.000000000000000000",
-            "overall_balance": "500.000000000000000000",
-            "ticker": "BTOC",
-            "transferrable_balance": "0.000000000000000000",
-          },
-          {
-            "available_balance": "121000.000000000000000000",
-            "overall_balance": "121000.000000000000000000",
-            "ticker": "FHAL",
-            "transferrable_balance": "0.000000000000000000",
-          },
-          {
-            "available_balance": "0.000000000000000000",
-            "overall_balance": "100000.000000000000000000",
-            "ticker": "gmgn",
-            "transferrable_balance": "100000.000000000000000000",
-          },
-          {
-            "available_balance": "136250.000000000000000000",
-            "overall_balance": "200000.000000000000000000",
-            "ticker": "mars",
-            "transferrable_balance": "63750.000000000000000000",
-          },
-          {
-            "available_balance": "850000.000000000000000000",
-            "overall_balance": "850000.000000000000000000",
-            "ticker": "OBJT",
-            "transferrable_balance": "0.000000000000000000",
-          },
-          {
-            "available_balance": "67000.000000000000000000",
-            "overall_balance": "67000.000000000000000000",
-            "ticker": "ODSR",
-            "transferrable_balance": "0.000000000000000000",
-          },
-          {
-            "available_balance": "189000.000000000000000000",
-            "overall_balance": "189000.000000000000000000",
-            "ticker": "OMNI",
-            "transferrable_balance": "0.000000000000000000",
-          },
-          {
-            "available_balance": "1200.000000000000000000",
-            "overall_balance": "1200.000000000000000000",
-            "ticker": "ORPR",
-            "transferrable_balance": "0.000000000000000000",
-          },
-          {
-            "available_balance": "202000.000000000000000000",
-            "overall_balance": "202000.000000000000000000",
-            "ticker": "rssc",
-            "transferrable_balance": "0.000000000000000000",
-          },
-          {
-            "available_balance": "3315599995981.000000000000000000",
-            "overall_balance": "3315599995981.000000000000000000",
-            "ticker": "sats",
-            "transferrable_balance": "0.000000000000000000",
-          },
-          {
-            "available_balance": "48000.000000000000000000",
-            "overall_balance": "48000.000000000000000000",
-            "ticker": "time",
-            "transferrable_balance": "0.000000000000000000",
-          },
-          {
-            "available_balance": "2.000000000000000000",
-            "overall_balance": "2.000000000000000000",
-            "ticker": "usdt",
-            "transferrable_balance": "0.000000000000000000",
-          },
-          {
-            "available_balance": "333600.000000000000000000",
-            "overall_balance": "452400.000000000000000000",
-            "ticker": "WOLV",
-            "transferrable_balance": "118800.000000000000000000",
-          },
-          {
-            "available_balance": "201200.000000000000000000",
-            "overall_balance": "225500.000000000000000000",
-            "ticker": "wzrd",
-            "transferrable_balance": "24300.000000000000000000",
-          },
-        ],
-        "total": 14,
-      }
+      [
+        {
+          "available_balance": 377456000000000000000000000000n,
+          "overall_balance": 377456000000000000000000000000n,
+          "ticker": "$DOG",
+          "transferrable_balance": 0n,
+        },
+        {
+          "available_balance": 12600000000000000000000n,
+          "overall_balance": 12600000000000000000000n,
+          "ticker": "cula",
+          "transferrable_balance": 0n,
+        },
+        {
+          "available_balance": 4000000000000000000000n,
+          "overall_balance": 4000000000000000000000n,
+          "ticker": "defi",
+          "transferrable_balance": 0n,
+        },
+        {
+          "available_balance": 21000000000000000000000n,
+          "overall_balance": 21000000000000000000000n,
+          "ticker": "GTTR",
+          "transferrable_balance": 0n,
+        },
+        {
+          "available_balance": 10000000000000000000000n,
+          "overall_balance": 10000000000000000000000n,
+          "ticker": "luck",
+          "transferrable_balance": 0n,
+        },
+        {
+          "available_balance": 5000000000000000000000n,
+          "overall_balance": 5000000000000000000000n,
+          "ticker": "lvdi",
+          "transferrable_balance": 0n,
+        },
+        {
+          "available_balance": 97275298995000000000000000000n,
+          "overall_balance": 239400108995000000000000000000n,
+          "ticker": "sats",
+          "transferrable_balance": 142124810000000000000000000000n,
+        },
+        {
+          "available_balance": 5000000000000000000000n,
+          "overall_balance": 5000000000000000000000n,
+          "ticker": "SBTC",
+          "transferrable_balance": 0n,
+        },
+        {
+          "available_balance": 11000000000000000000n,
+          "overall_balance": 11000000000000000000n,
+          "ticker": "TEXO",
+          "transferrable_balance": 0n,
+        },
+        {
+          "available_balance": 5000000000000000000000n,
+          "overall_balance": 5000000000000000000000n,
+          "ticker": "UdiW",
+          "transferrable_balance": 0n,
+        },
+        {
+          "available_balance": 55000000000000000000000n,
+          "overall_balance": 55000000000000000000000n,
+          "ticker": "weth",
+          "transferrable_balance": 0n,
+        },
+      ]
     `);
   });
 });
