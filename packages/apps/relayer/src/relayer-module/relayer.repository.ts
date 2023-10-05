@@ -1,7 +1,7 @@
 import { SQL } from '@bitcoin-oracle/commons';
 
 import { PersistentService } from '@bitcoin-oracle/persistent';
-import { ModelIndexer } from '@bitcoin-oracle/types';
+import { m, ModelIndexer } from '@bitcoin-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
 import { env } from '../env';
 
@@ -14,34 +14,42 @@ export class RelayerRepository {
 
   async getPendingSubmitTx() {
     return this.persistent.pgPool.transaction(async conn => {
-      const pendingTxs = await conn.query(SQL.typeAlias('indexer_txs_proof')`
-        with target_txs as (select *
-                            from indexer.txs
-                            where not exists (select 1
-                                              from indexer.submitted_tx
-                                              where txs.id = submitted_tx.id)),
-             qualified_txs as (select target_txs.tx_hash, count(*)
-                               from target_txs
-                               group by target_txs.tx_hash
+      const pendingTxs = await conn.query(SQL.type(
+        m.database('indexer', 'relayer_txs'),
+      )`
+        with pending_txs as (select *
+                             from indexer.txs
+                             where not exists (select 1
+                                               from indexer.submitted_tx
+                                               where txs.id = submitted_tx.id)
+                               and length(tx_hash) <= 4096
+        ),
+             qualified_txs as (select pt.id, count(*)
+                               from pending_txs pt
+                                      join indexer.proofs pf on pt.id = pf.id
+                               group by 1
                                having count(*) >=
                                       (select minimal_proof_count
                                        from indexer_config.relayer_configs
                                        limit 1
-                                       )
-                               ),
-             with_proof as (select target_txs.*,
-                                   proofs.type,
-                                   proofs.order_hash,
-                                   proofs.signer,
-                                   proofs.signature
-                            from target_txs
-                                   join indexer.proofs on target_txs.id = proofs.id
-                            where target_txs.tx_hash in (select tx_hash
-                                                        from qualified_txs)
-                              and length(target_txs.tx_hash) <= 4096)
+                                      )),
+             bundle_proof as (
+               select qt.id,
+                      json_agg(json_build_object('type', pf.type,
+                                                 'order_hash', pf.order_hash,
+                                                 'signer', pf.signer,
+                                                 'signature', pf.signature)) as proofs
+               from qualified_txs qt
+                      join indexer.proofs pf on qt.id = pf.id
+               group by 1
+             ),
+             with_proof as (select pt.*,
+                                   bp.proofs
+                            from bundle_proof bp
+                                   join pending_txs pt on bp.id = pt.id
+             )
         select *
         from with_proof
-        limit 2000
         ;
       `);
       this.logger.verbose(`getPendingSubmitTx: ${pendingTxs.rows.length}`);
@@ -115,7 +123,9 @@ export class RelayerRepository {
             set stacks_tx_id = ${
               tx.stacks_tx_id == null ? null : SQL.binary(tx.stacks_tx_id)
             },
-                submitter_nonce = COALESCE(${tx.submitter_nonce?.toString() ?? null}, submitter_nonce),
+                submitter_nonce = COALESCE(${
+                  tx.submitter_nonce?.toString() ?? null
+                }, submitter_nonce),
                 broadcast_result_type = ${tx.broadcast_result_type},
                 error = ${tx.error ?? null}
             where tx_hash = ${SQL.binary(tx.tx_hash)}

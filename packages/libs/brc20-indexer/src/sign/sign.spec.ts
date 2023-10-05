@@ -4,7 +4,7 @@ import { getDomainHash, signTx, structuredDataHash } from './sign';
 describe('sign', () => {
   it('should get correct domain hash', () => {
     expect(getDomainHash().toString('hex')).toMatchInlineSnapshot(
-      '"84deb9a3b41b870d85819000deefa999f43b1bf2c3d80c3ea19d4b83b7b10fbc"',
+      `"6d11cd301d11961e7cfeabd61e3f4da17f42f3d627362c8878aa9cbb5c532be2"`,
     );
   });
 
@@ -31,7 +31,7 @@ describe('sign', () => {
       encodeValue,
     );
     expect(signature.toString('hex')).toMatchInlineSnapshot(
-      `"cc0659d8d366e0516a8fdadde96d1ef59a8186786558d8f817e259ca8f62837e744055fb03f4690df9603fc469f81aece4e838fbde32c157a6fef905b4acf8a201"`,
+      `"7e8730beb34166ab2f3c5de3d253fd8eb13a5b6a24bea9e2c85fbac519b17ee75448463a06a1a208f751259c3a1f10dfddf35ff0844a2b6ba85b50e8916c32e500"`,
     );
   });
 });

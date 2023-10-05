@@ -75,10 +75,24 @@ const blocks = z.object({
   canonical: z.boolean(),
 });
 
+const relayer_txs = txs.merge(
+  z.object({
+    proofs: z.array(
+      z.object({
+        type: Enums.ValidatorName,
+        order_hash: BufferHexSchema,
+        signature: BufferHexSchema,
+        signer: z.string(),
+      }),
+    ),
+  }),
+);
+
 export const indexer = {
   blocks,
   txs,
   proofs,
   tx_with_proofs,
   submitted_tx,
+  relayer_txs,
 };
