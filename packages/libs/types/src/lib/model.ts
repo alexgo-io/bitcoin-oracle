@@ -2,7 +2,7 @@
 import { ZodType } from 'zod';
 import { indexerAPI } from './api-model';
 import { Enums } from './enums-model';
-import { indexer } from './indexer-model';
+import { indexer } from './db-model';
 
 export const Models = {
   database: {
