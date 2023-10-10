@@ -68,8 +68,8 @@ function makeDebugRequestQuery<T extends DataType>(type: T) {
     tx_hash: makeBuffer(type).optional(),
     header: makeBuffer(type).optional(),
     tx_index: makeBigInt(type).optional(),
-    stacks_error: z.string().optional(),
-    tx_error: z.string().optional(),
+    stacks_error: z.string().nullish(),
+    tx_error: z.string().nullish(),
     output: makeBigInt(type).optional(),
     satpoint: makeBigInt(type).optional(),
     height: makeBigInt(type).optional(),
@@ -93,7 +93,7 @@ function makeDebugResponseQuery<T extends DataType>(type: T) {
     tx_index: makeBigInt(type),
     tree_depth: makeBigInt(type),
     height: makeBigInt(type),
-    tx_error: z.string().optional(),
+    tx_error: z.string().nullish(),
     proofs_count: makeBigInt(type),
     proofs: z.array(
       z.object({
@@ -118,7 +118,7 @@ function makeDebugResponseQuery<T extends DataType>(type: T) {
     stacks_submitted_at: DateSchema.nullable(),
     stacks_submitter_nonce: makeBigInt(type).nullable(),
     stacks_broadcast_result: z.string().nullable(),
-    stacks_error: z.string().nullable(),
+    stacks_error: z.string().nullish(),
     block_hash: makeBuffer(type),
     block_header: makeBuffer(type),
   });
