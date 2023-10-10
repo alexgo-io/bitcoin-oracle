@@ -8,7 +8,7 @@
     "rxjs": "^7.8.1",
     "@bitcoin-oracle/types": "*",
     "scure-btc-signer-cjs": "^1.0.1",
-    "zod": "^3.22.2",
+    "zod": "^3.22.3",
     "@t3-oss/env-core": "^0.6.1",
     "@bitcoin-oracle/commons": "*",
     "@bitcoin-oracle/api-client": "*",

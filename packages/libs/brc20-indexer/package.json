@@ -8,7 +8,7 @@
     "@stacks/transactions": "^6.7.0",
     "@t3-oss/env-core": "^0.6.1",
     "memoizee": "^0.4.15",
-    "zod": "^3.22.2",
+    "zod": "^3.22.3",
     "@nestjs/common": "^10.2.4",
     "@iarna/toml": "^2.2.5",
     "lodash": "^4.17.21",
