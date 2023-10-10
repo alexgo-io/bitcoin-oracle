@@ -4,7 +4,7 @@
   "dependencies": {
     "tslib": "^2.3.0",
     "@t3-oss/env-core": "^0.6.1",
-    "zod": "^3.22.2",
+    "zod": "^3.22.3",
     "electrum-client-sl": "^0.1.4",
     "@bitcoin-oracle/commons": "*",
     "got-cjs": "^12.5.4",

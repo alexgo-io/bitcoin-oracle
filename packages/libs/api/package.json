@@ -7,7 +7,7 @@
     "@bitcoin-oracle/persistent": "*",
     "@nestjs/common": "^10.2.4",
     "@bitcoin-oracle/commons": "*",
-    "zod": "^3.22.2",
+    "zod": "^3.22.3",
     "scure-btc-signer-cjs": "^1.0.1"
   },
   "type": "commonjs",
