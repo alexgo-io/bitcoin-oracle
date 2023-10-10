@@ -56,8 +56,18 @@ export class DefaultRelayerService implements RelayerService {
     this.logger.log(`processing: ${rows.length} rows transactions`);
 
     const queue = new PQueue({ concurrency: 25 });
-    const indexed: { 'bitcoin-tx': Buffer; offset: bigint; output: bigint }[] =
-      [];
+    const indexedTxs: {
+      'bitcoin-tx': Buffer;
+      offset: bigint;
+      output: bigint;
+    }[] = [];
+
+    const txErrors: {
+      tx_hash: Buffer;
+      satpoint: bigint;
+      output: bigint;
+      error: string;
+    }[] = [];
 
     for (const tx of rows) {
       if (tx.tx_hash.length > 4096) {
@@ -83,13 +93,60 @@ export class DefaultRelayerService implements RelayerService {
             'get-bitcoin-tx-indexed-or-fail',
           );
 
-          // TODO: check error code in mainnet
+          // error: the tx is not indexed yet
           if (isIndexedTx.type === 'error') {
+            const firstProof = tx.proofs[0];
+            let validateError = '';
+            tx.proofs.forEach(proof => {
+              if (proof.from != firstProof.from) {
+                validateError += `from: ${proof.from}[${proof.type}] != ${firstProof.from}[${proof.type}].\n`;
+              }
+              if (proof.to != firstProof.to) {
+                validateError += `to: ${proof.to}[${proof.type}] != ${firstProof.to}[${proof.type}].\n`;
+              }
+              if (proof.amt != firstProof.amt) {
+                validateError += `amt: ${proof.amt}[${proof.type}] != ${firstProof.amt}[${proof.type}].\n`;
+              }
+              if (proof.from_bal != firstProof.from_bal) {
+                validateError += `from_bal: ${proof.from_bal}[${proof.type}] != ${firstProof.from_bal}[${proof.type}].\n`;
+              }
+              if (proof.to_bal != firstProof.to_bal) {
+                validateError += `to_bal: ${proof.to_bal}[${proof.type}] != ${firstProof.to_bal}[${proof.type}].\n`;
+              }
+              if (proof.satpoint != firstProof.satpoint) {
+                validateError += `satpoint: ${proof.satpoint}[${proof.type}] != ${firstProof.satpoint}[${proof.type}].\n`;
+              }
+              if (proof.output != firstProof.output) {
+                validateError += `output: ${proof.output}[${proof.type}] != ${firstProof.output}[${proof.type}].\n`;
+              }
+              if (proof.tick != firstProof.tick) {
+                validateError += `tick: ${proof.tick}[${proof.type}] != ${firstProof.tick}[${proof.type}].\n`;
+              }
+              if (proof.tx_id != firstProof.tx_id) {
+                validateError += `tx_id: ${proof.tx_id}[${proof.type}] != ${firstProof.tx_id}[${proof.type}].\n`;
+              }
+              if (proof.order_hash != firstProof.order_hash) {
+                validateError += `order_hash: ${proof.order_hash}[${proof.type}] != ${firstProof.order_hash}[${proof.type}].\n`;
+              }
+            });
+
+            // mark the tx as error if any of the proofs does not match
+            if (validateError.length > 0) {
+              txErrors.push({
+                satpoint: tx.satpoint,
+                output: tx.output,
+                tx_hash: tx.tx_hash,
+                error: validateError,
+              });
+              return;
+            }
+
             const signaturePacks = tx.proofs.map(proof => ({
               signature: proof.signature,
               signer: proof.signer,
               'tx-hash': proof.order_hash,
             }));
+
             txManyInputs.push({
               block: {
                 height: tx.height,
@@ -104,17 +161,17 @@ export class DefaultRelayerService implements RelayerService {
                 output: tx.output,
                 offset: tx.satpoint,
                 'bitcoin-tx': tx.tx_hash,
-                from: tx.from,
-                tick: tx.tick,
-                'from-bal': tx.from_bal,
-                'to-bal': tx.to_bal,
-                to: tx.to,
-                amt: tx.amt,
+                from: firstProof.from,
+                tick: firstProof.tick,
+                'from-bal': firstProof.from_bal,
+                'to-bal': firstProof.to_bal,
+                to: firstProof.to,
+                amt: firstProof.amt,
               },
               'signature-packs': signaturePacks,
             });
           } else {
-            indexed.push({
+            indexedTxs.push({
               'bitcoin-tx': tx.tx_hash,
               offset: tx.satpoint,
               output: tx.output,
@@ -126,11 +183,16 @@ export class DefaultRelayerService implements RelayerService {
 
     await queue.onIdle();
 
-    if (indexed.length > 0) {
+    if (indexedTxs.length > 0) {
       this.logger.log(
-        `setAlreadyIndexed: ${indexed.length} txs indexed by others`,
+        `setAlreadyIndexed: ${indexedTxs.length} txs indexed by others`,
       );
-      await this.relayerRepository.setAlreadyIndexed(indexed);
+      await this.relayerRepository.setAlreadyIndexed(indexedTxs);
+    }
+
+    if (txErrors.length > 0) {
+      this.logger.log(`setTxs Error: ${txErrors.length} txs with errors`);
+      await this.relayerRepository.setTxsWithError(txErrors);
     }
 
     const kChunkSize = 25;

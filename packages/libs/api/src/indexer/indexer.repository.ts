@@ -13,6 +13,13 @@ export class IndexerRepository {
 
   async upsertTxWithProof(tx: APIOf<'txs', 'request', 'dto'>) {
     return this.persistentService.pgPool.transaction(async conn => {
+      const tx_id = Buffer.from(
+        Transaction.fromRaw(tx.tx_hash, { allowUnknownOutputs: true }).id,
+        'hex',
+      );
+      const from_address = Address().encode(OutScript.decode(tx.from));
+      const to_address = Address().encode(OutScript.decode(tx.to));
+
       await conn.query(SQL.typeAlias('void')`
           INSERT INTO indexer.proofs(type,
                                      order_hash,
@@ -26,7 +33,10 @@ export class IndexerRepository {
                                      tick,
                                      "to",
                                      to_bal,
-                                     signer)
+                                     signer,
+                                     from_address,
+                                     to_address,
+                                     tx_id)
           VALUES (${tx.type},
                   ${SQL.binary(tx.order_hash)},
                   ${SQL.binary(tx.signature)},
@@ -39,7 +49,11 @@ export class IndexerRepository {
                   ${tx.tick},
                   ${SQL.binary(tx.to)},
                   ${tx.to_bal.toString()},
-                  ${tx.signer})
+                  ${tx.signer},
+                  ${from_address},
+                  ${to_address},
+                  ${SQL.binary(tx_id)}
+                  )
           on conflict do nothing;
           ;
       `);
@@ -57,48 +71,26 @@ export class IndexerRepository {
         return;
       }
 
-      const tx_id = Buffer.from(
-        Transaction.fromRaw(tx.tx_hash, { allowUnknownOutputs: true }).id,
-        'hex',
-      );
-      const from_address = Address().encode(OutScript.decode(tx.from));
-      const to_address = Address().encode(OutScript.decode(tx.to));
-
       await conn.query(SQL.typeAlias('void')`
           INSERT INTO indexer.txs(header,
                                   height,
                                   tx_hash,
                                   tx_id,
-                                  from_address,
-                                  to_address,
                                   proof_hashes,
                                   tx_index,
                                   tree_depth,
-                                  "from",
-                                  "to",
                                   output,
-                                  tick,
-                                  amt,
-                                  satpoint,
-                                  from_bal,
-                                  to_bal)
+                                  satpoint
+                                  )
           VALUES (${SQL.binary(tx.header)},
                   ${tx.height.toString()},
                   ${SQL.binary(tx.tx_hash)},
                   ${SQL.binary(tx_id)},
-                  ${from_address},
-                  ${to_address},
                   ${SQL.array(tx.proof_hashes, 'bytea')},
                   ${tx.tx_index.toString()},
                   ${tx.tree_depth.toString()},
-                  ${SQL.binary(tx.from)},
-                  ${SQL.binary(tx.to)},
                   ${tx.output.toString()},
-                  ${tx.tick},
-                  ${tx.amt.toString()},
-                  ${tx.satpoint.toString()},
-                  ${tx.from_bal.toString()},
-                  ${tx.to_bal.toString()});
+                  ${tx.satpoint.toString()});
       `);
     });
   }
@@ -135,6 +127,14 @@ export class IndexerRepository {
                            p.type,
                            json_build_object(
                                    'type', p.type,
+                                   'from_address', p.from_address,
+                                   'to_address', p.to_address,
+                                   'amt', p.amt,
+                                   'from', p.from,
+                                   'to', p.to,
+                                   'tick', p.tick,
+                                   'from_bal', p.from_bal,
+                                   'to_bal', p.to_bal,
                                    'satpoint', p.satpoint,
                                    'output', p.output,
                                    'signer', p.signer,
@@ -152,18 +152,10 @@ export class IndexerRepository {
                                 t.output,
                                 t.satpoint,
                                 t.tx_id,
-                                t.from_address,
-                                t.to_address,
                                 t.header,
                                 t.proof_hashes,
                                 t.tx_index,
                                 t.tree_depth,
-                                t."from",
-                                t."to",
-                                t.tick,
-                                t.amt,
-                                t.from_bal,
-                                t.to_bal,
                                 t.height,
                                 with_json_pf.proofs_count,
                                 with_json_pf.proofs,
