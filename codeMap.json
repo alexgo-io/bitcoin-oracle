@@ -87,33 +87,33 @@
     "code": "ERR-TOO-MANY-TXOUTS",
     "comment": "clarity-bitcoin.clar:242"
   },
-  "377556247": {
+  "377556930": {
     "code": "ERR-OUT-OF-BOUNDS",
-    "comment": "clarity-bitcoin.clar:295"
+    "comment": "clarity-bitcoin.clar:306"
   },
-  "377556248": {
+  "377556931": {
     "code": "ERR-VARSLICE-TOO-LONG",
-    "comment": "clarity-bitcoin.clar:296"
+    "comment": "clarity-bitcoin.clar:307"
   },
-  "377556249": {
+  "377556932": {
     "code": "ERR-TOO-MANY-TXOUTS",
-    "comment": "clarity-bitcoin.clar:297"
+    "comment": "clarity-bitcoin.clar:308"
   },
-  "377556250": {
+  "377556933": {
     "code": "ERR-TOO-MANY-TXINS",
-    "comment": "clarity-bitcoin.clar:298"
+    "comment": "clarity-bitcoin.clar:309"
   },
-  "377558049": {
+  "377558102": {
     "code": "ERR-PROOF-TOO-SHORT",
-    "comment": "clarity-bitcoin.clar:459"
+    "comment": "clarity-bitcoin.clar:470"
   },
-  "377558073": {
+  "377558105": {
     "code": "ERR-PROOF-TOO-SHORT",
-    "comment": "clarity-bitcoin.clar:462"
+    "comment": "clarity-bitcoin.clar:473"
   },
-  "377558141": {
+  "377558173": {
     "code": "ERR-PROOF-TOO-SHORT",
-    "comment": "clarity-bitcoin.clar:488"
+    "comment": "clarity-bitcoin.clar:499"
   },
   "2090389178": {
     "code": "ERR-OUT-OF-BOUNDS",
@@ -191,21 +191,21 @@
     "code": "ERR-INVALID-SIGNATURE",
     "comment": "indexer.clar:110"
   },
-  "3842857283": {
+  "3842857286": {
     "code": "ERR-PAUSED",
-    "comment": "indexer.clar:136"
+    "comment": "indexer.clar:139"
   },
-  "3842857284": {
+  "3842857308": {
     "code": "ERR-UKNOWN-RELAYER",
-    "comment": "indexer.clar:137"
+    "comment": "indexer.clar:140"
   },
-  "3842857402": {
+  "3842857405": {
     "code": "ERR-REQUIRED-VALIDATORS",
-    "comment": "indexer.clar:171"
+    "comment": "indexer.clar:174"
   },
-  "3842857464": {
+  "3842857467": {
     "code": "ERR-NOT-AUTHORIZED",
-    "comment": "indexer.clar:191"
+    "comment": "indexer.clar:194"
   },
   "4072773152": {
     "code": "ERR-TX-NOT-INDEXED",
