@@ -157,6 +157,7 @@ export class IndexerRepository {
                                 t.tx_index,
                                 t.tree_depth,
                                 t.height,
+                                t.error                as tx_error,
                                 with_json_pf.proofs_count,
                                 with_json_pf.proofs,
                                 st.stacks_tx_id          as stacks_tx_id,
