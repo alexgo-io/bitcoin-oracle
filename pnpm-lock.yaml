@@ -31,7 +31,7 @@ importers:
         version: 6.7.0
       '@t3-oss/env-core':
         specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.2)
+        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
       axios:
         specifier: ^1.5.0
         version: 1.5.0
@@ -73,7 +73,7 @@ importers:
         version: 3.4.0(@nestjs/common@10.2.4)(pino-http@8.5.0)
       nestjs-zod:
         specifier: ^3.0.0
-        version: 3.0.0(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(@nestjs/swagger@7.1.10)(zod@3.22.2)
+        version: 3.0.0(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(@nestjs/swagger@7.1.10)(zod@3.22.3)
       p-queue:
         specifier: ^6.6.2
         version: 6.6.2
@@ -106,7 +106,7 @@ importers:
         version: 1.0.1
       slonik:
         specifier: ^34.1.0
-        version: 34.1.0(zod@3.22.2)
+        version: 34.1.0(zod@3.22.3)
       slonik-interceptor-query-logging:
         specifier: ^1.4.7
         version: 1.4.7(slonik@34.1.0)
@@ -114,8 +114,8 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
       zod:
-        specifier: ^3.22.2
-        version: 3.22.2
+        specifier: ^3.22.3
+        version: 3.22.3
     devDependencies:
       '@milahu/patch-package':
         specifier: ^6.4.14
@@ -351,8 +351,8 @@ importers:
         specifier: ^2.3.0
         version: 2.6.2
       zod:
-        specifier: ^3.22.2
-        version: 3.22.2
+        specifier: ^3.22.3
+        version: 3.22.3
 
   packages/libs/api-client:
     dependencies:
@@ -364,7 +364,7 @@ importers:
         version: link:../types
       '@t3-oss/env-core':
         specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.2)
+        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
       got-cjs:
         specifier: ^12.5.4
         version: 12.5.4
@@ -375,8 +375,8 @@ importers:
         specifier: ^2.3.0
         version: 2.6.2
       zod:
-        specifier: ^3.22.2
-        version: 3.22.2
+        specifier: ^3.22.3
+        version: 3.22.3
 
   packages/libs/bitcoin:
     dependencies:
@@ -385,7 +385,7 @@ importers:
         version: link:../commons
       '@t3-oss/env-core':
         specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.2)
+        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
       bitcoinjs-lib:
         specifier: ^6.1.3
         version: 6.1.3
@@ -408,8 +408,8 @@ importers:
         specifier: ^2.3.0
         version: 2.6.2
       zod:
-        specifier: ^3.22.2
-        version: 3.22.2
+        specifier: ^3.22.3
+        version: 3.22.3
 
   packages/libs/brc20-indexer:
     dependencies:
@@ -433,7 +433,7 @@ importers:
         version: 6.7.0
       '@t3-oss/env-core':
         specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.2)
+        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
       clarity-codegen:
         specifier: ^0.2.6
         version: 0.2.6(@stacks/transactions@6.7.0)
@@ -453,8 +453,8 @@ importers:
         specifier: ^2.3.0
         version: 2.6.2
       zod:
-        specifier: ^3.22.2
-        version: 3.22.2
+        specifier: ^3.22.3
+        version: 3.22.3
 
   packages/libs/commons: {}
 
@@ -475,7 +475,7 @@ importers:
         version: link:../commons
       '@t3-oss/env-core':
         specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.2)
+        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
       got-cjs:
         specifier: ^12.5.4
         version: 12.5.4
@@ -492,8 +492,8 @@ importers:
         specifier: ^2.3.0
         version: 2.6.2
       zod:
-        specifier: ^3.22.2
-        version: 3.22.2
+        specifier: ^3.22.3
+        version: 3.22.3
 
   packages/libs/validator-bis:
     dependencies:
@@ -514,7 +514,7 @@ importers:
         version: 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@t3-oss/env-core':
         specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.2)
+        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
       got-cjs:
         specifier: ^12.5.4
         version: 12.5.4
@@ -528,8 +528,8 @@ importers:
         specifier: ^2.3.0
         version: 2.6.2
       zod:
-        specifier: ^3.22.2
-        version: 3.22.2
+        specifier: ^3.22.3
+        version: 3.22.3
 
   packages/libs/validator-hiro:
     dependencies:
@@ -553,7 +553,7 @@ importers:
         version: 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@t3-oss/env-core':
         specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.2)
+        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
       got-cjs:
         specifier: ^12.5.4
         version: 12.5.4
@@ -570,8 +570,8 @@ importers:
         specifier: ^2.3.0
         version: 2.6.2
       zod:
-        specifier: ^3.22.2
-        version: 3.22.2
+        specifier: ^3.22.3
+        version: 3.22.3
 
   packages/plugins/nx-stacks: {}
 
@@ -4720,14 +4720,14 @@ packages:
       defer-to-connect: 2.0.1
     dev: true
 
-  /@t3-oss/env-core@0.6.1(typescript@5.2.2)(zod@3.22.2):
+  /@t3-oss/env-core@0.6.1(typescript@5.2.2)(zod@3.22.3):
     resolution: {integrity: sha512-KQD7qEDJtkWIWWmTVjNvk0wnHpkvAQ6CRbUxbWMFNG/fiosBQDQvtRpBNu6USxBscJCoC4z6y7P9MN52/mLOzw==}
     peerDependencies:
       typescript: '>=4.7.2'
       zod: ^3.0.0
     dependencies:
       typescript: 5.2.2
-      zod: 3.22.2
+      zod: 3.22.3
     dev: false
 
   /@tootallnate/once@1.1.2:
@@ -10983,7 +10983,7 @@ packages:
       pino-http: 8.5.0
     dev: false
 
-  /nestjs-zod@3.0.0(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(@nestjs/swagger@7.1.10)(zod@3.22.2):
+  /nestjs-zod@3.0.0(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(@nestjs/swagger@7.1.10)(zod@3.22.3):
     resolution: {integrity: sha512-vL9CHShCVj6TmjCVPOd4my46D8d7FdoB4nQvvh+lmVTuzvnwuD+slSxjT4EDdPDWDFtjhfpvQnnkr55/80KHEQ==}
     peerDependencies:
       '@nestjs/common': '>= 8.0.0'
@@ -11002,7 +11002,7 @@ packages:
       '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@nestjs/swagger': 7.1.10(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)
       merge-deep: 3.0.3
-      zod: 3.22.2
+      zod: 3.22.3
     dev: false
 
   /next-tick@1.1.0:
@@ -13601,10 +13601,10 @@ packages:
       crack-json: 1.3.0
       pretty-ms: 7.0.1
       serialize-error: 8.1.0
-      slonik: 34.1.0(zod@3.22.2)
+      slonik: 34.1.0(zod@3.22.3)
     dev: false
 
-  /slonik@34.1.0(zod@3.22.2):
+  /slonik@34.1.0(zod@3.22.3):
     resolution: {integrity: sha512-sGw8nopmEFIg7parn2HD7AvPfJLTUkPg/8vZr9jWrf/s4TItYvtgI8V3kH1JrCbFvDmz0ln/WV6yhsIQewm0gg==}
     engines: {node: '>=10.0'}
     peerDependencies:
@@ -13624,7 +13624,7 @@ packages:
       safe-stable-stringify: 2.4.3
       serialize-error: 8.1.0
       through2: 4.0.2
-      zod: 3.22.2
+      zod: 3.22.3
     transitivePeerDependencies:
       - pg-native
     dev: false
@@ -15326,8 +15326,8 @@ packages:
     resolution: {integrity: sha512-DBxJZBRafFLA/tCc5uO8ZTGFr+sQgn1FRJkZ4cVrIQIk6bv2bInraE3mbpLAJw9z93JGrLkqDoyTLrrZaCNq5w==}
     dev: false
 
-  /zod@3.22.2:
-    resolution: {integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==}
+  /zod@3.22.3:
+    resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
     dev: false
 
   /zone-file@2.0.0-beta.3:

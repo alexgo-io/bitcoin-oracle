@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
-    "zod": "^3.22.2",
+    "zod": "^3.22.3",
     "memoizee": "^0.4.15",
     "rxjs": "^7.8.1",
     "got-cjs": "^12.5.4",
