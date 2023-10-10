@@ -14,19 +14,11 @@ const txs = z.object({
   height: BigIntSchema,
   tx_hash: BufferHexSchema,
   tx_id: BufferHexSchema,
-  from_address: z.string(),
-  to_address: z.string(),
   output: BigIntSchema,
   satpoint: BigIntSchema,
   proof_hashes: z.array(BufferHexSchema),
   tx_index: BigIntSchema,
   tree_depth: BigIntSchema,
-  from: BufferHexSchema,
-  to: BufferHexSchema,
-  tick: z.string(),
-  amt: BigIntSchema,
-  from_bal: BigIntSchema,
-  to_bal: BigIntSchema,
 });
 
 /*
@@ -50,6 +42,10 @@ const proofs = z.object({
   tick: z.string(),
   to: BufferHexSchema,
   to_bal: BigIntSchema,
+
+  from_address: z.string(),
+  to_address: z.string(),
+  tx_id: BufferHexSchema,
 
   signer: z.string(),
 });
@@ -83,6 +79,17 @@ const relayer_txs = txs.merge(
         order_hash: BufferHexSchema,
         signature: BufferHexSchema,
         signer: z.string(),
+
+        amt: BigIntSchema,
+        from: BufferHexSchema,
+        from_bal: BigIntSchema,
+        satpoint: BigIntSchema,
+        output: BigIntSchema,
+        tick: z.string(),
+        to: BufferHexSchema,
+        to_bal: BigIntSchema,
+
+        tx_id: BufferHexSchema,
       }),
     ),
   }),

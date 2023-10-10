@@ -38,8 +38,6 @@ create table indexer.txs
   "satpoint"     integer     not null,
 
   "tx_id"        bytea       not null,
-  "from_address" text        not null,
-  "to_address"   text        not null,
 
   "header"       bytea       not null,
 -- bitcoin height
@@ -47,12 +45,13 @@ create table indexer.txs
   "proof_hashes" bytea[]     not null,
   "tx_index"     integer     not null,
   "tree_depth"   integer     not null,
-  "from"         bytea       not null,
-  "to"           bytea       not null,
-  "tick"         text        not null,
-  "amt"          numeric     not null,
-  "from_bal"     numeric     not null,
-  "to_bal"       numeric     not null,
+--   "from"         bytea       not null,
+--   "to"           bytea       not null,
+--   "tick"         text        not null,
+--   "amt"          numeric     not null,
+--   "from_bal"     numeric     not null,
+--   "to_bal"       numeric     not null,
+  "error"        text,
   "created_at"   timestamptz not null default now(),
   "updated_at"   timestamptz not null default now()
 );
@@ -60,26 +59,30 @@ CREATE INDEX tx_height ON indexer.txs (height);
 
 create table indexer.proofs
 (
-  "id"         bytea generated always as (digest(lower(encode(tx_hash, 'hex')) ||
-                                                 ':' || cast(output as text) ||
-                                                 ':' || cast(satpoint as text), 'sha256')) STORED,
-  "tx_hash"    bytea       not null,
-  "output"     integer     not null,
-  "satpoint"   integer     not null,
-  "from"       bytea       not null,
-  "to"         bytea       not null,
-  "tick"       text        not null,
-  "amt"        numeric     not null,
-  "from_bal"   numeric     not null,
-  "to_bal"     numeric     not null,
+  "id"           bytea generated always as (digest(lower(encode(tx_hash, 'hex')) ||
+                                                   ':' || cast(output as text) ||
+                                                   ':' || cast(satpoint as text), 'sha256')) STORED,
+  "tx_hash"      bytea       not null,
+  "output"       integer     not null,
+  "satpoint"     integer     not null,
+  "from"         bytea       not null,
+  "to"           bytea       not null,
+  "tick"         text        not null,
+  "amt"          numeric     not null,
+  "from_bal"     numeric     not null,
+  "to_bal"       numeric     not null,
 
-  "type"       text        not null,
-  "order_hash" bytea       not null,
-  "signature"  bytea       not null,
-  "signer"     text        not null,
+  "from_address" text        not null,
+  "to_address"   text        not null,
+  "tx_id"        bytea       not null,
+
+  "type"         text        not null,
+  "order_hash"   bytea       not null,
+  "signature"    bytea       not null,
+  "signer"       text        not null,
   unique ("order_hash", "signature", "signer"),
-  "created_at" timestamptz not null default now(),
-  "updated_at" timestamptz not null default now()
+  "created_at"   timestamptz not null default now(),
+  "updated_at"   timestamptz not null default now()
 );
 CREATE INDEX proof_order_hash ON indexer.proofs (order_hash);
 
