@@ -15,6 +15,8 @@ const HiroAmountBigIntSchema = z.preprocess((val, ctx) => {
   });
   return z.never;
 }, z.bigint());
+
+
 const HiroAddressToPKScriptSchema = z.preprocess((val, ctx) => {
   if (typeof val === 'string') {
     if (val.length === 0) {
@@ -44,7 +46,34 @@ const HiroAddressToPKScriptSchema = z.preprocess((val, ctx) => {
   return z.never();
 }, z.string());
 
-export const HiroSatpointSchema = z.object({
+export const PKScriptToHiroAddressSchema = z.preprocess((val, ctx) => {
+  if (typeof val === 'string') {
+    if (val.length === 0) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `Invalid PKScriptToHiroAddressSchema: empty string`,
+      });
+      return z.never();
+    }
+    try {
+      return Address().encode(OutScript.decode(Buffer.from(val, 'hex')));
+    } catch (e) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `Invalid PKScriptToHiroAddressSchema: [${val}]. ${e}`,
+      });
+    }
+  } else {
+    ctx.addIssue({
+      code: 'custom',
+      message: `Invalid PKScriptToHiroAddressSchema: ${val}`,
+    });
+  }
+
+  return z.never();
+}, z.string());
+
+  export const HiroSatpointSchema = z.object({
   tx_id: z.string(),
   vout: BigIntSchema,
   satpoint: BigIntSchema,

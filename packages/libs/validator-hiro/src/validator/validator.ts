@@ -1,5 +1,8 @@
 import { indexer } from '@bitcoin-oracle/api-client';
-import { generateOrderHash, signOrderHash } from '@bitcoin-oracle/brc20-indexer';
+import {
+  generateOrderHash,
+  signOrderHash,
+} from '@bitcoin-oracle/brc20-indexer';
 import { Unobservable } from '@bitcoin-oracle/commons';
 import { Enums } from '@bitcoin-oracle/types';
 import { getBitcoinTx$ } from '@bitcoin-oracle/validator';
@@ -15,6 +18,7 @@ import {
 } from 'rxjs';
 import {
   HiroType,
+  PKScriptToHiroAddressSchema,
   getAllActivitiesOnBlock$,
   getAllBalancesOnBlock$,
 } from '../api';
@@ -36,8 +40,16 @@ export function getHiroTxOnBlock$(block: number) {
     mergeAll(),
     mergeMap(activity => {
       return combineLatest([
-        getAllBalancesOnBlock$(block, activity.transfer_send.from_address),
-        getAllBalancesOnBlock$(block, activity.transfer_send.to_address),
+        getAllBalancesOnBlock$(
+          block,
+          PKScriptToHiroAddressSchema.parse(
+            activity.transfer_send.from_address,
+          ),
+        ),
+        getAllBalancesOnBlock$(
+          block,
+          PKScriptToHiroAddressSchema.parse(activity.transfer_send.to_address),
+        ),
       ]).pipe(
         retry(5),
         map(([oldBalances, newBalances]) => {
