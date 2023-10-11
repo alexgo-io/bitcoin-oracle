@@ -33,14 +33,14 @@ describe('sign', () => {
 
     const hash = structuredDataHash(encodeValue);
     expect(hash.toString('hex')).toMatchInlineSnapshot(
-      `"f62aa6e32781feb0bcbb84c2df7d9838eb2a092bc4c66ed6d6d38d2ab72f438d"`,
+      `"881d23d98389419449228406955a44d7e80b53d608fd660b8c5b553dee5b7607"`,
     );
     const signature = await signTx(
       '114dd00b2407eb036aa12c38662ed35ff3ba6c4f743b5a8ae4c984ac0ec7afe301',
       encodeValue,
     );
     expect(signature.toString('hex')).toMatchInlineSnapshot(
-      `"cc0659d8d366e0516a8fdadde96d1ef59a8186786558d8f817e259ca8f62837e744055fb03f4690df9603fc469f81aece4e838fbde32c157a6fef905b4acf8a201"`,
+      `"5abea57752d555172edc9b8d4251dccd1d0ed924b77db7dfa93ae298e98d72620a883e2405d6dfbd33c103c36e72a6e902c3d9f4b1a8734e9236f9c15659d4e501"`,
     );
   });
 });
