@@ -195,6 +195,12 @@ export class IndexerRepository {
 
 function generateProofFilter(params: APIOf<'debug_txs', 'request', 'dto'>) {
   const pairs = Object.entries(params).map(([key, value]) => {
+    if (key === 'tx_error'){
+      return SQL.fragment`
+        ${SQL.identifier([key])} is not null
+      `;
+    }
+
     if (typeof value === 'bigint') {
       return SQL.fragment`
         ${SQL.identifier([key])} = ${value.toString(10)}
