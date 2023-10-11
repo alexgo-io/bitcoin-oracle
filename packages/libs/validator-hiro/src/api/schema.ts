@@ -1,4 +1,4 @@
-import { BigIntSchema } from '@bitcoin-oracle/types';
+import { BigIntSchema, UpperCaseStringSchema } from '@bitcoin-oracle/types';
 import { Address, OutScript } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
 
@@ -15,7 +15,6 @@ const HiroAmountBigIntSchema = z.preprocess((val, ctx) => {
   });
   return z.never;
 }, z.bigint());
-
 
 const HiroAddressToPKScriptSchema = z.preprocess((val, ctx) => {
   if (typeof val === 'string') {
@@ -73,7 +72,7 @@ export const PKScriptToHiroAddressSchema = z.preprocess((val, ctx) => {
   return z.never();
 }, z.string());
 
-  export const HiroSatpointSchema = z.object({
+export const HiroSatpointSchema = z.object({
   tx_id: z.string(),
   vout: BigIntSchema,
   satpoint: BigIntSchema,
@@ -117,7 +116,7 @@ const activity = z.object({
   inscription_id: z.string(),
   operation: z.string(),
   location: HiroSatpointStringSchema,
-  ticker: z.string(),
+  ticker: UpperCaseStringSchema,
   timestamp: z.number(),
   transfer_send: transfer_send,
   tx_id: z.string(),
@@ -133,7 +132,7 @@ function createPaginationSchema<T extends z.ZodTypeAny>(schema: T) {
 }
 
 const balance = z.object({
-  ticker: z.string(),
+  ticker: UpperCaseStringSchema,
   available_balance: HiroAmountBigIntSchema,
   transferrable_balance: HiroAmountBigIntSchema,
   overall_balance: HiroAmountBigIntSchema,

@@ -11,14 +11,23 @@ describe('sign', () => {
   it('should sign tx', async () => {
     const encoder = indexer['indexer']['hash-tx'].input[0].type.encode;
     const encodeValue = encoder({
-      amt: 10n,
-      from: Buffer.from('01'),
-      'from-bal': 20n,
-      to: Buffer.from('02'),
-      'to-bal': 21n,
-      'bitcoin-tx': Buffer.from('03'),
-      tick: 'sat',
-      output: 99n,
+      amt: 22000000000000000000000n,
+      from: Buffer.from(
+        '5120fd60cb617c9c9e5d8d612f56805d7b7b55383a2477cc063ec99ce1f82730e1f3',
+        'hex',
+      ),
+      'from-bal': 0n,
+      to: Buffer.from(
+        '512033b6efa5c46830b6ea184fb31c38b3d5cf42f7a3738415fdf96a86d3971ddf67',
+        'hex',
+      ),
+      'to-bal': 22000000000000000000000n,
+      'bitcoin-tx': Buffer.from(
+        '020000000001020eff3512154960490cabf7775309b046a24c9c1da2b4912d9b1dc27a180e8c98000000000001000080aed10330c5bc5540c29b839997c1dd4a98651590621ec3eea854b0b1453d5d3301000000000100008002220200000000000022512033b6efa5c46830b6ea184fb31c38b3d5cf42f7a3738415fdf96a86d3971ddf67b263010000000000225120fd60cb617c9c9e5d8d612f56805d7b7b55383a2477cc063ec99ce1f82730e1f30140cafc44bea0ab6098c21e2dafd69df3eef13d8c32f64f2e12e5008a10acddba573d72463359eb9bd17348dfbf8d1f99ab6f799734a5725d2ffadc4d2e6b5c29770140f1b8685e534e7e99b8b108ba48a80227bb8c0caf1d57316f67f117a36119825ea8f8fe64192ddc7b891fa073e19a05dcf9e0564263fe6367c7a7eef87e3a2f7800000000',
+        'hex',
+      ),
+      tick: 'XBTC',
+      output: 0n,
       offset: 0n,
     });
 

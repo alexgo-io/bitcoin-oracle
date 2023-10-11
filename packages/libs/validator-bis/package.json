@@ -12,7 +12,8 @@
     "@bitcoin-oracle/validator": "*",
     "@bitcoin-oracle/commons": "*",
     "@bitcoin-oracle/api-client": "*",
-    "@bitcoin-oracle/brc20-indexer": "*"
+    "@bitcoin-oracle/brc20-indexer": "*",
+    "@bitcoin-oracle/types": "*"
   },
   "type": "commonjs",
   "main": "./src/index.js",
