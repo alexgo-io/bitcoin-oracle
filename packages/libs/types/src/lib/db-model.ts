@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BigIntSchema, BufferHexSchema } from './basic-model';
+import { BigIntSchema, BufferHexSchema, UpperCaseStringSchema } from "./basic-model";
 import { Enums } from './enums-model';
 
 /*
@@ -39,7 +39,7 @@ const proofs = z.object({
   from_bal: BigIntSchema,
   satpoint: BigIntSchema,
   output: BigIntSchema,
-  tick: z.string(),
+  tick: UpperCaseStringSchema,
   to: BufferHexSchema,
   to_bal: BigIntSchema,
 
@@ -85,7 +85,7 @@ const relayer_txs = txs.merge(
         from_bal: BigIntSchema,
         satpoint: BigIntSchema,
         output: BigIntSchema,
-        tick: z.string(),
+        tick: UpperCaseStringSchema,
         to: BufferHexSchema,
         to_bal: BigIntSchema,
 
