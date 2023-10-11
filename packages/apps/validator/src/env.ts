@@ -13,6 +13,7 @@ export const env = memoizee(() =>
       VALIDATOR_FORCE_SYNC_END: z.coerce.number().nullish(),
       INDEXER_API_URL: z.string().default('http://localhost:8716'),
       VALIDATOR_NAME: Enums.ValidatorName.default('bis'),
+      INDEXER_SYNC_THRESHOLD_BLOCK: z.coerce.number().default(3),
     },
     runtimeEnv: process.env,
   }),

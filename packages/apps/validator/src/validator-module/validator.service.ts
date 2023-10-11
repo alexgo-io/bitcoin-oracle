@@ -26,7 +26,10 @@ export class DefaultValidatorService implements ValidatorService {
       : env().VALIDATOR_GENESIS_BLOCK_HEIGHT;
   }
   async getToBlockHeight$() {
-    return (await getCurrentBitcoinHeader()).height;
+    return (
+      (await getCurrentBitcoinHeader()).height -
+      env().INDEXER_SYNC_THRESHOLD_BLOCK
+    );
   }
 
   syncBlockHeight(from: number, to: number) {
