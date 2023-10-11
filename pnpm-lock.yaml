@@ -506,6 +506,9 @@ importers:
       '@bitcoin-oracle/commons':
         specifier: '*'
         version: link:../commons
+      '@bitcoin-oracle/types':
+        specifier: '*'
+        version: link:../types
       '@bitcoin-oracle/validator':
         specifier: '*'
         version: link:../validator
