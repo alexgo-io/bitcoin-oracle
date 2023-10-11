@@ -36,7 +36,7 @@ export function getDomainHash() {
     tupleCV({
       name: stringAsciiCV('ALEX BRC20 Indexer'),
       version: stringAsciiCV('0.0.1'),
-      'chain-id': uintCV(getStacksNetwork().chainId),
+      'chain-id': uintCV(0x00000001),
     }),
   );
 }
