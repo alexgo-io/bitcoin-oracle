@@ -10,9 +10,9 @@ export class DefaultValidatorHiroService implements ValidatorProcessInterface {
   }
 }
 
-const ValidatorBisServiceProvider = {
+const ValidatorHiroServiceProvider = {
   provide: ValidatorProcessInterface,
   useClass: DefaultValidatorHiroService,
 };
 
-export default ValidatorBisServiceProvider;
+export default ValidatorHiroServiceProvider;

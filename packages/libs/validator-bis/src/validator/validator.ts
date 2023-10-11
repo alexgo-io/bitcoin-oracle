@@ -18,6 +18,7 @@ import { BISBalance } from '../api/base';
 import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
 import { env } from '../env';
 import { getElectrumQueue } from '../queue';
+import { Enums } from "@bitcoin-oracle/types";
 
 const logger = new Logger('validator', { timestamp: true });
 function getBalanceOnBlockCached$({
@@ -118,15 +119,15 @@ async function submitIndexerTx(
   );
 
   const order_hash = generateOrderHash({
+    amt: BigInt(tx.amount),
     from: Buffer.from(tx.old_pkscript, 'hex'),
     to: Buffer.from(tx.new_pkscript, 'hex'),
-    output: BigInt(tx.vout),
-    offset: BigInt(tx.satpoint),
-    tick: tx.tick,
-    amt: BigInt(tx.amount),
-    'bitcoin-tx': Buffer.from(tx.tx, 'hex'),
     'from-bal': BigInt(tx.from_bal),
     'to-bal': BigInt(tx.to_bal),
+    'bitcoin-tx': Buffer.from(tx.tx, 'hex'),
+    tick: tx.tick,
+    output: BigInt(tx.vout),
+    offset: BigInt(tx.satpoint),
   });
   const signature = await signOrderHash(
     env().STACKS_VALIDATOR_ACCOUNT_SECRET,
@@ -136,7 +137,7 @@ async function submitIndexerTx(
   return indexer(env().INDEXER_API_URL)
     .txs()
     .post({
-      type: 'bis',
+      type:  Enums.ValidatorName.enum.bis,
       header: tx.header,
       height: tx.height,
       tx_hash: tx.tx,
