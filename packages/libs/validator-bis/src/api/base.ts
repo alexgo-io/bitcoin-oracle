@@ -1,3 +1,4 @@
+import { UpperCaseStringSchema } from '@bitcoin-oracle/types';
 import { z, ZodRawShape } from 'zod';
 
 export const kBiSBaseURL = 'https://api.bestinslot.xyz';
@@ -26,7 +27,7 @@ export const BISActivitySchema = z.object({
   new_pkscript: z.string(),
   new_wallet: z.string().nullish(),
   new_satpoint: z.string(),
-  tick: z.string(),
+  tick: UpperCaseStringSchema,
   amount: z.string(),
   activity_type: BISActivityTypeSchema,
 });
@@ -35,7 +36,7 @@ export const BISActivityOnBlockResponseSchema =
   withDataArraySchema(BISActivitySchema);
 
 export const BISBalanceSchema = z.object({
-  tick: z.string(),
+  tick: UpperCaseStringSchema,
   balance: z.string(),
   transferrable_balance: z.string(),
 });

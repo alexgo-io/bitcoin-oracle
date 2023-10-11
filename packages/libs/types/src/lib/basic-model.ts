@@ -117,3 +117,5 @@ export const DateSchema = z.preprocess((val, ctx) => {
   });
   return z.never();
 }, z.date());
+
+export const UpperCaseStringSchema = z.string().toUpperCase();

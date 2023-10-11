@@ -5,8 +5,8 @@ import {
   BigIntStringSchema,
   BufferHexSchema,
   BufferStringSchema,
-  DateSchema,
-} from './basic-model';
+  DateSchema, UpperCaseStringSchema
+} from "./basic-model";
 import { Enums } from './enums-model';
 
 function createResponseSchema<ItemType extends z.ZodTypeAny>(
@@ -52,7 +52,7 @@ function makeTxs<T extends DataType>(type: T) {
     tree_depth: makeBigInt(type),
     from: makeBuffer(type),
     to: makeBuffer(type),
-    tick: z.string(),
+    tick: UpperCaseStringSchema,
     amt: makeBigInt(type),
     from_bal: makeBigInt(type),
     to_bal: makeBigInt(type),
@@ -103,7 +103,7 @@ function makeDebugResponseQuery<T extends DataType>(type: T) {
         amt: makeBigInt(type),
         from: makeBuffer(type),
         to: makeBuffer(type),
-        tick: z.string(),
+        tick: UpperCaseStringSchema,
         from_bal: makeBigInt(type),
         to_bal: makeBigInt(type),
         satpoint: makeBigInt(type),
