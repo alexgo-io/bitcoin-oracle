@@ -61,8 +61,8 @@ export function getHiroTxOnBlock$(block: number) {
           const newBalance = getBalance(newBalances, activity.ticker);
           return {
             ...activity,
-            from_bal: oldBalance?.available_balance ?? '0',
-            to_bal: newBalance?.available_balance ?? '0',
+            from_bal: oldBalance?.overall_balance ?? '0',
+            to_bal: newBalance?.overall_balance ?? '0',
           };
         }),
       );
