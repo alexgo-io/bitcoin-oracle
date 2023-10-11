@@ -80,7 +80,7 @@ create table indexer.proofs
   "order_hash"   bytea       not null,
   "signature"    bytea       not null,
   "signer"       text        not null,
-  unique ("order_hash", "signature", "signer"),
+  unique ("type", "order_hash", "signature", "signer"),
   "created_at"   timestamptz not null default now(),
   "updated_at"   timestamptz not null default now()
 );

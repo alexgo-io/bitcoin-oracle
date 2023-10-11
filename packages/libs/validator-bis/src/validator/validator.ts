@@ -1,6 +1,10 @@
 import { indexer } from '@bitcoin-oracle/api-client';
-import { generateOrderHash, signOrderHash } from '@bitcoin-oracle/brc20-indexer';
+import {
+  generateOrderHash,
+  signOrderHash,
+} from '@bitcoin-oracle/brc20-indexer';
 import { Unobservable } from '@bitcoin-oracle/commons';
+import { Enums } from '@bitcoin-oracle/types';
 import { getBitcoinTx$ } from '@bitcoin-oracle/validator';
 import { Logger } from '@nestjs/common';
 import assert from 'assert';
@@ -18,7 +22,6 @@ import { BISBalance } from '../api/base';
 import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
 import { env } from '../env';
 import { getElectrumQueue } from '../queue';
-import { Enums } from "@bitcoin-oracle/types";
 
 const logger = new Logger('validator', { timestamp: true });
 function getBalanceOnBlockCached$({
@@ -137,7 +140,7 @@ async function submitIndexerTx(
   return indexer(env().INDEXER_API_URL)
     .txs()
     .post({
-      type:  Enums.ValidatorName.enum.bis,
+      type: Enums.ValidatorName.enum.bis,
       header: tx.header,
       height: tx.height,
       tx_hash: tx.tx,
@@ -158,10 +161,32 @@ async function submitIndexerTx(
     });
 }
 
+const heightCounter: Record<string, number> = {};
 export function processBlock$(block: number) {
   return getIndexerTxOnBlock$(block).pipe(
     concatMap(tx => {
-      return from(submitIndexerTx(tx));
+      heightCounter[tx.height] = (heightCounter[tx.height] ?? 0) + 1;
+      const count = heightCounter[tx.height];
+      logger.verbose(`submitting tx: ${tx.tx_id} - ${tx.height} - ${count}`);
+      return from(
+        submitIndexerTx(tx)
+          .then(response => {
+            logger.verbose(
+              `submitted tx: ${tx.tx_id}: ${JSON.stringify(
+                response,
+              )} - ${count}`,
+            );
+            return response;
+          })
+          .catch(err => {
+            logger.verbose(
+              `failed to submit tx: ${tx.tx_id}: ${JSON.stringify(
+                err,
+              )} - ${count}`,
+            );
+            throw err;
+          }),
+      );
     }),
   );
 }
