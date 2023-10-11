@@ -524,6 +524,9 @@ importers:
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
+      p-queue:
+        specifier: ^6.6.2
+        version: 6.6.2
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
