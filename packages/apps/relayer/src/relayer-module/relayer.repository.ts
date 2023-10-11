@@ -45,7 +45,7 @@ export class RelayerRepository {
                                                                   'tick', pf.tick,
                                                                   'to', pf.to,
                                                                   'to_bal', pf.to_bal,
-                                                                  'tx_id', pf.tx_id,
+                                                                  'tx_id', pf.tx_id
                                            )) as proofs
                                 from qualified_txs qt
                                          join indexer.proofs pf on qt.id = pf.id
