@@ -75,6 +75,12 @@ export class DefaultRelayerService implements RelayerService {
         this.logger.error(
           `tx_hash too long: ${tx.tx_hash.length}, tx_id: ${tx_id}, output: ${tx.output}, satpoint: ${tx.satpoint}`,
         );
+        txErrors.push({
+          satpoint: tx.satpoint,
+          output: tx.output,
+          tx_hash: tx.tx_hash,
+          error: 'tx_hash too long (>4096)',
+        });
         continue;
       }
       noAwait(
@@ -98,11 +104,17 @@ export class DefaultRelayerService implements RelayerService {
             const firstProof = tx.proofs[0];
             let validateError = '';
             tx.proofs.forEach(proof => {
-              if (proof.from != firstProof.from) {
-                validateError += `from: ${proof.from}[${proof.type}] != ${firstProof.from}[${proof.type}].\n`;
+              if (
+                proof.from.toString('hex') != firstProof.from.toString('hex')
+              ) {
+                validateError += `from: ${proof.from.toString('hex')}[${
+                  proof.type
+                }] != ${firstProof.from.toString('hex')}[${proof.type}].\n`;
               }
-              if (proof.to != firstProof.to) {
-                validateError += `to: ${proof.to}[${proof.type}] != ${firstProof.to}[${proof.type}].\n`;
+              if (proof.to.toString('hex') != firstProof.to.toString('hex')) {
+                validateError += `to: ${proof.to.toString('hex')}[${
+                  proof.type
+                }] != ${firstProof.to.toString('hex')}[${proof.type}].\n`;
               }
               if (proof.amt != firstProof.amt) {
                 validateError += `amt: ${proof.amt}[${proof.type}] != ${firstProof.amt}[${proof.type}].\n`;
@@ -122,11 +134,22 @@ export class DefaultRelayerService implements RelayerService {
               if (proof.tick != firstProof.tick) {
                 validateError += `tick: ${proof.tick}[${proof.type}] != ${firstProof.tick}[${proof.type}].\n`;
               }
-              if (proof.tx_id != firstProof.tx_id) {
-                validateError += `tx_id: ${proof.tx_id}[${proof.type}] != ${firstProof.tx_id}[${proof.type}].\n`;
+              if (
+                proof.tx_id.toString('hex') != firstProof.tx_id.toString('hex')
+              ) {
+                validateError += `tx_id: ${proof.tx_id.toString('hex')}[${
+                  proof.type
+                }] != ${firstProof.tx_id.toString('hex')}[${proof.type}].\n`;
               }
-              if (proof.order_hash != firstProof.order_hash) {
-                validateError += `order_hash: ${proof.order_hash}[${proof.type}] != ${firstProof.order_hash}[${proof.type}].\n`;
+              if (
+                proof.order_hash.toString('hex') !=
+                firstProof.order_hash.toString('hex')
+              ) {
+                validateError += `order_hash: ${proof.order_hash.toString(
+                  'hex',
+                )}[${proof.type}] != ${firstProof.order_hash.toString('hex')}[${
+                  proof.type
+                }].\n`;
               }
             });
 
