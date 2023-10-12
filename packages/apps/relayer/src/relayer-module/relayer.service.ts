@@ -109,37 +109,37 @@ export class DefaultRelayerService implements RelayerService {
               ) {
                 validateError += `from: ${proof.from.toString('hex')}[${
                   proof.type
-                }] != ${firstProof.from.toString('hex')}[${proof.type}].\n`;
+                }] != ${firstProof.from.toString('hex')}[${firstProof.type}].\n`;
               }
               if (proof.to.toString('hex') != firstProof.to.toString('hex')) {
                 validateError += `to: ${proof.to.toString('hex')}[${
                   proof.type
-                }] != ${firstProof.to.toString('hex')}[${proof.type}].\n`;
+                }] != ${firstProof.to.toString('hex')}[${firstProof.type}].\n`;
               }
               if (proof.amt != firstProof.amt) {
-                validateError += `amt: ${proof.amt}[${proof.type}] != ${firstProof.amt}[${proof.type}].\n`;
+                validateError += `amt: ${proof.amt}[${proof.type}] != ${firstProof.amt}[${firstProof.type}].\n`;
               }
               if (proof.from_bal != firstProof.from_bal) {
-                validateError += `from_bal: ${proof.from_bal}[${proof.type}] != ${firstProof.from_bal}[${proof.type}].\n`;
+                validateError += `from_bal: ${proof.from_bal}[${proof.type}] != ${firstProof.from_bal}[${firstProof.type}].\n`;
               }
               if (proof.to_bal != firstProof.to_bal) {
-                validateError += `to_bal: ${proof.to_bal}[${proof.type}] != ${firstProof.to_bal}[${proof.type}].\n`;
+                validateError += `to_bal: ${proof.to_bal}[${proof.type}] != ${firstProof.to_bal}[${firstProof.type}].\n`;
               }
               if (proof.satpoint != firstProof.satpoint) {
-                validateError += `satpoint: ${proof.satpoint}[${proof.type}] != ${firstProof.satpoint}[${proof.type}].\n`;
+                validateError += `satpoint: ${proof.satpoint}[${proof.type}] != ${firstProof.satpoint}[${firstProof.type}].\n`;
               }
               if (proof.output != firstProof.output) {
-                validateError += `output: ${proof.output}[${proof.type}] != ${firstProof.output}[${proof.type}].\n`;
+                validateError += `output: ${proof.output}[${proof.type}] != ${firstProof.output}[${firstProof.type}].\n`;
               }
               if (proof.tick != firstProof.tick) {
-                validateError += `tick: ${proof.tick}[${proof.type}] != ${firstProof.tick}[${proof.type}].\n`;
+                validateError += `tick: ${proof.tick}[${proof.type}] != ${firstProof.tick}[${firstProof.type}].\n`;
               }
               if (
                 proof.tx_id.toString('hex') != firstProof.tx_id.toString('hex')
               ) {
                 validateError += `tx_id: ${proof.tx_id.toString('hex')}[${
                   proof.type
-                }] != ${firstProof.tx_id.toString('hex')}[${proof.type}].\n`;
+                }] != ${firstProof.tx_id.toString('hex')}[${firstProof.type}].\n`;
               }
               if (
                 proof.order_hash.toString('hex') !=
@@ -148,7 +148,7 @@ export class DefaultRelayerService implements RelayerService {
                 validateError += `order_hash: ${proof.order_hash.toString(
                   'hex',
                 )}[${proof.type}] != ${firstProof.order_hash.toString('hex')}[${
-                  proof.type
+                  firstProof.type
                 }].\n`;
               }
             });
