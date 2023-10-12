@@ -170,6 +170,38 @@ export class DefaultRelayerService implements RelayerService {
               'tx-hash': proof.order_hash,
             }));
 
+            const serverOrderHash = await fastRetry(() =>
+              this.stacks.readonlyCaller()(kIndexerContractName, 'hash-tx', {
+                tx: {
+                  output: tx.output,
+                  'bitcoin-tx': tx.tx_hash,
+                  offset: tx.satpoint,
+                  from: firstProof.from,
+                  to: firstProof.to,
+                  amt: firstProof.amt,
+                  'from-bal': firstProof.from_bal,
+                  'to-bal': firstProof.to_bal,
+                  tick: firstProof.tick,
+                },
+              }),
+            );
+
+            const serverOrderHashBuffer = Buffer.from(serverOrderHash);
+            if (
+              serverOrderHashBuffer.toString('hex') !=
+              firstProof.order_hash.toString('hex')
+            ) {
+              txErrors.push({
+                satpoint: tx.satpoint,
+                output: tx.output,
+                tx_hash: tx.tx_hash,
+                error: `!server_order_hash-mismatch: server: ${serverOrderHashBuffer.toString(
+                  'hex',
+                )} != proof: ${firstProof.order_hash.toString('hex')}`,
+              });
+              return;
+            }
+
             txManyInputs.push({
               block: {
                 height: tx.height,
