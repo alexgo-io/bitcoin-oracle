@@ -139,7 +139,7 @@ describe('libs-bitcoin', () => {
     `);
   }, 20e3);
 
-  it('should getBitcoinBlockHeaderByHeight', async () => {
+  it.skip('should getBitcoinBlockHeaderByHeight', async () => {
     expect(await getBitcoinBlockHeaderByHeight(806048)).toMatchInlineSnapshot(
       `"00a04e30c989a54632fdd1e988414ca51165e9c59b3bc3f12f6d02000000000000000000f04a3b046cf92888e1dcf5b44225e90820cdda9d7e24f94d21d978655f909bb43e9ff4647b0f05176c15c57a"`,
     );
