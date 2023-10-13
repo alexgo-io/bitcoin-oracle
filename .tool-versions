@@ -1,5 +1,5 @@
 nodejs 20.5.1
-pnpm 8.7.6
+pnpm 8.9.0
 direnv 2.32.2
 yarn 1.22.19
 yq 4.25.1
