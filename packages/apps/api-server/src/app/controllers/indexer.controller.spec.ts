@@ -1,3 +1,4 @@
+import { Indexer, MockIndexer } from '@bitcoin-oracle/api';
 import { SQL } from '@bitcoin-oracle/commons';
 import { PersistentService } from '@bitcoin-oracle/persistent';
 import { APIOf, Enums } from '@bitcoin-oracle/types';
@@ -10,6 +11,7 @@ import { AllExceptionsFilter } from '../interceptors/all-exceptions.filter';
 
 describe('Indexer Controller (e2e)', () => {
   let app: INestApplication;
+  let indexer: Indexer;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -23,9 +25,16 @@ describe('Indexer Controller (e2e)', () => {
     await persistent.pgPool.query(
       SQL.typeAlias('void')`truncate table indexer.txs cascade`,
     );
+
+    indexer = moduleFixture.get(Indexer);
   });
 
   it('/api/v1/indexer/txs (POST)', () => {
+    const defaultIndexer = indexer as unknown as MockIndexer;
+    jest
+      .spyOn(defaultIndexer, 'validateOrderHash')
+      .mockImplementation(() => Promise.resolve());
+
     const data: APIOf<'txs', 'request', 'json'> = {
       type: 'bis',
       header: '0x01',

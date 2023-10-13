@@ -14,7 +14,8 @@
     "@bitcoin-oracle/api-client": "*",
     "@bitcoin-oracle/brc20-indexer": "*",
     "@bitcoin-oracle/validator": "*",
-    "@nestjs/common": "^10.2.4"
+    "@nestjs/common": "^10.2.4",
+    "p-queue": "^6.6.2"
   },
   "type": "commonjs",
   "main": "./src/index.js",

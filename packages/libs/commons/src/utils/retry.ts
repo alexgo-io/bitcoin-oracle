@@ -44,8 +44,8 @@ export const fastRetry = <T>(
     {
       retries: 10,
       factor: 1,
-      minTimeout: 200,
-      maxTimeout: 500,
+      minTimeout: 500,
+      maxTimeout: 1000,
       onFailedAttempt: error => {
         logger.warn(
           `[${label}] Attempt ${error.attemptNumber} failed. There are ${

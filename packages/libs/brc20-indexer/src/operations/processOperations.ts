@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getLogger, stringifyJSON } from '@bitcoin-oracle/commons';
 import { StacksMainnet, StacksMocknet, StacksNetwork } from '@stacks/network';
 import {
@@ -31,8 +30,6 @@ import {
   TransferSTX,
 } from './operation';
 import { assertNever, sleep } from './utils';
-
-const logger = getLogger('stacks-caller');
 
 function chainIDToTransactionVersion(chainID: ChainID) {
   if (chainID === ChainID.Mainnet) {
@@ -88,17 +85,21 @@ export const processOperations =
     const didRBFBroadcast = options.didRBFBroadcast;
     const contractAddress = options.contractAddress ?? senderAddress;
     const network = stackNetworkFrom(chainID, stacksAPIURL);
-    logger.log(`network: ${JSON.stringify(network)}, ${senderAddress}`);
+    getLogger('stacks-caller').log(
+      `network: ${JSON.stringify(network)}, ${senderAddress}`,
+    );
 
     const start = Date.now();
     const ts = () => `${start}+${(Date.now() - start) / 1e3}s`;
-    logger.log(
+    getLogger('stacks-caller').log(
       `Submitting ${operations.length} operations, puppetURL: ${
         puppetUrl ?? ''
       }`,
     );
     const startingNonce = await getAccountNonceV2(stacksAPIURL, senderAddress);
-    logger.log(`[${ts()}] starting nonce: ${startingNonce}`);
+    getLogger('stacks-caller').log(
+      `[${ts()}] starting nonce: ${startingNonce}`,
+    );
     if (operations.length === 0) return startingNonce;
     let lastExecutedNonce = await getAccountNonceV2(
       stacksAPIURL,
@@ -117,7 +118,7 @@ export const processOperations =
         } else {
           await sleep(30 * 1000);
         }
-        logger.debug(
+        getLogger('stacks-caller').debug(
           `0.waiting for server nonce to catch up... nonce: ${nonce} - serverNonce: ${lastExecutedNonce}`,
         );
         lastExecutedNonce = await getAccountNonceV2(
@@ -130,12 +131,12 @@ export const processOperations =
             stacksAPIURL,
             chainID,
             contractAddress,
-            didRBFBroadcast
+            didRBFBroadcast,
           });
         }
       }
 
-      logger.debug(
+      getLogger('stacks-caller').debug(
         `[${ts()}] processing #${
           nonce - startingNonce
         }, nonce: ${nonce}, serverNonce: ${lastExecutedNonce}, perBlock: ${currentMaxTxPerBlockPerAccount}`,
@@ -155,7 +156,7 @@ export const processOperations =
               network,
               contractAddress,
             ).then(result => {
-              logger.log(
+              getLogger('stacks-caller').log(
                 `[public call] broadcast: ${JSON.stringify(
                   result.txid,
                 )}, nonce: ${nonce}`,
@@ -164,7 +165,10 @@ export const processOperations =
               return operation?.options
                 ?.onBroadcast?.(result, { fee, nonce })
                 .catch(e => {
-                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                  getLogger('stacks-caller').error(
+                    `operation.onBroadcast failed: ${e.message}`,
+                    e,
+                  );
                   return null;
                 });
             });
@@ -184,7 +188,10 @@ export const processOperations =
               operation?.options
                 ?.onBroadcast?.(result, { fee, nonce })
                 .catch(e => {
-                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                  getLogger('stacks-caller').error(
+                    `operation.onBroadcast failed: ${e.message}`,
+                    e,
+                  );
                   return null;
                 }),
             );
@@ -203,7 +210,10 @@ export const processOperations =
               operation?.options
                 ?.onBroadcast?.(result, { fee, nonce })
                 .catch(e => {
-                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                  getLogger('stacks-caller').error(
+                    `operation.onBroadcast failed: ${e.message}`,
+                    e,
+                  );
                   return null;
                 }),
             );
@@ -217,7 +227,7 @@ export const processOperations =
           continue;
         }
         if ((e as Error).message.includes('ConflictingNonceInMempool')) {
-          logger.warn(
+          getLogger('stacks-caller').warn(
             `[${ts()}] ConflictingNonceInMempool, increase the nonce from ${nonce} to ${
               nonce + 1
             } and retrying..., per block: ${currentMaxTxPerBlockPerAccount}`,
@@ -229,12 +239,12 @@ export const processOperations =
             stacksAPIURL,
             chainID,
             contractAddress,
-            didRBFBroadcast
+            didRBFBroadcast,
           });
           continue;
         }
         if ((e as Error).message === 'TooMuchChaining') {
-          logger.log(
+          getLogger('stacks-caller').log(
             `[${ts()}] TooMuchChaining on nonce: ${nonce}, decreasing the max per block to ${
               currentMaxTxPerBlockPerAccount - 1
             }`,
@@ -246,7 +256,7 @@ export const processOperations =
 
         const operationJSON = stringifyJSON(operation);
 
-        logger.warn(
+        getLogger('stacks-caller').warn(
           `[${ts()}] operation failed:,
           operation: ${
             operationJSON.length < 4096
@@ -258,7 +268,7 @@ export const processOperations =
       }
     }
 
-    logger.debug(
+    getLogger('stacks-caller').debug(
       `[${ts()}] waiting for last executed nonce to catch up...${nonce} > ${lastExecutedNonce}`,
     );
     while (nonce > lastExecutedNonce) {
@@ -266,7 +276,7 @@ export const processOperations =
         await got(`${puppetUrl}/kick`, { method: 'POST' });
         await sleep(100);
       } else {
-        logger.verbose(
+        getLogger('stacks-caller').verbose(
           `1.[${ts()}] waiting for last executed nonce to catch up...${nonce} > ${lastExecutedNonce}`,
         );
         await sleep(5 * 1000);
@@ -277,18 +287,19 @@ export const processOperations =
           stacksAPIURL,
           chainID,
           contractAddress,
-          didRBFBroadcast
+          didRBFBroadcast,
         });
       }
 
       currentMaxTxPerBlockPerAccount = kStacksMaxTxPerBlockPerAccount;
     }
 
-    logger.debug(
+    getLogger('stacks-caller').debug(
       `[${ts()}] server nonce has caught up. nonce: ${nonce}, serverNonce: ${lastExecutedNonce}`,
     );
 
     await Promise.all(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       operations.map(a => a.options?.onSettled?.(a as any)).filter(Boolean),
     );
 
@@ -300,7 +311,7 @@ export const processOperations =
       );
       const errTxs = txs.filter(tx => tx.tx_status !== 'success');
       if (errTxs.length) {
-        logger.error(
+        getLogger('stacks-caller').error(
           `[${ts()}] failed transactions: ${JSON.stringify(errTxs, null, 2)}`,
         );
         throw new Error(
@@ -310,7 +321,7 @@ export const processOperations =
         );
       }
     }
-    logger.log(
+    getLogger('stacks-caller').log(
       `Finished ${nonce - startingNonce} transactions in ${
         Date.now() - start
       }ms. serverNonce is: ${lastExecutedNonce}, nonce is: ${nonce}, startingNonce: ${startingNonce}`,
@@ -374,7 +385,7 @@ export async function RBFIfNeeded(
       tx_id: tx.tx_id,
       nonce: tx.nonce.toString(),
     });
-    logger.warn(
+    getLogger('stacks-caller').warn(
       `${tx.nonce} already at MAX RBF rate of [${
         feeLevels[feeLevels.length - 1] / 1e6
       }]}`,
@@ -382,7 +393,7 @@ export async function RBFIfNeeded(
     maxFeeReachedNonce.push(tx.nonce);
     return;
   }
-  logger.log(
+  getLogger('stacks-caller').log(
     `RBFIng tx ${tx.tx_id} : ${tx.nonce} from ${fee / 1e6} to ${
       newFee / 1e6
     }, after ${secondsPassed / 60} mins`,
@@ -576,7 +587,9 @@ async function publicCall(
   const result = await broadcastTransaction(transaction, network);
 
   if (result.error) {
-    logger.log(`[public call] failed: ${JSON.stringify(result)}`);
+    getLogger('stacks-caller').log(
+      `[public call] failed: ${JSON.stringify(result)}`,
+    );
     throw new Error(result.reason!);
   }
 
@@ -607,7 +620,9 @@ async function getTransaction(
   while (result.every(t => t.nonce > untilNonce)) {
     const response: AddressTransactionsListResponse = await fetch(
       `${stacksAPIURL}/extended/v1/address/${address}/transactions?limit=50&offset=${result.length}`,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ).then(r => r.json() as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const newResults = response.results as any[];
     if (!newResults.length) {
       break;

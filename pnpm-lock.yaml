@@ -332,18 +332,33 @@ importers:
 
   packages/libs/api:
     dependencies:
+      '@bitcoin-oracle/brc20-indexer':
+        specifier: '*'
+        version: link:../brc20-indexer
       '@bitcoin-oracle/commons':
         specifier: '*'
-        version: link:../commons
+        version: 1.0.0
       '@bitcoin-oracle/persistent':
         specifier: '*'
-        version: link:../persistent
+        version: 1.0.0
       '@bitcoin-oracle/types':
         specifier: '*'
         version: link:../types
       '@nestjs/common':
         specifier: ^10.2.4
         version: 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@stacks/network':
+        specifier: ^6.5.5
+        version: 6.5.5
+      '@stacks/transactions':
+        specifier: ^6.7.0
+        version: 6.7.0
+      '@t3-oss/env-core':
+        specifier: ^0.6.1
+        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+      memoizee:
+        specifier: ^0.4.15
+        version: 0.4.15
       scure-btc-signer-cjs:
         specifier: ^1.0.1
         version: 1.0.1
@@ -358,7 +373,7 @@ importers:
     dependencies:
       '@bitcoin-oracle/commons':
         specifier: '*'
-        version: link:../commons
+        version: 1.0.0
       '@bitcoin-oracle/types':
         specifier: '*'
         version: link:../types
@@ -382,7 +397,7 @@ importers:
     dependencies:
       '@bitcoin-oracle/commons':
         specifier: '*'
-        version: link:../commons
+        version: 1.0.0
       '@t3-oss/env-core':
         specifier: ^0.6.1
         version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
@@ -415,7 +430,7 @@ importers:
     dependencies:
       '@bitcoin-oracle/commons':
         specifier: '*'
-        version: link:../commons
+        version: 1.0.0
       '@iarna/toml':
         specifier: ^2.2.5
         version: 2.2.5
@@ -472,7 +487,7 @@ importers:
         version: link:../bitcoin
       '@bitcoin-oracle/commons':
         specifier: '*'
-        version: link:../commons
+        version: 1.0.0
       '@t3-oss/env-core':
         specifier: ^0.6.1
         version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
@@ -505,7 +520,7 @@ importers:
         version: link:../brc20-indexer
       '@bitcoin-oracle/commons':
         specifier: '*'
-        version: link:../commons
+        version: 1.0.0
       '@bitcoin-oracle/types':
         specifier: '*'
         version: link:../types
@@ -547,7 +562,7 @@ importers:
         version: link:../brc20-indexer
       '@bitcoin-oracle/commons':
         specifier: '*'
-        version: link:../commons
+        version: 1.0.0
       '@bitcoin-oracle/types':
         specifier: '*'
         version: link:../types
@@ -566,6 +581,9 @@ importers:
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
+      p-queue:
+        specifier: ^6.6.2
+        version: 6.6.2
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -1959,6 +1977,14 @@ packages:
   /@bcoe/v8-coverage@0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
+
+  /@bitcoin-oracle/commons@1.0.0:
+    resolution: {integrity: sha512-sFSIGscW2QkzKFMXeRWOe4hegTwW84f9HXxbKrA+hIuicZPrR7/TaFHJ5zA89Sfc5d1yZczRFgKMEqcUwwXRkQ==}
+    dev: false
+
+  /@bitcoin-oracle/persistent@1.0.0:
+    resolution: {integrity: sha512-9h3SfAZ526wf+XAFJjLfItzPzz5cHzC7I0T1RoyLav++4S7Nsi9KMWbZ+0WC7mbjp5JgALxpS3q7PuH4Gjrr0g==}
+    dev: false
 
   /@blockstack/rpc-client@0.3.0-alpha.22:
     resolution: {integrity: sha512-pfIg0WYkCUZ/fbM9ic3dMf9n9dU3NAJrGLMHTXgxndQRktf8fWBSXOxA4PUuBFzVh4aDlfEGh0PWS4WPe/FRnA==}

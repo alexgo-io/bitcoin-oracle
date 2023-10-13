@@ -36,12 +36,7 @@
       "nx-stacks": ["packages/plugins/nx-stacks/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp",
-    ".git-modules",
-    "packages/libs/brc20-indexer/brc20-indexer-v1"
-  ],
+  "exclude": ["node_modules", "tmp", ".git-modules"],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   }
