@@ -1,5 +1,6 @@
-import { Indexer } from '@bitcoin-oracle/api';
-import { APIOf, ValidatorName, m } from '@bitcoin-oracle/types';
+import { Indexer, IndexerError } from '@bitcoin-oracle/api';
+import { ErrorDetails } from '@bitcoin-oracle/commons';
+import { APIOf, StatusCode, ValidatorName, m } from '@bitcoin-oracle/types';
 import {
   Body,
   Controller,
@@ -35,7 +36,18 @@ export class IndexerController {
 
   @Post('/txs')
   async txs(@Body() tx: IndexerTxsCreateInput) {
-    await this.indexer.upsertTxWithProof(tx);
+    try {
+      await this.indexer.upsertTxWithProof(tx);
+    } catch (error) {
+      if (error instanceof IndexerError) {
+        throw ErrorDetails.from(
+          StatusCode.INVALID_ARGUMENT,
+          error.message,
+        ).throwHttpException();
+      } else {
+        throw error;
+      }
+    }
     return m.api('txs', 'response', 'json').parse({ message: 'ok' });
   }
 
