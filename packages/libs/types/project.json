@@ -19,7 +19,10 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/libs/types/**/*.ts"]
+        "lintFilePatterns": [
+          "packages/libs/types/**/*.ts",
+          "packages/libs/types/**/package.json"
+        ]
       }
     },
     "test": {
@@ -29,6 +32,10 @@
         "jestConfig": "packages/libs/types/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs libs-types {args.ver} {args.tag}",
+      "dependsOn": ["build"]
     }
   },
   "tags": []

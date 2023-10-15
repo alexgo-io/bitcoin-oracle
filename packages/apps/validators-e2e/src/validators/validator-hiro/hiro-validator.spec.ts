@@ -4,9 +4,9 @@ import {
   getHiroTxOnBlock$,
   getIndexerTxOnBlock$,
   processBlock$,
-} from '@bitcoin-oracle/validator-hiro';
+} from '@meta-protocols-oracle/validator-hiro';
 
-jest.mock('@bitcoin-oracle/api-client', () => {
+jest.mock('@meta-protocols-oracle/api-client', () => {
   return {
     indexer: () => {
       return {

@@ -1,4 +1,4 @@
-import { PersistentModule } from '@bitcoin-oracle/persistent';
+import { PersistentModule } from '@meta-protocols-oracle/persistent';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';

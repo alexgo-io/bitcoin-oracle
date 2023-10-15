@@ -1,7 +1,7 @@
-import { PinoLoggerModule } from '@bitcoin-oracle/commons';
-import { Enums, ValidatorName } from '@bitcoin-oracle/types';
-import { ValidatorBisModule } from '@bitcoin-oracle/validator-bis';
-import { ValidatorHiroModule } from '@bitcoin-oracle/validator-hiro';
+import { PinoLoggerModule } from '@meta-protocols-oracle/commons';
+import { Enums, ValidatorName } from '@meta-protocols-oracle/types';
+import { ValidatorBisModule } from '@meta-protocols-oracle/validator-bis';
+import { ValidatorHiroModule } from '@meta-protocols-oracle/validator-hiro';
 import { DynamicModule, Module } from '@nestjs/common';
 import ValidatorServiceProvider from './validator.service';
 

@@ -1,9 +1,9 @@
 import {
   callReadonlyWith,
   kIndexerContractName,
-} from '@bitcoin-oracle/brc20-indexer';
-import { fastRetry } from '@bitcoin-oracle/commons';
-import { APIOf, ValidatorName } from '@bitcoin-oracle/types';
+} from '@meta-protocols-oracle/brc20-indexer';
+import { fastRetry } from '@meta-protocols-oracle/commons';
+import { APIOf, ValidatorName } from '@meta-protocols-oracle/types';
 import { Inject } from '@nestjs/common';
 import { env, getEnvStacksNetwork } from '../env';
 import { Indexer, IndexerError } from './indexer.interface';

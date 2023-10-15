@@ -1,4 +1,7 @@
-import { BigIntSchema, UpperCaseStringSchema } from '@bitcoin-oracle/types';
+import {
+  BigIntSchema,
+  UpperCaseStringSchema,
+} from '@meta-protocols-oracle/types';
 import { Address, OutScript } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
 

@@ -4,8 +4,8 @@ import {
   kIndexerContractName,
   kIndexerRegistryName,
   StacksCaller,
-} from '@bitcoin-oracle/brc20-indexer';
-import { fastRetry, noAwait, toBuffer } from '@bitcoin-oracle/commons';
+} from '@meta-protocols-oracle/brc20-indexer';
+import { fastRetry, noAwait, toBuffer } from '@meta-protocols-oracle/commons';
 import { Inject, Logger } from '@nestjs/common';
 import { chunk } from 'lodash';
 import PQueue from 'p-queue';

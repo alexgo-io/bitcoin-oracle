@@ -1,5 +1,21 @@
 {
-  "name": "@bitcoin-oracle/commons",
+  "name": "@meta-protocols-oracle/commons",
   "version": "0.1.0",
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "@meta-protocols-oracle/types": "*",
+    "slonik": "^37.0.1",
+    "zod": "^3.22.3",
+    "@t3-oss/env-core": "^0.6.1",
+    "@nestjs/common": "^10.2.4",
+    "class-validator": "^0.14.0",
+    "safe-json-stringify": "^1.2.0",
+    "memoizee": "^0.4.15",
+    "nestjs-pino": "^3.4.0",
+    "pino-pretty": "^10.2.0",
+    "rxjs": "^7.8.1",
+    "p-queue": "^6.6.2",
+    "p-retry": "^4.6.2",
+    "tslib": "^2.6.2"
+  }
 }

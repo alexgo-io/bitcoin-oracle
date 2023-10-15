@@ -1,7 +1,7 @@
 import { Indexer, MockIndexer } from '@bitcoin-oracle/api';
-import { SQL } from '@bitcoin-oracle/commons';
-import { PersistentService } from '@bitcoin-oracle/persistent';
-import { APIOf, Enums } from '@bitcoin-oracle/types';
+import { SQL } from '@meta-protocols-oracle/commons';
+import { PersistentService } from '@meta-protocols-oracle/persistent';
+import { APIOf, Enums } from '@meta-protocols-oracle/types';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { randomBytes } from 'node:crypto';

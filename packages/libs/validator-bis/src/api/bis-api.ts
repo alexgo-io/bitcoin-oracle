@@ -1,4 +1,4 @@
-import { getLogger } from '@bitcoin-oracle/commons';
+import { getLogger } from '@meta-protocols-oracle/commons';
 import got from 'got-cjs';
 import { env } from '../env';
 import {
