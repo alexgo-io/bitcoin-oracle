@@ -10,7 +10,6 @@
     "got-cjs": "^12.5.4",
     "micro-stacks": "^1.2.1",
     "p-queue": "^6.6.2",
-    "bitcoinjs-lib": "^6.1.3",
     "scure-btc-signer-cjs": "^1.0.1"
   },
   "type": "module",
