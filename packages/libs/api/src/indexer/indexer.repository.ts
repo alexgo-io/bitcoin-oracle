@@ -119,36 +119,29 @@ export class IndexerRepository {
 
   async findDebugInfo(params: APIOf<'debug_txs', 'request', 'dto'>) {
     const whereClause = generateProofFilter(params);
+    const api_schema = m
+      .api('debug_txs', 'response', 'dto')
+      .merge(m.database('indexer', 'has_id'));
+    const proof_schema = m.database('indexer', 'proofs');
+    const result_schema = api_schema.merge(
+      z.object({
+        proofs: z.array(proof_schema),
+      }),
+    );
+    type ResultType = z.infer<typeof result_schema>;
 
-    return this.persistentService.pgPool.any(SQL.type(
-      m.api('debug_txs', 'response', 'dto'),
-    )`
+    return this.persistentService.pgPool.transaction(async conn => {
+      const txs = await conn.many(SQL.type(api_schema)`
         with pf as (select p.id,
-                           p.type,
-                           json_build_object(
-                                   'type', p.type,
-                                   'from_address', p.from_address,
-                                   'to_address', p.to_address,
-                                   'amt', p.amt,
-                                   'from', p.from,
-                                   'to', p.to,
-                                   'tick', p.tick,
-                                   'from_bal', p.from_bal,
-                                   'to_bal', p.to_bal,
-                                   'satpoint', p.satpoint,
-                                   'output', p.output,
-                                   'signer', p.signer,
-                                   'signature', p.signature,
-                                   'order_hash', p.order_hash
-                               ) as proof
+                           p.type
                     from indexer.proofs p),
-             with_json_pf as (select t.id,
-                                     count(*)           as proofs_count,
-                                     json_agg(pf.proof) as proofs
+             with_pf_count as (select t.id,
+                                     count(*)           as proofs_count
                               from indexer.txs t
-                                       join pf on pf.id = t.id
+                                     join pf on pf.id = t.id
                               group by 1),
-             with_tx as (select t.tx_hash,
+             with_tx as (select t.id,
+                                t.tx_hash,
                                 t.output,
                                 t.satpoint,
                                 t.tx_id,
@@ -157,9 +150,8 @@ export class IndexerRepository {
                                 t.tx_index,
                                 t.tree_depth,
                                 t.height,
-                                t.error                as tx_error,
-                                with_json_pf.proofs_count,
-                                with_json_pf.proofs,
+                                t.error                  as tx_error,
+                                with_pf_count.proofs_count,
                                 st.stacks_tx_id          as stacks_tx_id,
                                 st.submitted_by          as stacks_submitted_by,
                                 st.submitted_at          as stacks_submitted_at,
@@ -169,13 +161,32 @@ export class IndexerRepository {
                                 b.header                 as block_header,
                                 b.block_hash             as block_hash
                          from indexer.txs t
-                                  join with_json_pf on with_json_pf.id = t.id
-                                  join indexer.blocks b on t.height = b.height
-                                  left join indexer.submitted_tx st on st.id = t.id)
+                                join with_pf_count on with_pf_count.id = t.id
+                                join indexer.blocks b on t.height = b.height
+                                left join indexer.submitted_tx st on st.id = t.id)
         select *
         from with_tx t
-            ${whereClause}
-    `);
+          ${whereClause}
+      `);
+
+      const results: ResultType[] = [];
+
+      for (const t of txs) {
+        const proofs = await conn.many(SQL.type(proof_schema)`
+          select *
+          from indexer.proofs p
+          where p.id = ${SQL.binary(t.id)}
+        `);
+        results.push(
+          result_schema.parse({
+            ...t,
+            proofs,
+          }),
+        );
+      }
+
+      return results;
+    });
   }
 
   // async getMissingBlockNumbers(type: ValidatorName) {
@@ -195,7 +206,7 @@ export class IndexerRepository {
 
 function generateProofFilter(params: APIOf<'debug_txs', 'request', 'dto'>) {
   const pairs = Object.entries(params).map(([key, value]) => {
-    if (key === 'tx_error'){
+    if (key === 'tx_error') {
       return SQL.fragment`
         ${SQL.identifier([key])} is not null
       `;

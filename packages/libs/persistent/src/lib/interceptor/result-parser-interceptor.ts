@@ -2,7 +2,6 @@ import { stringifyJSON } from '@bitcoin-oracle/commons';
 import { Logger } from '@nestjs/common';
 import {
   SchemaValidationError,
-  SerializableValue,
   type Interceptor,
   type QueryResultRow,
 } from 'slonik';
@@ -34,7 +33,7 @@ export const createResultParserInterceptor = (): Interceptor => {
         );
         throw new SchemaValidationError(
           actualQuery,
-          row as SerializableValue,
+          row,
           validationResult.error.issues,
         );
       }

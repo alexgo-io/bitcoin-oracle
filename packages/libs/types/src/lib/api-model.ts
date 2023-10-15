@@ -5,8 +5,9 @@ import {
   BigIntStringSchema,
   BufferHexSchema,
   BufferStringSchema,
-  DateSchema, UpperCaseStringSchema
-} from "./basic-model";
+  DateSchema,
+  UpperCaseStringSchema,
+} from './basic-model';
 import { Enums } from './enums-model';
 
 function createResponseSchema<ItemType extends z.ZodTypeAny>(
@@ -83,45 +84,52 @@ function makeDebugRequestQuery<T extends DataType>(type: T) {
 }
 
 function makeDebugResponseQuery<T extends DataType>(type: T) {
-  return z.object({
-    tx_hash: makeBuffer(type),
-    output: makeBigInt(type),
-    satpoint: makeBigInt(type),
-    tx_id: makeBuffer(type),
-    header: makeBuffer(type),
-    proof_hashes: z.array(makeBuffer(type)),
-    tx_index: makeBigInt(type),
-    tree_depth: makeBigInt(type),
-    height: makeBigInt(type),
-    tx_error: z.string().nullish(),
-    proofs_count: makeBigInt(type),
-    proofs: z.array(
-      z.object({
-        type: z.string(),
-        from_address: z.string(),
-        to_address: z.string(),
-        amt: makeBigInt(type),
-        from: makeBuffer(type),
-        to: makeBuffer(type),
-        tick: UpperCaseStringSchema,
-        from_bal: makeBigInt(type),
-        to_bal: makeBigInt(type),
-        satpoint: makeBigInt(type),
-        output: makeBigInt(type),
-        signer: z.string(),
-        signature: makeBuffer(type),
-        order_hash: makeBuffer(type),
-      }),
-    ),
-    stacks_tx_id: makeBuffer(type).nullable(),
-    stacks_submitted_by: z.string().nullable(),
-    stacks_submitted_at: DateSchema.nullable(),
-    stacks_submitter_nonce: makeBigInt(type).nullable(),
-    stacks_broadcast_result: z.string().nullable(),
-    stacks_error: z.string().nullish(),
-    block_hash: makeBuffer(type),
-    block_header: makeBuffer(type),
-  });
+  return z
+    .object({
+      tx_hash: makeBuffer(type),
+      output: makeBigInt(type),
+      satpoint: makeBigInt(type),
+      tx_id: makeBuffer(type),
+      header: makeBuffer(type),
+      proof_hashes: z.array(makeBuffer(type)),
+      tx_index: makeBigInt(type),
+      tree_depth: makeBigInt(type),
+      height: makeBigInt(type),
+      tx_error: z.string().nullish(),
+      proofs_count: makeBigInt(type),
+      stacks_tx_id: makeBuffer(type).nullable(),
+      stacks_submitted_by: z.string().nullable(),
+      stacks_submitted_at: DateSchema.nullable(),
+      stacks_submitter_nonce: makeBigInt(type).nullable(),
+      stacks_broadcast_result: z.string().nullable(),
+      stacks_error: z.string().nullish(),
+      block_hash: makeBuffer(type),
+      block_header: makeBuffer(type),
+    })
+    .merge(
+      type === 'json'
+        ? z.object({
+            proofs: z.array(
+              z.object({
+                type: z.string(),
+                from_address: z.string(),
+                to_address: z.string(),
+                amt: makeBigInt(type),
+                from: makeBuffer(type),
+                to: makeBuffer(type),
+                tick: UpperCaseStringSchema,
+                from_bal: makeBigInt(type),
+                to_bal: makeBigInt(type),
+                satpoint: makeBigInt(type),
+                output: makeBigInt(type),
+                signer: z.string(),
+                signature: makeBuffer(type),
+                order_hash: makeBuffer(type),
+              }),
+            ),
+          })
+        : z.object({}),
+    );
 }
 
 export const indexerAPI = {
