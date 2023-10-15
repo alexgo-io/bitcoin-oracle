@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { BigIntSchema, BufferHexSchema, UpperCaseStringSchema } from "./basic-model";
+import {
+  BigIntSchema,
+  BufferHexSchema,
+  UpperCaseStringSchema,
+} from './basic-model';
 import { Enums } from './enums-model';
 
 /*
@@ -71,29 +75,25 @@ const blocks = z.object({
   canonical: z.boolean(),
 });
 
-const relayer_txs = txs.merge(
-  z.object({
-    proofs: z.array(
-      z.object({
-        type: Enums.ValidatorName,
-        order_hash: BufferHexSchema,
-        signature: BufferHexSchema,
-        signer: z.string(),
+const query_proofs = z.object({
+  type: Enums.ValidatorName,
+  order_hash: BufferHexSchema,
+  signature: BufferHexSchema,
+  signer: z.string(),
 
-        amt: BigIntSchema,
-        from: BufferHexSchema,
-        from_bal: BigIntSchema,
-        satpoint: BigIntSchema,
-        output: BigIntSchema,
-        tick: UpperCaseStringSchema,
-        to: BufferHexSchema,
-        to_bal: BigIntSchema,
+  amt: BigIntSchema,
+  from: BufferHexSchema,
+  from_bal: BigIntSchema,
+  satpoint: BigIntSchema,
+  output: BigIntSchema,
+  tick: UpperCaseStringSchema,
+  to: BufferHexSchema,
+  to_bal: BigIntSchema,
 
-        tx_id: BufferHexSchema,
-      }),
-    ),
-  }),
-);
+  tx_id: BufferHexSchema,
+});
+
+const has_id = z.object({ id: BufferHexSchema });
 
 export const indexer = {
   blocks,
@@ -101,5 +101,6 @@ export const indexer = {
   proofs,
   tx_with_proofs,
   submitted_tx,
-  relayer_txs,
+  has_id,
+  query_proofs,
 };
