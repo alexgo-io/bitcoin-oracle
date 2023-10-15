@@ -105,12 +105,6 @@ async function submitIndexerTx(
   );
 
   logger.verbose(`submitting ${tx.tx_id}`);
-  if (
-    tx.tx_id !==
-    '14ebe8b35f7697a8e7828cfe89b62e6d80448898acc407308ca1c69e8c7d485a'
-  ) {
-    return;
-  }
 
   return indexer(env().INDEXER_API_URL)
     .txs()
