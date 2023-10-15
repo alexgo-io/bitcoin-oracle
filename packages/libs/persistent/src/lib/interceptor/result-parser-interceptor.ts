@@ -2,7 +2,6 @@ import { stringifyJSON } from '@bitcoin-oracle/commons';
 import { Logger } from '@nestjs/common';
 import {
   SchemaValidationError,
-  SerializableValue,
   type Interceptor,
   type QueryResultRow,
 } from 'slonik';
