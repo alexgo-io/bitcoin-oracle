@@ -19,7 +19,10 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/libs/commons/**/*.ts"]
+        "lintFilePatterns": [
+          "packages/libs/commons/**/*.ts",
+          "packages/libs/commons/**/package.json"
+        ]
       }
     },
     "test": {

@@ -1,6 +1,6 @@
-import { SQL } from '@bitcoin-oracle/commons';
-import { PersistentService } from '@bitcoin-oracle/persistent';
-import { BigIntSchema, ModelIndexer } from '@bitcoin-oracle/types';
+import { SQL } from '@meta-protocols-oracle/commons';
+import { PersistentService } from '@meta-protocols-oracle/persistent';
+import { BigIntSchema, ModelIndexer } from '@meta-protocols-oracle/types';
 import { Inject } from '@nestjs/common';
 import { z } from 'zod';
 

@@ -1,4 +1,4 @@
-import { getLogger, stringifyJSON } from '@bitcoin-oracle/commons';
+import { getLogger, stringifyJSON } from '@meta-protocols-oracle/commons';
 import { StacksMainnet, StacksMocknet, StacksNetwork } from '@stacks/network';
 import {
   AccountDataResponse,

@@ -1,4 +1,4 @@
-import { expoRetry, noAwait } from '@bitcoin-oracle/commons';
+import { expoRetry, noAwait } from '@meta-protocols-oracle/commons';
 import got from 'got-cjs';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
 import PQueue from 'p-queue';

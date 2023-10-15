@@ -1,4 +1,4 @@
-import { Enums } from '@bitcoin-oracle/types';
+import { Enums } from '@meta-protocols-oracle/types';
 import {
   CanActivate,
   ExecutionContext,

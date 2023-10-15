@@ -1,5 +1,8 @@
-import { ApiClient } from '@bitcoin-oracle/api-client';
-import { reverseBuffer, withElectrumClient } from '@bitcoin-oracle/bitcoin';
+import { ApiClient } from '@meta-protocols-oracle/api-client';
+import {
+  reverseBuffer,
+  withElectrumClient,
+} from '@meta-protocols-oracle/bitcoin';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
 import { from } from 'rxjs';
 import { env } from '../env';

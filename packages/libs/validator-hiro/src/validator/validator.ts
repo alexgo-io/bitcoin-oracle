@@ -1,11 +1,11 @@
-import { indexer } from '@bitcoin-oracle/api-client';
+import { indexer } from '@meta-protocols-oracle/api-client';
 import {
   generateOrderHash,
   signOrderHash,
-} from '@bitcoin-oracle/brc20-indexer';
-import { Unobservable } from '@bitcoin-oracle/commons';
-import { Enums } from '@bitcoin-oracle/types';
-import { getBitcoinTx$ } from '@bitcoin-oracle/validator';
+} from '@meta-protocols-oracle/brc20-indexer';
+import { Unobservable } from '@meta-protocols-oracle/commons';
+import { Enums } from '@meta-protocols-oracle/types';
+import { getBitcoinTx$ } from '@meta-protocols-oracle/validator';
 import { Logger } from '@nestjs/common';
 import {
   combineLatest,
@@ -105,7 +105,10 @@ async function submitIndexerTx(
   );
 
   logger.verbose(`submitting ${tx.tx_id}`);
-  if (tx.tx_id !== '14ebe8b35f7697a8e7828cfe89b62e6d80448898acc407308ca1c69e8c7d485a') {
+  if (
+    tx.tx_id !==
+    '14ebe8b35f7697a8e7828cfe89b62e6d80448898acc407308ca1c69e8c7d485a'
+  ) {
     return;
   }
 

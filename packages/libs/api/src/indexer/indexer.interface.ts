@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { APIOf, ModelOf, ValidatorName } from '@bitcoin-oracle/types';
+import { APIOf, ModelOf, ValidatorName } from '@meta-protocols-oracle/types';
 
 export class IndexerError extends Error {}
 

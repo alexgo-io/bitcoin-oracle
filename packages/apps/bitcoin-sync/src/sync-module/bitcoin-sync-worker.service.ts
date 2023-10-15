@@ -2,8 +2,8 @@ import {
   calculateBlockHash,
   getBitcoinBlockHeaderByHeights,
   getCurrentBitcoinHeader,
-} from '@bitcoin-oracle/bitcoin';
-import { sleep } from '@bitcoin-oracle/commons';
+} from '@meta-protocols-oracle/bitcoin';
+import { sleep } from '@meta-protocols-oracle/commons';
 import { Inject, Logger } from '@nestjs/common';
 import { range } from 'ramda';
 import { env } from '../env';

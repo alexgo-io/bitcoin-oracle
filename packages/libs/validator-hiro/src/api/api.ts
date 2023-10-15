@@ -1,4 +1,4 @@
-import { getLogger } from '@bitcoin-oracle/commons';
+import { getLogger } from '@meta-protocols-oracle/commons';
 import memoizee from 'memoizee';
 import { EMPTY, expand, from, reduce } from 'rxjs';
 import { getHiroQueue } from '../queue';

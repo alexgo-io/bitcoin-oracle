@@ -3,7 +3,7 @@ import {
   getActivityOnBlock,
   getAllActivitiesOnBlock$,
   getBalanceOnBlock,
-} from '@bitcoin-oracle/validator-hiro';
+} from '@meta-protocols-oracle/validator-hiro';
 
 describe('Hiro API', function () {
   it('should get activity', async function () {

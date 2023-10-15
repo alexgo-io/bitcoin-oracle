@@ -2,7 +2,7 @@ import {
   parseErrorDetail,
   stringifyJSON,
   toErrorDetailsHttpException,
-} from '@bitcoin-oracle/commons';
+} from '@meta-protocols-oracle/commons';
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { env } from '../../env';
@@ -27,10 +27,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         },
       };
       this.logger.error(
-        `Error occurred for request ${request.url}, ${stringifyJSON(
-          data,
-          2,
-        )}
+        `Error occurred for request ${request.url}, ${stringifyJSON(data, 2)}
             `,
       );
     }

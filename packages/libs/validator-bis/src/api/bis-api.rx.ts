@@ -1,4 +1,4 @@
-import { getLogger } from '@bitcoin-oracle/commons';
+import { getLogger } from '@meta-protocols-oracle/commons';
 import memoizee from 'memoizee';
 import { from } from 'rxjs';
 import { getBISQueue } from '../queue';
