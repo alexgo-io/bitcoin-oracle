@@ -34,7 +34,7 @@ export const createResultParserInterceptor = (): Interceptor => {
         );
         throw new SchemaValidationError(
           actualQuery,
-          row as SerializableValue,
+          row,
           validationResult.error.issues,
         );
       }

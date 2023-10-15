@@ -45,8 +45,7 @@ export class DefaultRelayerService implements RelayerService {
   }
 
   async syncOnce(): Promise<void> {
-    const pendingTxs = await this.relayerRepository.getPendingSubmitTx();
-    const rows = pendingTxs.rows;
+    const rows = await this.relayerRepository.getPendingSubmitTx();
 
     const TxManyInputEncoder =
       indexerContracts[kIndexerContractName]['index-tx-many']['input'][0].type
@@ -109,7 +108,9 @@ export class DefaultRelayerService implements RelayerService {
               ) {
                 validateError += `from: ${proof.from.toString('hex')}[${
                   proof.type
-                }] != ${firstProof.from.toString('hex')}[${firstProof.type}].\n`;
+                }] != ${firstProof.from.toString('hex')}[${
+                  firstProof.type
+                }].\n`;
               }
               if (proof.to.toString('hex') != firstProof.to.toString('hex')) {
                 validateError += `to: ${proof.to.toString('hex')}[${
@@ -139,7 +140,9 @@ export class DefaultRelayerService implements RelayerService {
               ) {
                 validateError += `tx_id: ${proof.tx_id.toString('hex')}[${
                   proof.type
-                }] != ${firstProof.tx_id.toString('hex')}[${firstProof.type}].\n`;
+                }] != ${firstProof.tx_id.toString('hex')}[${
+                  firstProof.type
+                }].\n`;
               }
               if (
                 proof.order_hash.toString('hex') !=
