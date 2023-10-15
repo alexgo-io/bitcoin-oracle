@@ -30,6 +30,7 @@
     "micro-stacks": "^1.2.1",
     "nestjs-pino": "^3.4.0",
     "nestjs-zod": "^3.0.0",
+    "node-fetch": "^3.3.2",
     "p-queue": "^6.6.2",
     "p-retry": "^4.6.2",
     "pino": "^8.15.0",

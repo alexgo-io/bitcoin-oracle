@@ -1,4 +1,5 @@
 import { getLogger } from '@meta-protocols-oracle/commons';
+import fetch from 'node-fetch';
 import { env } from './env';
 
 export async function alertToTelegram(

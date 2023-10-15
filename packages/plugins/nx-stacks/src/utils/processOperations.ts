@@ -21,6 +21,7 @@ import {
 import assert from 'assert';
 import * as fs from 'fs';
 import got from 'got-cjs';
+import fetch from 'node-fetch';
 import pino from 'pino';
 import { keepSendingTx } from './keepSendingTx';
 import {
@@ -127,12 +128,11 @@ export const processOperations =
               { senderKey: privateKey, nonce, fee, minFee },
               network,
               contractAddress,
-            ).then(
-              result =>
-                operation?.onBroadcast?.(result).catch(e => {
-                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
-                  return null;
-                }),
+            ).then(result =>
+              operation?.onBroadcast?.(result).catch(e => {
+                logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                return null;
+              }),
             );
             break;
           case 'deploy':
@@ -140,12 +140,11 @@ export const processOperations =
               operation,
               { senderKey: privateKey, nonce, fee },
               network,
-            ).then(
-              result =>
-                operation?.onBroadcast?.(result).catch(e => {
-                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
-                  return null;
-                }),
+            ).then(result =>
+              operation?.onBroadcast?.(result).catch(e => {
+                logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                return null;
+              }),
             );
             break;
           case 'transfer':
@@ -153,12 +152,11 @@ export const processOperations =
               operation,
               { senderKey: privateKey, nonce, fee },
               network,
-            ).then(
-              result =>
-                operation?.onBroadcast?.(result).catch(e => {
-                  logger.error(`operation.onBroadcast failed: ${e.message}`, e);
-                  return null;
-                }),
+            ).then(result =>
+              operation?.onBroadcast?.(result).catch(e => {
+                logger.error(`operation.onBroadcast failed: ${e.message}`, e);
+                return null;
+              }),
             );
             break;
           default:
@@ -444,9 +442,9 @@ async function getTransaction(
 ) {
   const result: Transaction[] = [];
   while (result.every(t => t.nonce > untilNonce)) {
-    const response: AddressTransactionsListResponse = await fetch(
+    const response = (await fetch(
       `${stacksAPIURL}/extended/v1/address/${address}/transactions?limit=50&offset=${result.length}`,
-    ).then(r => r.json());
+    ).then(r => r.json())) as AddressTransactionsListResponse;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const newResults = response.results as any[];
     if (!newResults.length) {

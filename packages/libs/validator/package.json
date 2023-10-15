@@ -11,7 +11,8 @@
     "@meta-protocols-oracle/api-client": "*",
     "@meta-protocols-oracle/bitcoin": "*",
     "micro-stacks": "^1.2.1",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "p-queue": "^6.6.2"
   },
   "type": "commonjs",
   "main": "./src/index.js",

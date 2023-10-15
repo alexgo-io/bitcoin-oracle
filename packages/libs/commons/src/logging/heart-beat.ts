@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 export function startHeartBeat(url?: string) {
   if (url) {
     console.log(`Starting heartbeat to ${url}`);

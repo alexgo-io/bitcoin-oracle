@@ -4,7 +4,7 @@ import {
   withElectrumClient,
 } from '@meta-protocols-oracle/bitcoin';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
-import { from } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { env } from '../env';
 import { getElectrumQueue } from '../queue';
 
@@ -51,6 +51,11 @@ export async function getBitcoinTx(txId: string) {
   });
 }
 
-export function getBitcoinTx$(txId: string) {
+export function getBitcoinTx$(txId: string): Observable<{
+  tx: string;
+  header: string;
+  proof: { 'tx-index': number; 'tree-depth': number; hashes: string[] };
+  height: string;
+}> {
   return from(getElectrumQueue().add(() => getBitcoinTx(txId)));
 }

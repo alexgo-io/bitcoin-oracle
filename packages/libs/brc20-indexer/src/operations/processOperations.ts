@@ -22,6 +22,7 @@ import {
 } from '@stacks/transactions';
 import * as fs from 'fs';
 import got from 'got-cjs';
+import fetch from 'node-fetch';
 import { alertToTelegram } from '../alert';
 import {
   DeployContract,
@@ -341,7 +342,8 @@ export async function fetchMemPoolTransactions(
   const response = await fetch(
     `${options.stacksAPIURL}/extended/v1/address/${address}/mempool?limit=50`,
   ).then(r => (r.ok ? r.json() : Promise.reject(new Error(r.statusText))));
-  return response.results;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (response as any).results;
 }
 
 export async function RBFIfNeeded(
