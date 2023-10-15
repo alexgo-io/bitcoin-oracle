@@ -16,7 +16,7 @@
     "@stacks/stacks-blockchain-api-types": "^7.3.0",
     "got-cjs": "^12.5.4",
     "micro-stacks": "^1.2.1",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^2.7.0"
   },
   "type": "commonjs",
   "main": "./src/index.js",

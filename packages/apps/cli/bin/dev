@@ -8,11 +8,7 @@ const project = path.join(__dirname, '..', 'tsconfig.lib.json');
 // In dev mode -> use ts-node and dev plugins
 process.env.NODE_ENV = 'development';
 
-require('ts-node').register({
-  project,
-  transpileOnly: true,
-  transpiler: 'ts-node/transpilers/swc',
-});
+require('@swc-node/register');
 
 // In dev mode, always show stack traces
 oclif.settings.debug = true;
