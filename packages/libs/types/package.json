@@ -1,4 +1,8 @@
 {
-  "name": "@bitcoin-oracle/types",
-  "version": "0.1.0"
+  "name": "@meta-protocols-oracle/types",
+  "version": "0.0.1",
+  "dependencies": {
+    "zod": "^3.22.3",
+    "tslib": "^2.6.2"
+  }
 }

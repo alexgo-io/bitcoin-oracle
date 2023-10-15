@@ -1,5 +1,11 @@
-import { expoRetry } from '@bitcoin-oracle/commons';
-import { APIOf, Enums, ValidatorName, m, ModelIndexer } from '@bitcoin-oracle/types';
+import { expoRetry } from '@meta-protocols-oracle/commons';
+import {
+  APIOf,
+  Enums,
+  ModelIndexer,
+  ValidatorName,
+  m,
+} from '@meta-protocols-oracle/types';
 import got from 'got-cjs';
 import memoizee from 'memoizee';
 import { env } from '../env';

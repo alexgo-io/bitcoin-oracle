@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-import { indexerContracts } from '@bitcoin-oracle/brc20-indexer';
-import { stringifyJSON } from '@bitcoin-oracle/commons';
+import { indexerContracts } from '@meta-protocols-oracle/brc20-indexer';
+import { stringifyJSON } from '@meta-protocols-oracle/commons';
 import { Command, Flags } from '@oclif/core';
 import { hexToCV } from '@stacks/transactions';
 import fs from 'fs';

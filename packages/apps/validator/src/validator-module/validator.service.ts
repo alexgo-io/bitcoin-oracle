@@ -1,6 +1,6 @@
-import { ApiClient } from '@bitcoin-oracle/api-client';
-import { getCurrentBitcoinHeader } from '@bitcoin-oracle/bitcoin';
-import { ValidatorProcessInterface } from '@bitcoin-oracle/validator';
+import { ApiClient } from '@meta-protocols-oracle/api-client';
+import { getCurrentBitcoinHeader } from '@meta-protocols-oracle/bitcoin';
+import { ValidatorProcessInterface } from '@meta-protocols-oracle/validator';
 import { Inject, Logger } from '@nestjs/common';
 import { concatMap, exhaustMap, from, interval, map, range } from 'rxjs';
 import { env } from '../env';

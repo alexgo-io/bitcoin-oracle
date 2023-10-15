@@ -1,4 +1,4 @@
-import { UpperCaseStringSchema } from '@bitcoin-oracle/types';
+import { UpperCaseStringSchema } from '@meta-protocols-oracle/types';
 import { z, ZodRawShape } from 'zod';
 
 export const kBiSBaseURL = 'https://api.bestinslot.xyz';

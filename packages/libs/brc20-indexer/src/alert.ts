@@ -1,4 +1,4 @@
-import { getLogger } from '@bitcoin-oracle/commons';
+import { getLogger } from '@meta-protocols-oracle/commons';
 import { env } from './env';
 
 export async function alertToTelegram(

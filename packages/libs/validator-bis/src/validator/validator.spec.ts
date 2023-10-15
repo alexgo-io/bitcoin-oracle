@@ -5,7 +5,7 @@ import {
   processBlock$,
 } from './validator';
 
-jest.mock('@bitcoin-oracle/api-client', () => {
+jest.mock('@meta-protocols-oracle/api-client', () => {
   return {
     indexer: () => {
       return {

@@ -1,6 +1,11 @@
 import { Indexer, IndexerError } from '@bitcoin-oracle/api';
-import { ErrorDetails } from '@bitcoin-oracle/commons';
-import { APIOf, StatusCode, ValidatorName, m } from '@bitcoin-oracle/types';
+import { ErrorDetails } from '@meta-protocols-oracle/commons';
+import {
+  APIOf,
+  StatusCode,
+  ValidatorName,
+  m,
+} from '@meta-protocols-oracle/types';
 import {
   Body,
   Controller,

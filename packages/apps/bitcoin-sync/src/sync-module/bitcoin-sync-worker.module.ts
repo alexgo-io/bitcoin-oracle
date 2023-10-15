@@ -1,5 +1,5 @@
-import { PinoLoggerModule } from '@bitcoin-oracle/commons';
-import { PersistentModule } from '@bitcoin-oracle/persistent';
+import { PinoLoggerModule } from '@meta-protocols-oracle/commons';
+import { PersistentModule } from '@meta-protocols-oracle/persistent';
 import { Module } from '@nestjs/common';
 import { BitcoinSyncWorkerService } from './bitcoin-sync-worker.interface';
 import { BitcoinSyncWorkerRepository } from './bitcoin-sync-worker.repository';

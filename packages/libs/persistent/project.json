@@ -11,6 +11,7 @@
         "outputPath": "dist/packages/libs/persistent",
         "tsConfig": "packages/libs/persistent/tsconfig.lib.json",
         "packageJson": "packages/libs/persistent/package.json",
+        "generateLockfile": true,
         "main": "packages/libs/persistent/src/index.ts",
         "assets": ["packages/libs/persistent/*.md"]
       }
@@ -19,7 +20,10 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/libs/persistent/**/*.ts"]
+        "lintFilePatterns": [
+          "packages/libs/persistent/**/*.ts",
+          "packages/libs/persistent/package.json"
+        ]
       }
     },
     "test": {
@@ -29,6 +33,10 @@
         "jestConfig": "packages/libs/persistent/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs libs-persistent {args.ver} {args.tag}",
+      "dependsOn": ["build"]
     }
   },
   "tags": []

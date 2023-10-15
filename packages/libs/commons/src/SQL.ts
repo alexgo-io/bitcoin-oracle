@@ -1,4 +1,4 @@
-import { m } from '@bitcoin-oracle/types';
+import { m } from '@meta-protocols-oracle/types';
 import { createSqlTag } from 'slonik';
 import z from 'zod';
 

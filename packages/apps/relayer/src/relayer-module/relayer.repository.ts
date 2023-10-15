@@ -1,7 +1,7 @@
-import { SQL } from '@bitcoin-oracle/commons';
+import { SQL } from '@meta-protocols-oracle/commons';
 
-import { PersistentService } from '@bitcoin-oracle/persistent';
-import { m, ModelIndexer } from '@bitcoin-oracle/types';
+import { PersistentService } from '@meta-protocols-oracle/persistent';
+import { m, ModelIndexer } from '@meta-protocols-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
 import { z } from 'zod';
 import { env } from '../env';

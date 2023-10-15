@@ -1,10 +1,10 @@
 import {
   StacksCaller,
   kIndexerRegistryName,
-} from '@bitcoin-oracle/brc20-indexer';
+} from '@meta-protocols-oracle/brc20-indexer';
+import { stringifyJSON } from '@meta-protocols-oracle/commons';
 import { Command, Flags } from '@oclif/core';
 import { env } from '../../env';
-import { stringifyJSON } from "@bitcoin-oracle/commons";
 
 export default class World extends Command {
   static description = 'Say hello world';
