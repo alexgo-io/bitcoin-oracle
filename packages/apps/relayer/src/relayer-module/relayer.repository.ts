@@ -3,6 +3,7 @@ import { SQL } from '@bitcoin-oracle/commons';
 import { PersistentService } from '@bitcoin-oracle/persistent';
 import { m, ModelIndexer } from '@bitcoin-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
+import { z } from 'zod';
 import { env } from '../env';
 
 export class RelayerRepository {
@@ -14,9 +15,17 @@ export class RelayerRepository {
 
   async getPendingSubmitTx() {
     return this.persistent.pgPool.transaction(async conn => {
-      const pendingTxs = await conn.query(SQL.type(
-        m.database('indexer', 'relayer_txs'),
-      )`
+      const txs_schema = m
+        .database('indexer', 'txs')
+        .merge(m.database('indexer', 'has_id'));
+      const proof_schema = m.database('indexer', 'query_proofs');
+      const txs_join_proof_schema = txs_schema.merge(
+        z.object({
+          proofs: z.array(proof_schema),
+        }),
+      );
+
+      const pendingTxs = await conn.query(SQL.type(txs_schema)`
           with pending_txs as (select *
                                from indexer.txs
                                where not exists (select 1
@@ -31,36 +40,33 @@ export class RelayerRepository {
                                  having count(*) >=
                                         (select minimal_proof_count
                                          from indexer_config.relayer_configs
-                                         limit 1)),
-               bundle_proof as (select qt.id,
-                                       json_agg(json_build_object('type', pf.type,
-                                                                  'order_hash', pf.order_hash,
-                                                                  'signer', pf.signer,
-                                                                  'signature', pf.signature,
-                                                                  'amt', pf.amt,
-                                                                  'from', pf.from,
-                                                                  'from_bal', pf.from_bal,
-                                                                  'satpoint', pf.satpoint,
-                                                                  'output', pf.output,
-                                                                  'tick', pf.tick,
-                                                                  'to', pf.to,
-                                                                  'to_bal', pf.to_bal,
-                                                                  'tx_id', pf.tx_id
-                                           )) as proofs
-                                from qualified_txs qt
-                                         join indexer.proofs pf on qt.id = pf.id
-                                group by 1),
-               with_proof as (select pt.*,
-                                     bp.proofs
-                              from bundle_proof bp
-                                       join pending_txs pt on bp.id = pt.id)
+                                         limit 1))
           select *
-          from with_proof
+          from qualified_txs
           ;
       `);
-      this.logger.verbose(`getPendingSubmitTx: ${pendingTxs.rows.length}`);
 
-      return pendingTxs;
+      type ResultType = z.infer<typeof txs_join_proof_schema>;
+
+      const results: ResultType[] = [];
+
+      for (const tx of pendingTxs.rows) {
+        const proofs = await conn.many(SQL.type(proof_schema)`
+          select *
+          from indexer.proofs p
+          where p.id = ${SQL.binary(tx.id)}
+        `);
+        results.push(
+          txs_join_proof_schema.parse({
+            ...tx,
+            proofs,
+          }),
+        );
+      }
+
+      this.logger.verbose(`getPendingSubmitTx: ${results.length}`);
+
+      return results;
     });
   }
 
