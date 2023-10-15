@@ -40,9 +40,13 @@ export class RelayerRepository {
                                  having count(*) >=
                                         (select minimal_proof_count
                                          from indexer_config.relayer_configs
-                                         limit 1))
+                                         limit 1)),
+               qualified_txs_with_proof as (select *
+                                            from qualified_txs
+                                                     join pending_txs p on qualified_txs.id = p.id)
+
           select *
-          from qualified_txs
+          from qualified_txs_with_proof
           ;
       `);
 
