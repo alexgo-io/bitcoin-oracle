@@ -102,6 +102,10 @@
 (define-read-only (get-user-balance-or-default (user (buff 128)) (tick (string-utf8 4)))
 	(contract-call? .indexer-registry get-user-balance-or-default user tick))
 
+(define-read-only (get-tick-decimals-or-default (tick (string-utf8 4)))
+	(contract-call? .indexer-registry get-tick-decimals-or-default tick)
+)
+
 (define-read-only (validate-tx (tx-hash (buff 32)) (signature-pack { signer: principal, tx-hash: (buff 32), signature: (buff 65)}))
 	(let (
 			(validator-pubkey (try! (get-validator-or-fail (get signer signature-pack)))))
