@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
   .:
     dependencies:
@@ -21709,3 +21705,7 @@ packages:
       }
     engines: { node: '>=10' }
     dev: false
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
