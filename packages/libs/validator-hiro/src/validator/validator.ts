@@ -3,11 +3,17 @@ import {
   generateOrderHash,
   signOrderHash,
 } from '@meta-protocols-oracle/brc20-indexer';
-import { Unobservable } from '@meta-protocols-oracle/commons';
+import {
+  Unobservable,
+  getLogger,
+  stringifyJSON,
+} from '@meta-protocols-oracle/commons';
 import { Enums } from '@meta-protocols-oracle/types';
 import { getBitcoinTx$ } from '@meta-protocols-oracle/validator';
 import { Logger } from '@nestjs/common';
 import {
+  EMPTY,
+  catchError,
   combineLatest,
   concatMap,
   from,
@@ -54,6 +60,12 @@ export function getHiroTxOnBlock$(block: number) {
         getTokenInfo$(activity.ticker),
       ]).pipe(
         retry(5),
+        catchError(err => {
+          getLogger('validator-hiro').error(`error getting indexer tx ${err}.
+          activity: ${stringifyJSON(activity)}
+          `);
+          return EMPTY;
+        }),
         map(([oldBalances, newBalances, token]) => {
           logger.verbose(
             `got [getHiroTxOnBlock$] for tx ${activity.tx_id} - ${block}`,
@@ -138,7 +150,15 @@ async function submitIndexerTx(
 export function processBlock$(block: number) {
   return getIndexerTxOnBlock$(block).pipe(
     concatMap(tx => {
-      return from(submitIndexerTx(tx));
+      return from(
+        submitIndexerTx(tx).catch(err => {
+          getLogger('validator-hiro').error(
+            `error submitting tx: ${
+              tx.tx_id
+            }, error: ${err}, tx: ${stringifyJSON(tx)}`,
+          );
+        }),
+      );
     }),
   );
 }

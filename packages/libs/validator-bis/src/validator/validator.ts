@@ -3,12 +3,17 @@ import {
   generateOrderHash,
   signOrderHash,
 } from '@meta-protocols-oracle/brc20-indexer';
-import { Unobservable } from '@meta-protocols-oracle/commons';
+import {
+  Unobservable,
+  getLogger,
+  stringifyJSON,
+} from '@meta-protocols-oracle/commons';
 import { Enums } from '@meta-protocols-oracle/types';
 import { getBitcoinTx$ } from '@meta-protocols-oracle/validator';
-import { Logger } from '@nestjs/common';
 import assert from 'assert';
 import {
+  EMPTY,
+  catchError,
   combineLatest,
   concatMap,
   from,
@@ -27,7 +32,7 @@ import {
 import { env } from '../env';
 import { getElectrumQueue } from '../queue';
 
-const logger = new Logger('validator', { timestamp: true });
+const logger = getLogger('validator-bis');
 function getBalanceOnBlockCached$({
   address,
   block,
@@ -113,6 +118,12 @@ export function getIndexerTxOnBlock$(block: number) {
             decimals: tokenInfo.data.decimals,
           };
         }),
+        catchError(err => {
+          logger.error(`failed to get indexer tx ${tx_id}: ${err}.
+          tx: ${stringifyJSON(tx)}
+          `);
+          return EMPTY;
+        }),
       );
     }),
   );
@@ -189,7 +200,7 @@ export function processBlock$(block: number) {
             logger.verbose(
               `failed to submit tx: ${tx.tx_id}: ${JSON.stringify(
                 err,
-              )} - ${count}`,
+              )} - ${count} - ${stringifyJSON(tx)}`,
             );
             throw err;
           }),
