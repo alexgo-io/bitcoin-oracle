@@ -106,6 +106,8 @@ export function getIndexerTxOnBlock$(block: number) {
             vout,
             tx_id,
             satpoint,
+            // TODO: @decimals implement this
+            decimals: 0,
           };
         }),
       );
@@ -123,6 +125,7 @@ async function submitIndexerTx(
 
   const order_hash = generateOrderHash({
     amt: BigInt(tx.amount),
+    decimals: BigInt(tx.decimals),
     from: Buffer.from(tx.old_pkscript, 'hex'),
     to: Buffer.from(tx.new_pkscript, 'hex'),
     'from-bal': BigInt(tx.from_bal),
@@ -153,6 +156,7 @@ async function submitIndexerTx(
       output: tx.vout,
       tick: tx.tick,
       amt: tx.amount,
+      decimals: tx.decimals.toString(10),
       from_bal: tx.from_bal,
       to_bal: tx.to_bal,
       order_hash: order_hash.toString('hex'),

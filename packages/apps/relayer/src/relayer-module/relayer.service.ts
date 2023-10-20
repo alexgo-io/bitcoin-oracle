@@ -135,6 +135,10 @@ export class DefaultRelayerService implements RelayerService {
               if (proof.tick != firstProof.tick) {
                 validateError += `tick: ${proof.tick}[${proof.type}] != ${firstProof.tick}[${firstProof.type}].\n`;
               }
+              if (proof.decimals != firstProof.decimals) {
+                validateError += `decimals: ${proof.decimals}[${proof.type}] != ${firstProof.decimals}[${firstProof.type}].\n`;
+              }
+
               if (
                 proof.tx_id.toString('hex') != firstProof.tx_id.toString('hex')
               ) {
@@ -179,6 +183,7 @@ export class DefaultRelayerService implements RelayerService {
                   output: tx.output,
                   'bitcoin-tx': tx.tx_hash,
                   offset: tx.satpoint,
+                  decimals: firstProof.decimals,
                   from: firstProof.from,
                   to: firstProof.to,
                   amt: firstProof.amt,
@@ -219,6 +224,7 @@ export class DefaultRelayerService implements RelayerService {
                 output: tx.output,
                 offset: tx.satpoint,
                 'bitcoin-tx': tx.tx_hash,
+                decimals: firstProof.decimals,
                 from: firstProof.from,
                 tick: firstProof.tick,
                 'from-bal': firstProof.from_bal,

@@ -71,6 +71,7 @@ create table indexer.proofs
   "amt"          numeric     not null,
   "from_bal"     numeric     not null,
   "to_bal"       numeric     not null,
+  "decimals"     integer     not null,
 
   "from_address" text        not null,
   "to_address"   text        not null,

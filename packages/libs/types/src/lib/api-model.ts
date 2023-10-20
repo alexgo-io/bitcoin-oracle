@@ -55,6 +55,7 @@ function makeTxs<T extends DataType>(type: T) {
     to: makeBuffer(type),
     tick: UpperCaseStringSchema,
     amt: makeBigInt(type),
+    decimals: makeBigInt(type),
     from_bal: makeBigInt(type),
     to_bal: makeBigInt(type),
     order_hash: makeBuffer(type),

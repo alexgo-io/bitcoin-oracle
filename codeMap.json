@@ -115,6 +115,14 @@
     "code": "ERR-PROOF-TOO-SHORT",
     "comment": "clarity-bitcoin.clar:499"
   },
+  "1701912084": {
+    "code": "ERR-NOT-AUTHORIZED",
+    "comment": "indexer-registry.clar:100"
+  },
+  "1701912088": {
+    "code": "ERR-NOT-AUTHORIZED",
+    "comment": "indexer-registry.clar:104"
+  },
   "2090389178": {
     "code": "ERR-OUT-OF-BOUNDS",
     "comment": "clarity-bitcoin.clar:14"
@@ -179,44 +187,36 @@
     "code": "ERR-UNKNOWN-VALIDATOR",
     "comment": "indexer.clar:91"
   },
-  "3842857192": {
+  "3842857217": {
     "code": "ERR-DUPLICATE-SIGNATURE",
-    "comment": "indexer.clar:108"
+    "comment": "indexer.clar:112"
   },
-  "3842857193": {
+  "3842857218": {
     "code": "ERR-ORDER-HASH-MISMATCH",
-    "comment": "indexer.clar:109"
+    "comment": "indexer.clar:113"
   },
-  "3842857215": {
+  "3842857219": {
     "code": "ERR-INVALID-SIGNATURE",
-    "comment": "indexer.clar:110"
+    "comment": "indexer.clar:114"
   },
-  "3842857286": {
+  "3842857311": {
     "code": "ERR-PAUSED",
-    "comment": "indexer.clar:139"
+    "comment": "indexer.clar:143"
   },
-  "3842857308": {
+  "3842857312": {
     "code": "ERR-UKNOWN-RELAYER",
-    "comment": "indexer.clar:140"
+    "comment": "indexer.clar:144"
   },
-  "3842857405": {
+  "3842857409": {
     "code": "ERR-REQUIRED-VALIDATORS",
-    "comment": "indexer.clar:174"
+    "comment": "indexer.clar:178"
   },
-  "3842857467": {
+  "3842857472": {
     "code": "ERR-NOT-AUTHORIZED",
-    "comment": "indexer.clar:194"
+    "comment": "indexer.clar:199"
   },
-  "4072773152": {
+  "4072773178": {
     "code": "ERR-TX-NOT-INDEXED",
-    "comment": "indexer-registry.clar:58"
-  },
-  "4072773244": {
-    "code": "ERR-NOT-AUTHORIZED",
-    "comment": "indexer-registry.clar:87"
-  },
-  "4072773269": {
-    "code": "ERR-NOT-AUTHORIZED",
-    "comment": "indexer-registry.clar:91"
+    "comment": "indexer-registry.clar:63"
   }
 }
