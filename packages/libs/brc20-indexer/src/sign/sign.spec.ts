@@ -24,20 +24,21 @@ describe('sign', () => {
         'hex',
       ),
       tick: 'SATS',
+      decimals: 18n,
       output: 1n,
       offset: 0n,
     });
 
     const hash = structuredDataHash(encodeValue);
     expect(hash.toString('hex')).toMatchInlineSnapshot(
-      `"cc5dcb4078408ed38d5f0ce079c87050a0585eba66bf5462f06b8c0b11cee55e"`,
+      `"659487fb3a5f4d93107e22e741c45282694a69893aa7c9c6d6912c93ff952c27"`,
     );
     const signature = await signTx(
       '114dd00b2407eb036aa12c38662ed35ff3ba6c4f743b5a8ae4c984ac0ec7afe301',
       encodeValue,
     );
     expect(signature.toString('hex')).toMatchInlineSnapshot(
-      `"93c82317189f7b9d3c93fc8cfb040b1b56d3ed422020af94359168670e6ba5d0056d4b7b870d330e775d98230889a0f1921c9ea1b8fed2519e92addc53ae67aa00"`,
+      `"9343450e5712edd7b969c52c1e9e4ca5aa98ecf62ff7f3035b90d559605165022f9e6baa2f6f01f4ca082212513536f43516a01c12db006230fa44dde6da9e5800"`,
     );
   });
 });
