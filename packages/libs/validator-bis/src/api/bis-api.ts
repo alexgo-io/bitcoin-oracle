@@ -58,9 +58,10 @@ export async function getBalanceOnBlock(address: string, block: number) {
 }
 
 export async function getTokenInfo(token: string) {
-  const url = `${kBiSBaseURL}/v3/brc20/ticker_info?ticker=${token}`;
+  const url = `${kBiSBaseURL}/v3/brc20/ticker_info`;
   try {
     const rawResult = await got(url, {
+      searchParams: { ticker: token },
       headers: {
         'x-api-key': env().BIS_ACCESS_KEY,
       },
