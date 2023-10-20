@@ -43,7 +43,9 @@ export async function getBalanceOnBlock(
 
 export async function getTokenInfo(token: string) {
   const rawResult = await got(
-    `${env().HIRO_B20_API_URL}/ordinals/v1/brc-20/tokens/${token}`,
+    `${env().HIRO_B20_API_URL}/ordinals/v1/brc-20/tokens/${encodeURIComponent(
+      token,
+    )}`,
   ).json();
 
   return rawResult;
