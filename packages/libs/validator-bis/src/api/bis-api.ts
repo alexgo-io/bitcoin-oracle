@@ -4,6 +4,7 @@ import { env } from '../env';
 import {
   BISActivityOnBlockResponseSchema,
   BISBalanceOnBlockResponseSchema,
+  BISTickerInfoResponseSchema,
   kBiSBaseURL,
 } from './base';
 
@@ -49,6 +50,30 @@ export async function getBalanceOnBlock(address: string, block: number) {
     return BISBalanceOnBlockResponseSchema.parse(rawResult);
   } catch (e) {
     getLogger('getBalanceOnBlock').error(`
+     error on url: ${url}
+     error: ${e}
+    `);
+    throw e;
+  }
+}
+
+export async function getTokenInfo(token: string) {
+  const url = `${kBiSBaseURL}/v3/brc20/ticker_info?ticker=${token}`;
+  try {
+    const rawResult = await got(url, {
+      headers: {
+        'x-api-key': env().BIS_ACCESS_KEY,
+      },
+      retry: {
+        limit: 5,
+        // add retrying for 400 error code
+        statusCodes: [400, 408, 413, 429, 500, 502, 503, 504, 521, 522, 524],
+      },
+    }).json();
+
+    return BISTickerInfoResponseSchema.parse(rawResult);
+  } catch (e) {
+    getLogger('getTokenInfo').error(`
      error on url: ${url}
      error: ${e}
     `);

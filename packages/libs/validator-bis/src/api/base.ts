@@ -1,5 +1,8 @@
-import { UpperCaseStringSchema } from '@meta-protocols-oracle/types';
-import { z, ZodRawShape } from 'zod';
+import {
+  BigIntSchema,
+  UpperCaseStringSchema,
+} from '@meta-protocols-oracle/types';
+import { ZodRawShape, z } from 'zod';
 
 export const kBiSBaseURL = 'https://api.bestinslot.xyz';
 
@@ -14,6 +17,12 @@ export function withDataArraySchema<T extends ZodRawShape>(
 ) {
   return z.object({
     data: z.array(schema),
+    block_height: z.number(),
+  });
+}
+export function withDataSchema<T extends ZodRawShape>(schema: z.ZodObject<T>) {
+  return z.object({
+    data: schema,
     block_height: z.number(),
   });
 }
@@ -43,3 +52,9 @@ export const BISBalanceSchema = z.object({
 export type BISBalance = z.infer<typeof BISBalanceSchema>;
 export const BISBalanceOnBlockResponseSchema =
   withDataArraySchema(BISBalanceSchema);
+
+export const BISTickerInfoSchema = z.object({
+  ticker: UpperCaseStringSchema,
+  decimals: BigIntSchema,
+});
+export const BISTickerInfoResponseSchema = withDataSchema(BISTickerInfoSchema);

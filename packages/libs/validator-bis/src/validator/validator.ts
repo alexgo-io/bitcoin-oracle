@@ -19,7 +19,11 @@ import {
   retry,
 } from 'rxjs';
 import { BISBalance } from '../api/base';
-import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
+import {
+  getActivityOnBlock$,
+  getBalanceOnBlock$,
+  getTokenInfo$,
+} from '../api/bis-api.rx';
 import { env } from '../env';
 import { getElectrumQueue } from '../queue';
 
@@ -97,8 +101,8 @@ export function getIndexerTxOnBlock$(block: number) {
           getElectrumQueue().size
         }`,
       );
-      return getBitcoinTx$(tx_id).pipe(
-        map(result => {
+      return combineLatest([getBitcoinTx$(tx_id), getTokenInfo$(tx.tick)]).pipe(
+        map(([result, tokenInfo]) => {
           logger.log(`got bitcoin tx ${tx_id}`);
           return {
             ...tx,
@@ -106,8 +110,7 @@ export function getIndexerTxOnBlock$(block: number) {
             vout,
             tx_id,
             satpoint,
-            // TODO: @decimals implement this
-            decimals: 0,
+            decimals: tokenInfo.data.decimals,
           };
         }),
       );
