@@ -36,6 +36,7 @@ export class DefaultIndexer implements Indexer {
           from: tx.from,
           to: tx.to,
           amt: tx.amt,
+          decimals: tx.decimals,
           'from-bal': tx.from_bal,
           'to-bal': tx.to_bal,
           tick: tx.tick,

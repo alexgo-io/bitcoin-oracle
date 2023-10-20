@@ -2,7 +2,7 @@ import { getLogger } from '@meta-protocols-oracle/commons';
 import memoizee from 'memoizee';
 import { EMPTY, expand, from, reduce } from 'rxjs';
 import { getHiroQueue } from '../queue';
-import { getActivityOnBlock, getBalanceOnBlock } from './api.raw';
+import { getActivityOnBlock, getBalanceOnBlock, getTokenInfo } from './api.raw';
 import { HiroAPISchema, HiroType } from './schema';
 
 const getActivityOnBlockMemoized = memoizee(getActivityOnBlock, {
@@ -111,6 +111,16 @@ export function getAllBalancesOnBlock$(
     reduce(
       (acc, current) => acc.concat(current.results),
       [] as HiroType<'balance'>[],
+    ),
+  );
+}
+
+export const getTokenInfoMemoized = memoizee(getTokenInfo, { promise: true });
+
+export function getTokenInfo$(token: string) {
+  return from(
+    getHiroQueue().add(() =>
+      getTokenInfoMemoized(token).then(HiroAPISchema.tokens.parse),
     ),
   );
 }

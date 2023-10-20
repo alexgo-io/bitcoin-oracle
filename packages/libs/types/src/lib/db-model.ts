@@ -46,6 +46,7 @@ const proofs = z.object({
   tick: UpperCaseStringSchema,
   to: BufferHexSchema,
   to_bal: BigIntSchema,
+  decimals: BigIntSchema,
 
   from_address: z.string(),
   to_address: z.string(),
@@ -89,6 +90,7 @@ const query_proofs = z.object({
   tick: UpperCaseStringSchema,
   to: BufferHexSchema,
   to_bal: BigIntSchema,
+  decimals: BigIntSchema,
 
   tx_id: BufferHexSchema,
 });

@@ -2,7 +2,7 @@ import { getLogger } from '@meta-protocols-oracle/commons';
 import memoizee from 'memoizee';
 import { from } from 'rxjs';
 import { getBISQueue } from '../queue';
-import { getActivityOnBlock, getBalanceOnBlock } from './bis-api';
+import { getActivityOnBlock, getBalanceOnBlock, getTokenInfo } from './bis-api';
 
 const getActivityOnBlockMemoized = memoizee(getActivityOnBlock, {
   promise: true,
@@ -32,6 +32,23 @@ export function getBalanceOnBlock$(address: string, block: number) {
       getBalanceOnBlockMemoized(address, block).then(r => {
         getLogger('bis-queue').debug(
           `queue size: ${getBISQueue().size}. getBalanceOnBlock`,
+        );
+        return r;
+      }),
+    ),
+  );
+}
+
+const getTokenInfoMemoized = memoizee(getTokenInfo, {
+  promise: true,
+});
+
+export function getTokenInfo$(token: string) {
+  return from(
+    getBISQueue().add(() =>
+      getTokenInfoMemoized(token).then(r => {
+        getLogger('bis-queue').debug(
+          `queue size: ${getBISQueue().size}. getTokenInfo`,
         );
         return r;
       }),

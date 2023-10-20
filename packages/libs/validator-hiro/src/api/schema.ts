@@ -141,9 +141,17 @@ const balance = z.object({
   overall_balance: HiroAmountBigIntSchema,
 });
 
+const tokens = z.object({
+  token: z.object({
+    ticker: UpperCaseStringSchema,
+    decimals: BigIntSchema,
+  }),
+});
+
 export const HiroAPISchema = {
   activity: createPaginationSchema(activity),
   balance: createPaginationSchema(balance),
+  tokens,
 };
 
 export type HiroAPIType<K extends keyof typeof HiroAPISchema> = z.infer<
@@ -153,6 +161,7 @@ export type HiroAPIType<K extends keyof typeof HiroAPISchema> = z.infer<
 export const HiroSchema = {
   activity,
   balance,
+  tokens,
 };
 
 export type HiroType<K extends keyof typeof HiroAPISchema> = z.infer<

@@ -49,6 +49,7 @@ describe('Indexer Controller (e2e)', () => {
       to: '0x00145724F67BF087DCF5D402D83C7FCF97BB512C8EC8',
       output: '1',
       tick: 'sat',
+      decimals: '18',
       amt: '100000',
       from_bal: '100000',
       satpoint: '3',

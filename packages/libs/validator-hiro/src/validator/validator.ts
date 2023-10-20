@@ -21,6 +21,7 @@ import {
   PKScriptToHiroAddressSchema,
   getAllActivitiesOnBlock$,
   getAllBalancesOnBlock$,
+  getTokenInfo$,
 } from '../api';
 import { env } from '../env';
 
@@ -50,9 +51,10 @@ export function getHiroTxOnBlock$(block: number) {
           block,
           PKScriptToHiroAddressSchema.parse(activity.transfer_send.to_address),
         ),
+        getTokenInfo$(activity.ticker),
       ]).pipe(
         retry(5),
-        map(([oldBalances, newBalances]) => {
+        map(([oldBalances, newBalances, token]) => {
           logger.verbose(
             `got [getHiroTxOnBlock$] for tx ${activity.tx_id} - ${block}`,
           );
@@ -63,6 +65,7 @@ export function getHiroTxOnBlock$(block: number) {
             ...activity,
             from_bal: oldBalance?.overall_balance ?? '0',
             to_bal: newBalance?.overall_balance ?? '0',
+            decimals: token.token.decimals,
           };
         }),
       );
@@ -90,6 +93,7 @@ async function submitIndexerTx(
 ) {
   const order_hash = generateOrderHash({
     amt: tx.transfer_send.amount,
+    decimals: tx.decimals,
     from: Buffer.from(tx.transfer_send.from_address, 'hex'),
     to: Buffer.from(tx.transfer_send.to_address, 'hex'),
     'from-bal': BigInt(tx.from_bal),
@@ -122,6 +126,7 @@ async function submitIndexerTx(
       output: tx.location.vout.toString(),
       tick: tx.ticker,
       amt: tx.transfer_send.amount.toString(),
+      decimals: tx.decimals.toString(),
       from_bal: tx.from_bal.toString(),
       to_bal: tx.to_bal.toString(),
       order_hash: order_hash.toString('hex'),

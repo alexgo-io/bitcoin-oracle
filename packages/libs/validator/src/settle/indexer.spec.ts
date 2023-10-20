@@ -9,6 +9,7 @@ import {
 import { StacksMocknet } from '@stacks/network';
 import { bufferCV, stringCV, tupleCV } from '@stacks/transactions';
 import { uintCV } from 'clarity-codegen';
+import fetch from 'node-fetch';
 import { randomBytes } from 'node:crypto';
 import { env } from '../env';
 import { envTest } from '../env-test';
@@ -16,7 +17,7 @@ import { envTest } from '../env-test';
 describe('Indexer', () => {
   const readonlyCall = callReadonlyWith(
     envTest().STACKS_DEPLOYER_ACCOUNT_ADDRESS,
-    new StacksMocknet({ url: env().STACKS_API_URL }),
+    new StacksMocknet({ url: env().STACKS_API_URL, fetchFn: fetch }),
     envTest().STACKS_DEPLOYER_ACCOUNT_ADDRESS,
   );
   const bisData = {
@@ -38,6 +39,7 @@ describe('Indexer', () => {
         to: Buffer.from(bisData.new_pkscript),
         output: 10n,
         offset: 0n,
+        decimals: 18n,
         tick: 'sat',
         amt: 1000n,
         'bitcoin-tx': Buffer.from(
@@ -50,7 +52,7 @@ describe('Indexer', () => {
     });
     const hashFromContract = Buffer.from(hash).toString('hex');
     expect(hashFromContract).toMatchInlineSnapshot(
-      `"52e242a0caeab30b78e4eea88a4ab6afab0383d4f4207a9865ee9e4d48d8b7cd"`,
+      `"250a0842e588b20642a3c72866390655c7f6c7575c57de6f3df8a124c1e119af"`,
     );
 
     const orderHash = structuredDataHash(
@@ -61,6 +63,7 @@ describe('Indexer', () => {
         offset: uintCV(0n),
         tick: stringCV('sat', 'utf8'),
         amt: uintCV(1000n),
+        decimals: uintCV(18n),
         'bitcoin-tx': bufferCV(
           Buffer.from(
             '000000000000000000037299db1bd5b0872f8379d9971fcca36171825ee9cc83',
@@ -73,7 +76,7 @@ describe('Indexer', () => {
     );
     const hashLocal = orderHash.toString('hex');
     expect(hashLocal).toMatchInlineSnapshot(
-      `"52e242a0caeab30b78e4eea88a4ab6afab0383d4f4207a9865ee9e4d48d8b7cd"`,
+      `"250a0842e588b20642a3c72866390655c7f6c7575c57de6f3df8a124c1e119af"`,
     );
 
     expect(hashFromContract).toEqual(hashLocal);
@@ -126,6 +129,7 @@ describe('Indexer', () => {
               offset: 0n,
               tick: 'sat',
               amt,
+              decimals: 18n,
               'bitcoin-tx': bitcoinTx,
               'from-bal': BigInt(bisData.amount) + amt,
               'to-bal': BigInt(bisData.amount),

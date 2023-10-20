@@ -19,7 +19,11 @@ import {
   retry,
 } from 'rxjs';
 import { BISBalance } from '../api/base';
-import { getActivityOnBlock$, getBalanceOnBlock$ } from '../api/bis-api.rx';
+import {
+  getActivityOnBlock$,
+  getBalanceOnBlock$,
+  getTokenInfo$,
+} from '../api/bis-api.rx';
 import { env } from '../env';
 import { getElectrumQueue } from '../queue';
 
@@ -97,8 +101,8 @@ export function getIndexerTxOnBlock$(block: number) {
           getElectrumQueue().size
         }`,
       );
-      return getBitcoinTx$(tx_id).pipe(
-        map(result => {
+      return combineLatest([getBitcoinTx$(tx_id), getTokenInfo$(tx.tick)]).pipe(
+        map(([result, tokenInfo]) => {
           logger.log(`got bitcoin tx ${tx_id}`);
           return {
             ...tx,
@@ -106,6 +110,7 @@ export function getIndexerTxOnBlock$(block: number) {
             vout,
             tx_id,
             satpoint,
+            decimals: tokenInfo.data.decimals,
           };
         }),
       );
@@ -123,6 +128,7 @@ async function submitIndexerTx(
 
   const order_hash = generateOrderHash({
     amt: BigInt(tx.amount),
+    decimals: BigInt(tx.decimals),
     from: Buffer.from(tx.old_pkscript, 'hex'),
     to: Buffer.from(tx.new_pkscript, 'hex'),
     'from-bal': BigInt(tx.from_bal),
@@ -153,6 +159,7 @@ async function submitIndexerTx(
       output: tx.vout,
       tick: tx.tick,
       amt: tx.amount,
+      decimals: tx.decimals.toString(10),
       from_bal: tx.from_bal,
       to_bal: tx.to_bal,
       order_hash: order_hash.toString('hex'),
