@@ -106,6 +106,13 @@
 	(contract-call? .indexer-registry get-tick-decimals-or-default tick)
 )
 
+;; validate-tx
+;;
+;; it takes tx-hash (see `hash-tx` above) and verifies
+;; (1) the validator is approved,
+;; (2) the validator did not validate the tx-hash previously,
+;; (3) the tx-hash provided and that included in the signature-pack (that validator signed) are the same, and
+;; (4) the validator signature matches its pubkey registered
 (define-read-only (validate-tx (tx-hash (buff 32)) (signature-pack { signer: principal, tx-hash: (buff 32), signature: (buff 65)}))
 	(let (
 			(validator-pubkey (try! (get-validator-or-fail (get signer signature-pack)))))
@@ -113,6 +120,9 @@
 		(asserts! (is-eq tx-hash (get tx-hash signature-pack)) ERR-ORDER-HASH-MISMATCH)
 		(ok (asserts! (is-eq (secp256k1-recover? (sha256 (concat structured-data-prefix (concat message-domain tx-hash))) (get signature signature-pack)) (ok validator-pubkey)) ERR-INVALID-SIGNATURE))))
 
+;; verify-mined
+;;
+;; it takes Bitcoin tx and confirms if the tx is mined on Bitcoin L1
 (define-read-only (verify-mined (tx (buff 4096)) (block { header: (buff 80), height: uint }) (proof { tx-index: uint, hashes: (list 14 (buff 32)), tree-depth: uint }))
 	(if (is-eq chain-id u1)
 		(if (try! (contract-call? .clarity-bitcoin is-segwit-tx tx))
@@ -133,6 +143,10 @@
 
 ;; external functions
 
+;; index-tx-many
+;;
+;; helper-function that indexes BRC20 events in bulk
+;; see `index-tx-iter`
 (define-public (index-tx-many
 		(tx-many (list 25 {
 			tx: { bitcoin-tx: (buff 4096), output: uint, offset: uint, tick: (string-utf8 4), amt: uint, from: (buff 128), to: (buff 128), from-bal: uint, to-bal: uint, decimals: uint },
@@ -157,6 +171,17 @@
 		prev-err
 		previous-response))
 
+;; index-tx-iter
+;;
+;; it takes signed-tx, and verifies that
+;; (1) the tx (i.e. BRC20 event) is validated by at least min required,
+;; (2) the tx is part of a Bitcoin tx that is already mined, and
+;; (3) the signatures are valid.
+;; after verification, it
+;; (a) saves the tx (so other dapps can access),
+;; (b) updates the user balances,
+;; (c) updates token tick info (duplicate, but cheap)
+;;
 ;; TODO check if bitcoin-tx actually includes output?
 (define-private (index-tx-iter
 		(signed-tx {
