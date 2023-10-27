@@ -1,0 +1,21 @@
+{
+  "name": "dev-otlp",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/otlp/src",
+  "projectType": "application",
+  "targets": {
+    "up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dev-otlp up"
+      }
+    },
+    "down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dev-otlp down"
+      }
+    }
+  },
+  "tags": []
+}

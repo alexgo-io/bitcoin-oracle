@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export PROJECT_NAME="dev-otlp"
+# shellcheck source=./_dev_utils
+source "$NX_WORKSPACE_ROOT"/tools/bin/_dev_utils
+echo_welcome
+
+
+print_usage() {
+  echo "Usage: $0 {up|upd|deploy|down|logs|clean|reset|info|sync}"
+}
+
+green() { echo -e "\033[32m$@\033[0m"; }
+
+echo_ports() {
+  green prometheus: "http://$(get_host_name):$(read_docker_compose .services.prometheus.ports[0] | cut -d: -f1)"
+  green zipkin: http://$(get_host_name):"$(read_docker_compose .services.zipkin-all-in-one.ports[0] | cut -d: -f1)"
+  green collector-prometheus-exporter: http://$(get_host_name):"$(read_docker_compose .services.collector.ports[0] | cut -d: -f1)"
+  green collector-grpc: http://$(get_host_name):"$(read_docker_compose .services.collector.ports[1] | cut -d: -f1)"
+  green collector-http: http://$(get_host_name):"$(read_docker_compose .services.collector.ports[2] | cut -d: -f1)"
+}
+
+main() {
+  # check if command is passed
+  if [ -z "${1:-}" ]; then
+    print_usage
+    exit 1
+  fi
+
+  local cmd=$1
+  case $cmd in
+  sync)
+    check_remote_artifact_config
+    upload_artifact
+    ;;
+  up)
+    shift
+    _docker_compose up -d $@
+    echo_ports
+    ;;
+  _up)
+    _docker_compose up
+    echo_ports
+    ;;
+  down)
+    _docker_compose down $@
+    ;;
+  logs)
+    _docker_compose logs -f --tail=100
+    ;;
+  clean)
+    _docker_compose down -v -t 0
+    ;;
+  reset)
+    _docker_compose down -v -t 0
+    _docker_compose up -d
+    echo_ports
+    local CHECK_URL=http://$(get_host_name):$(read_docker_compose .services.prometheus.ports[0] | cut -d: -f1)
+    echo -n "Waiting for prometheus $CHECK_URL "
+    for _ in $(seq 1 999); do
+      echo -n .
+      if curl -so /dev/null "$CHECK_URL"; then
+        echo
+        echo 'prometheus started'
+        exit 0
+      fi
+      sleep 0.5
+    done
+    ;;
+  info)
+    echo_ports
+    ;;
+  *)
+    print_usage
+    exit 1
+    ;;
+  esac
+}
+
+main $@
