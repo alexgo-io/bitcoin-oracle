@@ -5,9 +5,8 @@ import { z } from 'zod';
 export const env = memoizee(() =>
   createEnv({
     server: {
-      BITCOIN_SYNC_GENESIS_BLOCK_HEIGHT: z.coerce.number().default(700000),
-      BITCOIN_SYNC_POLL_INTERVAL: z.coerce.number().default(2e3),
-      SERVICE_NAME: z.coerce.string().default('bitcoin-sync-app'),
+      DEBUG_INSTRUMENT: z.coerce.boolean().default(false),
+      SERVICE_NAME: z.coerce.string(),
     },
     runtimeEnv: process.env,
   }),

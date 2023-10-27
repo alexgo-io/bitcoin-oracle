@@ -1,3 +1,4 @@
+import { OtlpBitcoinSyncService } from '@bitcoin-oracle/instrument';
 import {
   calculateBlockHash,
   getBitcoinBlockHeaderByHeights,
@@ -17,22 +18,28 @@ export class DefaultBitcoinSyncWorkerService
   constructor(
     @Inject(BitcoinSyncWorkerRepository)
     private readonly repository: BitcoinSyncWorkerRepository,
+    @Inject(OtlpBitcoinSyncService)
+    private readonly otlp: OtlpBitcoinSyncService,
   ) {}
   async start(): Promise<void> {
     this.logger.verbose(`starting sync`);
     await this.sync();
-    // await this.syncMissingBlocks();
   }
 
   async sync() {
     // noinspection InfiniteLoopJS
     for (;;) {
+      const start = Date.now();
       await this.syncMissingBlocks();
       const fromHeight = await this.getFromBlockHeight$();
       const toHeight = await this.getToBlockHeight$();
       await this.syncFrom(fromHeight, toHeight);
 
       await sleep(env().BITCOIN_SYNC_POLL_INTERVAL);
+
+      this.otlp.recordBitcoinSyncInsertBlock(Date.now() - start, {
+        height: toHeight,
+      });
     }
   }
 
