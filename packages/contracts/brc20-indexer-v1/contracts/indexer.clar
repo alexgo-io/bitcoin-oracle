@@ -27,8 +27,8 @@
 ;;     'chain-id': uintCV(new StacksMainnet().chainId) | uintCV(new StacksMocknet().chainId),
 ;;   }),
 ;; );
-(define-constant message-domain 0x6d11cd301d11961e7cfeabd61e3f4da17f42f3d627362c8878aa9cbb5c532be2) ;;mainnet
-;; (define-constant message-domain 0x84deb9a3b41b870d85819000deefa999f43b1bf2c3d80c3ea19d4b83b7b10fbc) ;; testnet
+(define-constant message-domain-mainnet 0x6d11cd301d11961e7cfeabd61e3f4da17f42f3d627362c8878aa9cbb5c532be2) ;;mainnet
+(define-constant message-domain-testnet 0x84deb9a3b41b870d85819000deefa999f43b1bf2c3d80c3ea19d4b83b7b10fbc) ;; testnet
 
 (define-data-var contract-owner principal tx-sender)
 (define-map approved-relayers principal bool)
@@ -84,6 +84,13 @@
 
 ;; read-only functions
 
+(define-read-only (message-domain)
+	(if (is-eq chain-id u1)
+		message-domain-mainnet
+		message-domain-testnet
+	)
+)
+
 (define-read-only (get-contract-owner)
 	(var-get contract-owner))
 
@@ -94,7 +101,7 @@
 	(var-get required-validators))
 
 (define-read-only (hash-tx (tx { bitcoin-tx: (buff 4096), output: uint, offset: uint, tick: (string-utf8 4), amt: uint, from: (buff 128), to: (buff 128), from-bal: uint, to-bal: uint, decimals: uint } ))
-	(sha256 (default-to 0x (to-consensus-buff? tx))))
+	(sha256 (unwrap-panic (to-consensus-buff? tx))))
 
 (define-read-only (get-paused)
 	(var-get is-paused))
@@ -118,7 +125,7 @@
 			(validator-pubkey (try! (get-validator-or-fail (get signer signature-pack)))))
 		(asserts! (is-none (map-get? tx-validated-by { tx-hash: tx-hash, validator: (get signer signature-pack) })) ERR-DUPLICATE-SIGNATURE)
 		(asserts! (is-eq tx-hash (get tx-hash signature-pack)) ERR-ORDER-HASH-MISMATCH)
-		(ok (asserts! (is-eq (secp256k1-recover? (sha256 (concat structured-data-prefix (concat message-domain tx-hash))) (get signature signature-pack)) (ok validator-pubkey)) ERR-INVALID-SIGNATURE))))
+		(ok (asserts! (is-eq (secp256k1-recover? (sha256 (concat structured-data-prefix (concat (message-domain) tx-hash))) (get signature signature-pack)) (ok validator-pubkey)) ERR-INVALID-SIGNATURE))))
 
 ;; verify-mined
 ;;
