@@ -73,6 +73,15 @@ export class IndexerController {
   }
 }
 
+function rename(
+  object: Record<string, unknown>,
+  oldName: string,
+  newName: string,
+) {
+  object[newName] = object[oldName];
+  delete object[oldName];
+}
+
 @Controller('/debug')
 export class DebugIndexerController {
   private readonly logger = new Logger(DebugIndexerController.name);
@@ -86,6 +95,10 @@ export class DebugIndexerController {
     const dto = m.api('debug_txs', 'request', 'dto').parse(params);
     const txs = await this.indexer.findDebugInfo(dto);
 
-    return txs.map(t => m.api('debug_txs', 'response', 'json').parse(t));
+    return txs.map(t => {
+      const parse = m.api('debug_txs', 'response', 'json').parse(t);
+      rename(parse, 'satpoint', 'offset');
+      return parse;
+    });
   }
 }
