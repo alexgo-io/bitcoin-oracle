@@ -8,7 +8,8 @@
     "memoizee": "^0.4.15",
     "@t3-oss/env-core": "^0.6.1",
     "zod": "^3.22.3",
-    "@meta-protocols-oracle/commons": "*"
+    "@meta-protocols-oracle/commons": "*",
+    "@bitcoin-oracle/instrument": "*"
   },
   "type": "commonjs",
   "main": "./src/index.js",

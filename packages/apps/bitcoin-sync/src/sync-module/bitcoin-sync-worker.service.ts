@@ -1,3 +1,4 @@
+import { OTLP_BitcoinSync } from '@bitcoin-oracle/instrument';
 import {
   calculateBlockHash,
   getBitcoinBlockHeaderByHeights,
@@ -21,18 +22,20 @@ export class DefaultBitcoinSyncWorkerService
   async start(): Promise<void> {
     this.logger.verbose(`starting sync`);
     await this.sync();
-    // await this.syncMissingBlocks();
   }
 
   async sync() {
     // noinspection InfiniteLoopJS
     for (;;) {
+      const start = Date.now();
       await this.syncMissingBlocks();
       const fromHeight = await this.getFromBlockHeight$();
       const toHeight = await this.getToBlockHeight$();
       await this.syncFrom(fromHeight, toHeight);
 
       await sleep(env().BITCOIN_SYNC_POLL_INTERVAL);
+
+      OTLP_BitcoinSync().histogram.sync.record(Date.now() - start);
     }
   }
 
@@ -82,6 +85,8 @@ export class DefaultBitcoinSyncWorkerService
       block_hash: calculateBlockHash(headBuf),
       canonical: true,
     });
+    OTLP_BitcoinSync().counter.upsertBlock.add(1);
+
     if (rows.length > 0) {
       this.logger.log(`synced block ${height}, updated ${rows.length}`);
     }

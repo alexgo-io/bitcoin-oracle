@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const ValidatorName = z.enum(['bis', 'okx', 'hiro']);
+const ValidatorName = z.enum(['bis', 'okx', 'hiro', 'unknown']);
 const ServiceType = z.enum(['RELAYER', 'VALIDATOR']);
 
 export const Enums = {

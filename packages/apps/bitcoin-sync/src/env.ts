@@ -7,6 +7,7 @@ export const env = memoizee(() =>
     server: {
       BITCOIN_SYNC_GENESIS_BLOCK_HEIGHT: z.coerce.number().default(700000),
       BITCOIN_SYNC_POLL_INTERVAL: z.coerce.number().default(2e3),
+      SERVICE_NAME: z.coerce.string().default('bitcoin-sync-app'),
     },
     runtimeEnv: process.env,
   }),

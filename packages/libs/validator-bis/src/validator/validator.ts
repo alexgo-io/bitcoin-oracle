@@ -1,3 +1,4 @@
+import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import { indexer } from '@meta-protocols-oracle/api-client';
 import {
   generateOrderHash,
@@ -22,6 +23,7 @@ import {
   mergeMap,
   of,
   retry,
+  tap,
 } from 'rxjs';
 import { BISBalance } from '../api/base';
 import {
@@ -99,6 +101,9 @@ function getSatpoint(tx: string) {
 
 export function getIndexerTxOnBlock$(block: number) {
   return getBisTxOnBlock$(block).pipe(
+    tap(() => {
+      OTLP_Validator().counter['get-data-on-block'].add(1);
+    }),
     mergeMap(tx => {
       const { tx_id, vout, satpoint } = getSatpoint(tx.new_satpoint);
       logger.debug(

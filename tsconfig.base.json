@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@bitcoin-oracle/api": ["packages/libs/api/src/index.ts"],
+      "@bitcoin-oracle/instrument": ["packages/libs/instrument/src/index.ts"],
       "@meta-protocols-oracle/api-client": [
         "packages/libs/api-client/src/index.ts"
       ],

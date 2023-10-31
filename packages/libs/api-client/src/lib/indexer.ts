@@ -1,3 +1,4 @@
+import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import { expoRetry, getLogger } from '@meta-protocols-oracle/commons';
 import {
   APIOf,
@@ -23,7 +24,7 @@ export function indexer(baseURL: string) {
       return {
         async post(params: APIOf<'txs', 'request', 'json'>) {
           try {
-            return await got
+            const rs = await got
               .post(`${url}/txs`, {
                 headers: headers(),
                 json: params,
@@ -32,6 +33,10 @@ export function indexer(baseURL: string) {
                 },
               })
               .json<APIOf<'txs', 'response', 'json'>>();
+
+            OTLP_Validator().counter['submit-indexer-tx'].add(1);
+
+            return rs;
           } catch (e) {
             if (e instanceof RequestError) {
               // failed to submit tx if status is 400 (INVALID_ARGUMENT)

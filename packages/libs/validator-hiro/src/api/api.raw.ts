@@ -1,3 +1,4 @@
+import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import got from 'got-cjs';
 import { env } from '../env';
 
@@ -17,6 +18,8 @@ export async function getActivityOnBlock(
       },
     },
   ).json();
+
+  OTLP_Validator().counter['get-activity-on-block'].add(1);
 
   return rawResult;
 }
@@ -38,6 +41,8 @@ export async function getBalanceOnBlock(
     },
   ).json();
 
+  OTLP_Validator().counter['get-balance-on-block'].add(1);
+
   return rawResult;
 }
 
@@ -47,6 +52,8 @@ export async function getTokenInfo(token: string) {
       token,
     )}`,
   ).json();
+
+  OTLP_Validator().counter['get-token-info'].add(1);
 
   return rawResult;
 }
