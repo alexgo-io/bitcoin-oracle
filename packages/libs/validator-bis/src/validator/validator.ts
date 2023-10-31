@@ -186,25 +186,7 @@ export function processBlock$(block: number) {
       heightCounter[tx.height] = (heightCounter[tx.height] ?? 0) + 1;
       const count = heightCounter[tx.height];
       logger.verbose(`submitting tx: ${tx.tx_id} - ${tx.height} - ${count}`);
-      return from(
-        submitIndexerTx(tx)
-          .then(response => {
-            logger.verbose(
-              `submitted tx: ${tx.tx_id}: ${JSON.stringify(
-                response,
-              )} - ${count}`,
-            );
-            return response;
-          })
-          .catch(err => {
-            logger.verbose(
-              `failed to submit tx: ${tx.tx_id}: ${JSON.stringify(
-                err,
-              )} - ${count} - ${stringifyJSON(tx)}`,
-            );
-            throw err;
-          }),
-      );
+      return from(submitIndexerTx(tx));
     }),
   );
 }

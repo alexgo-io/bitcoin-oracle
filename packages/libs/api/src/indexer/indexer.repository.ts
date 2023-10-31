@@ -4,6 +4,17 @@ import { APIOf, m, ValidatorName } from '@meta-protocols-oracle/types';
 import { Inject } from '@nestjs/common';
 import { Address, OutScript, Transaction } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
+import { IndexerError } from './indexer.interface';
+
+function encodeAddress(address: Buffer) {
+  try {
+    return Address().encode(OutScript.decode(address));
+  } catch (e) {
+    throw new IndexerError(
+      `Failed to encode address: ${address.toString('hex')}, ${e}`,
+    );
+  }
+}
 
 export class IndexerRepository {
   constructor(
@@ -17,8 +28,8 @@ export class IndexerRepository {
         Transaction.fromRaw(tx.tx_hash, { allowUnknownOutputs: true }).id,
         'hex',
       );
-      const from_address = Address().encode(OutScript.decode(tx.from));
-      const to_address = Address().encode(OutScript.decode(tx.to));
+      const from_address = encodeAddress(tx.from);
+      const to_address = encodeAddress(tx.to);
 
       await conn.query(SQL.typeAlias('void')`
           INSERT INTO indexer.proofs(type,
