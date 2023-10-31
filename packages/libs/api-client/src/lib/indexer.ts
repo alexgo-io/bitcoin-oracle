@@ -1,5 +1,5 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import { expoRetry } from '@meta-protocols-oracle/commons';
+import { expoRetry, getLogger } from '@meta-protocols-oracle/commons';
 import {
   APIOf,
   Enums,
@@ -7,7 +7,7 @@ import {
   ValidatorName,
   m,
 } from '@meta-protocols-oracle/types';
-import got from 'got-cjs';
+import got, { RequestError } from 'got-cjs';
 import memoizee from 'memoizee';
 import { env } from '../env';
 
@@ -23,16 +23,38 @@ export function indexer(baseURL: string) {
     txs() {
       return {
         async post(params: APIOf<'txs', 'request', 'json'>) {
-          const rs = got
-            .post(`${url}/txs`, {
-              headers: headers(),
-              json: params,
-            })
-            .json<APIOf<'txs', 'response', 'json'>>();
+          try {
+            const rs = await got
+              .post(`${url}/txs`, {
+                headers: headers(),
+                json: params,
+                retry: {
+                  limit: 5,
+                },
+              })
+              .json<APIOf<'txs', 'response', 'json'>>();
 
-          OTLP_Validator().counter['submit-indexer-tx'].add(1);
+            OTLP_Validator().counter['submit-indexer-tx'].add(1);
 
-          return rs;
+            return rs;
+          } catch (e) {
+            if (e instanceof RequestError) {
+              // failed to submit tx if status is 400 (INVALID_ARGUMENT)
+              // it will not throw
+              if (e.response?.statusCode === 400) {
+                getLogger('indexer.txs.post').error(
+                  `submit tx [${JSON.stringify(params)}] failed: ${
+                    e.response.body
+                  }`,
+                );
+
+                return { message: 'failed' };
+              }
+              throw e;
+            } else {
+              throw e;
+            }
+          }
         },
       };
     },
