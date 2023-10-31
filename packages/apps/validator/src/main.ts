@@ -1,8 +1,7 @@
-import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import { sleep } from '@meta-protocols-oracle/commons';
 import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
 import { env } from './env';
+import { ValidatorService } from './validator-module/validator.interface';
 import { ValidatorModule } from './validator-module/validator.module';
 
 async function main() {
@@ -13,15 +12,9 @@ async function main() {
   const logger = app.get(Logger);
   app.useLogger(logger);
 
-  // logger.log(`Starting ValidatorService`);
-  // const worker = app.get(ValidatorService);
-  // worker.start();
-
-  for (let i = 0; i < 1000; i++) {
-    logger.log(`Adding new order ${i}`);
-    await sleep(1000);
-    OTLP_Validator().histogram['sync-duration'].record(Math.random() * 1000);
-  }
+  logger.log(`Starting ValidatorService`);
+  const worker = app.get(ValidatorService);
+  worker.start();
 }
 
 main().catch(console.error);
