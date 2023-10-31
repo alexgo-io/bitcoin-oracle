@@ -1,4 +1,4 @@
-import { expoRetry } from '@meta-protocols-oracle/commons';
+import { expoRetry, getLogger } from '@meta-protocols-oracle/commons';
 import {
   APIOf,
   Enums,
@@ -6,7 +6,7 @@ import {
   ValidatorName,
   m,
 } from '@meta-protocols-oracle/types';
-import got from 'got-cjs';
+import got, { RequestError } from 'got-cjs';
 import memoizee from 'memoizee';
 import { env } from '../env';
 
@@ -22,12 +22,34 @@ export function indexer(baseURL: string) {
     txs() {
       return {
         async post(params: APIOf<'txs', 'request', 'json'>) {
-          return got
-            .post(`${url}/txs`, {
-              headers: headers(),
-              json: params,
-            })
-            .json<APIOf<'txs', 'response', 'json'>>();
+          try {
+            return await got
+              .post(`${url}/txs`, {
+                headers: headers(),
+                json: params,
+                retry: {
+                  limit: 5,
+                },
+              })
+              .json<APIOf<'txs', 'response', 'json'>>();
+          } catch (e) {
+            if (e instanceof RequestError) {
+              // failed to submit tx if status is 400 (INVALID_ARGUMENT)
+              // it will not throw
+              if (e.response?.statusCode === 400) {
+                getLogger('indexer.txs.post').error(
+                  `submit tx [${JSON.stringify(params)}] failed: ${
+                    e.response.body
+                  }`,
+                );
+
+                return { message: 'failed' };
+              }
+              throw e;
+            } else {
+              throw e;
+            }
+          }
         },
       };
     },
