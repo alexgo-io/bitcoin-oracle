@@ -11,6 +11,8 @@ export class ValidatorModule {
     const moduleMapping = {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       [Enums.ValidatorName.enum.okx]: null as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      [Enums.ValidatorName.enum.unknown]: null as any,
       [Enums.ValidatorName.enum.bis]: ValidatorBisModule,
       [Enums.ValidatorName.enum.hiro]: ValidatorHiroModule,
     };

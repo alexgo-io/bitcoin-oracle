@@ -1,10 +1,11 @@
+import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import { ApiClient } from '@meta-protocols-oracle/api-client';
 import {
   reverseBuffer,
   withElectrumClient,
 } from '@meta-protocols-oracle/bitcoin';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
-import { Observable, from } from 'rxjs';
+import { Observable, from, tap } from 'rxjs';
 import { env } from '../env';
 import { getElectrumQueue } from '../queue';
 
@@ -57,5 +58,9 @@ export function getBitcoinTx$(txId: string): Observable<{
   proof: { 'tx-index': number; 'tree-depth': number; hashes: string[] };
   height: string;
 }> {
-  return from(getElectrumQueue().add(() => getBitcoinTx(txId)));
+  return from(getElectrumQueue().add(() => getBitcoinTx(txId))).pipe(
+    tap(() => {
+      OTLP_Validator().counter['get-bitcoin-tx'].add(1);
+    }),
+  );
 }

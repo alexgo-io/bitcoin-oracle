@@ -1,8 +1,9 @@
+import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import { ApiClient } from '@meta-protocols-oracle/api-client';
 import { getCurrentBitcoinHeader } from '@meta-protocols-oracle/bitcoin';
 import { ValidatorProcessInterface } from '@meta-protocols-oracle/validator';
 import { Inject, Logger } from '@nestjs/common';
-import { concatMap, exhaustMap, from, interval, map, range } from 'rxjs';
+import { concatMap, exhaustMap, from, interval, map, range, tap } from 'rxjs';
 import { env } from '../env';
 import { ValidatorService } from './validator.interface';
 
@@ -26,22 +27,24 @@ export class DefaultValidatorService implements ValidatorService {
       : env().VALIDATOR_GENESIS_BLOCK_HEIGHT;
   }
   async getToBlockHeight$() {
-    return (
+    const height =
       (await getCurrentBitcoinHeader()).height -
-      env().INDEXER_SYNC_THRESHOLD_BLOCK
-    );
+      env().INDEXER_SYNC_THRESHOLD_BLOCK;
+    OTLP_Validator().counter['get-current-bitcoin-header'].add(1);
+    return height;
   }
 
   syncBlockHeight(from: number, to: number) {
-    // if (to - from > 1000 || to - from < 0) {
-    //   throw new Error(`invalid from/to: ${from}/${to}`);
-    // }
     return range(from, to).pipe(
       concatMap(height => this.processor.processBlock$(height)),
+      tap(() => OTLP_Validator().counter['process-block'].add(1)),
     );
   }
 
   startIntervalSync() {
+    const syncIntervalMetric = OTLP_Validator().histogram['sync-duration'];
+    let lastSync = Date.now();
+
     interval(env().VALIDATOR_SYNC_POLL_INTERVAL)
       .pipe(
         exhaustMap(() => this.getToBlockHeight$()),
@@ -60,6 +63,11 @@ export class DefaultValidatorService implements ValidatorService {
             `- process fromBlockHeight: ${fromBlockHeight}, toBlockHeight: ${toBlockHeight}`,
           );
           return this.syncBlockHeight(fromBlockHeight, toBlockHeight);
+        }),
+        tap(() => {
+          const now = Date.now();
+          syncIntervalMetric.record(now - lastSync);
+          lastSync = now;
         }),
       )
       .subscribe();

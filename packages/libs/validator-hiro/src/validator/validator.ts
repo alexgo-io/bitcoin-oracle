@@ -1,3 +1,4 @@
+import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import { indexer } from '@meta-protocols-oracle/api-client';
 import {
   generateOrderHash,
@@ -88,6 +89,7 @@ export function getHiroTxOnBlock$(block: number) {
 export function getIndexerTxOnBlock$(block: number) {
   return getHiroTxOnBlock$(block).pipe(
     mergeMap(tx => {
+      OTLP_Validator().counter['get-data-on-block'].add(1);
       return getBitcoinTx$(tx.location.tx_id).pipe(
         map(result => {
           return {

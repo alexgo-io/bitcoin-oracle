@@ -1,3 +1,4 @@
+import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import { expoRetry } from '@meta-protocols-oracle/commons';
 import {
   APIOf,
@@ -22,12 +23,16 @@ export function indexer(baseURL: string) {
     txs() {
       return {
         async post(params: APIOf<'txs', 'request', 'json'>) {
-          return got
+          const rs = got
             .post(`${url}/txs`, {
               headers: headers(),
               json: params,
             })
             .json<APIOf<'txs', 'response', 'json'>>();
+
+          OTLP_Validator().counter['submit-indexer-tx'].add(1);
+
+          return rs;
         },
       };
     },

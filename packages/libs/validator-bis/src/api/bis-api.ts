@@ -1,3 +1,4 @@
+import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import { getLogger } from '@meta-protocols-oracle/commons';
 import got from 'got-cjs';
 import { env } from '../env';
@@ -23,6 +24,8 @@ export async function getActivityOnBlock(block: number) {
       },
     }).json();
 
+    OTLP_Validator().counter['get-activity-on-block'].add(1);
+
     return BISActivityOnBlockResponseSchema.parse(rawResult);
   } catch (e) {
     getLogger('getActivityOnBlock').error(`
@@ -46,6 +49,8 @@ export async function getBalanceOnBlock(address: string, block: number) {
         statusCodes: [400, 408, 413, 429, 500, 502, 503, 504, 521, 522, 524],
       },
     }).json();
+
+    OTLP_Validator().counter['get-balance-on-block'].add(1);
 
     return BISBalanceOnBlockResponseSchema.parse(rawResult);
   } catch (e) {
@@ -71,6 +76,8 @@ export async function getTokenInfo(token: string) {
         statusCodes: [400, 408, 413, 429, 500, 502, 503, 504, 521, 522, 524],
       },
     }).json();
+
+    OTLP_Validator().counter['get-token-info'].add(1);
 
     return BISTickerInfoResponseSchema.parse(rawResult);
   } catch (e) {

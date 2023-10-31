@@ -14,7 +14,8 @@
     "@meta-protocols-oracle/api-client": "*",
     "@meta-protocols-oracle/brc20-indexer": "*",
     "@meta-protocols-oracle/types": "*",
-    "p-queue": "^6.6.2"
+    "p-queue": "^6.6.2",
+    "@bitcoin-oracle/instrument": "*"
   },
   "type": "commonjs",
   "main": "./src/index.js",
