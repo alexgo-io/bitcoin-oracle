@@ -45,7 +45,7 @@ export class DefaultValidatorService implements ValidatorService {
   }
 
   syncBlockHeight(from: number, to: number) {
-    return range(from, to - from).pipe(
+    return range(from, to - from + 1).pipe(
       concatMap(height => this.processor.processBlock$(height)),
       tap(() => OTLP_Validator().counter['process-block'].add(1)),
     );
