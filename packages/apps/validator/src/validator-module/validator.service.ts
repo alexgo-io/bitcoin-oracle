@@ -3,7 +3,15 @@ import { ApiClient } from '@meta-protocols-oracle/api-client';
 import { getCurrentBitcoinHeader } from '@meta-protocols-oracle/bitcoin';
 import { ValidatorProcessInterface } from '@meta-protocols-oracle/validator';
 import { Inject, Logger } from '@nestjs/common';
-import { concatMap, exhaustMap, from, interval, map, range, tap } from 'rxjs';
+import {
+  combineLatest,
+  concatMap,
+  exhaustMap,
+  interval,
+  map,
+  range,
+  tap,
+} from 'rxjs';
 import { env } from '../env';
 import { ValidatorService } from './validator.interface';
 
@@ -49,28 +57,28 @@ export class DefaultValidatorService implements ValidatorService {
 
     interval(env().VALIDATOR_SYNC_POLL_INTERVAL)
       .pipe(
-        exhaustMap(() => this.getToBlockHeight()),
-        concatMap(toBlockHeight => {
-          return from(this.getFromBlockHeight()).pipe(
-            map(fromBlockHeight => {
-              return {
-                fromBlockHeight,
-                toBlockHeight,
-              };
+        exhaustMap(() =>
+          combineLatest([
+            this.getFromBlockHeight(),
+            this.getToBlockHeight(),
+          ]).pipe(
+            map(([fromBlockHeight, toBlockHeight]) => ({
+              fromBlockHeight,
+              toBlockHeight,
+            })),
+            concatMap(({ toBlockHeight, fromBlockHeight }) => {
+              this.logger.debug(
+                `- process fromBlockHeight: ${fromBlockHeight}, toBlockHeight: ${toBlockHeight}`,
+              );
+              return this.syncBlockHeight(fromBlockHeight, toBlockHeight);
             }),
-          );
-        }),
-        concatMap(({ toBlockHeight, fromBlockHeight }) => {
-          this.logger.debug(
-            `- process fromBlockHeight: ${fromBlockHeight}, toBlockHeight: ${toBlockHeight}`,
-          );
-          return this.syncBlockHeight(fromBlockHeight, toBlockHeight);
-        }),
-        tap(() => {
-          const now = Date.now();
-          syncIntervalMetric.record(now - lastSync);
-          lastSync = now;
-        }),
+            tap(() => {
+              const now = Date.now();
+              syncIntervalMetric.record(now - lastSync);
+              lastSync = now;
+            }),
+          ),
+        ),
       )
       .subscribe();
   }
