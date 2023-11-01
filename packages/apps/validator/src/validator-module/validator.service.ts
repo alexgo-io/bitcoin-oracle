@@ -19,18 +19,20 @@ export class DefaultValidatorService implements ValidatorService {
       .indexer()
       .latest_block_number()
       .get({ type: env().VALIDATOR_NAME });
-    this.logger.warn(`got: ${JSON.stringify(latestBlocks)}`);
+    this.logger.debug(`got: ${JSON.stringify(latestBlocks)}`);
 
     return latestBlocks.latest_block_number
       ? latestBlocks.latest_block_number -
           env().VALIDATOR_STARTING_SYNC_BACK_BLOCK_HEIGHT
       : env().VALIDATOR_GENESIS_BLOCK_HEIGHT;
   }
-  async getToBlockHeight$() {
+  async getToBlockHeight() {
     const height =
       (await getCurrentBitcoinHeader()).height -
       env().INDEXER_SYNC_THRESHOLD_BLOCK;
     OTLP_Validator().counter['get-current-bitcoin-header'].add(1);
+
+    this.logger.debug(`got current bitcoin header height: ${height}`);
     return height;
   }
 
@@ -47,7 +49,7 @@ export class DefaultValidatorService implements ValidatorService {
 
     interval(env().VALIDATOR_SYNC_POLL_INTERVAL)
       .pipe(
-        exhaustMap(() => this.getToBlockHeight$()),
+        exhaustMap(() => this.getToBlockHeight()),
         concatMap(toBlockHeight => {
           return from(this.getFromBlockHeight()).pipe(
             map(fromBlockHeight => {

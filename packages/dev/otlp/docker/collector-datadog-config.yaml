@@ -1,0 +1,76 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+        cors:
+          allowed_origins:
+            - http://*
+            - https://*
+
+  hostmetrics:
+    collection_interval: 10s
+    scrapers:
+      paging:
+        metrics:
+          system.paging.utilization:
+            enabled: true
+      cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
+      disk:
+      filesystem:
+        metrics:
+          system.filesystem.utilization:
+            enabled: true
+      load:
+      memory:
+      network:
+      processes:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'otelcol'
+          scrape_interval: 10s
+          static_configs:
+            - targets: ['0.0.0.0:8888']
+  filelog:
+    include_file_path: true
+    poll_interval: 500ms
+    include:
+      - /var/log/**/*example*/*.log
+
+processors:
+  batch:
+    send_batch_max_size: 100
+    send_batch_size: 10
+    timeout: 10s
+
+exporters:
+  zipkin:
+    endpoint: 'http://zipkin-all-in-one:9411/api/v2/spans'
+  prometheus:
+    endpoint: '0.0.0.0:9464'
+  datadog:
+    api:
+      site: us3.datadoghq.com
+      key: ${env:DD_API_KEY}
+
+service:
+  telemetry:
+    logs:
+      level: 'debug'
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [zipkin, datadog]
+    metrics:
+      receivers: [otlp, hostmetrics, prometheus]
+      processors: [batch]
+      exporters: [prometheus, datadog]
+    logs:
+      receivers: [otlp, filelog]
+      processors: [batch]
+      exporters: [datadog]
