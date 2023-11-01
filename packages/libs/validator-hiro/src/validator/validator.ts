@@ -13,8 +13,6 @@ import { Enums } from '@meta-protocols-oracle/types';
 import { getBitcoinTx$ } from '@meta-protocols-oracle/validator';
 import { Logger } from '@nestjs/common';
 import {
-  EMPTY,
-  catchError,
   combineLatest,
   concatMap,
   from,
@@ -61,12 +59,6 @@ export function getHiroTxOnBlock$(block: number) {
         getTokenInfo$(activity.ticker),
       ]).pipe(
         retry(5),
-        catchError(err => {
-          getLogger('validator-hiro').error(`error getting indexer tx ${err}.
-          activity: ${stringifyJSON(activity)}
-          `);
-          return EMPTY;
-        }),
         map(([oldBalances, newBalances, token]) => {
           logger.verbose(
             `got [getHiroTxOnBlock$] for tx ${activity.tx_id} - ${block}`,

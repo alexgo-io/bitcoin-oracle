@@ -9,6 +9,7 @@ import {
   exhaustMap,
   interval,
   map,
+  of,
   range,
   tap,
 } from 'rxjs';
@@ -27,7 +28,7 @@ export class DefaultValidatorService implements ValidatorService {
       .indexer()
       .latest_block_number()
       .get({ type: env().VALIDATOR_NAME });
-    this.logger.debug(`got: ${JSON.stringify(latestBlocks)}`);
+    // this.logger.debug(`got: ${JSON.stringify(latestBlocks)}`);
 
     return latestBlocks.latest_block_number
       ? latestBlocks.latest_block_number -
@@ -39,13 +40,12 @@ export class DefaultValidatorService implements ValidatorService {
       (await getCurrentBitcoinHeader()).height -
       env().INDEXER_SYNC_THRESHOLD_BLOCK;
     OTLP_Validator().counter['get-current-bitcoin-header'].add(1);
-
-    this.logger.debug(`got current bitcoin header height: ${height}`);
+    // this.logger.debug(`got current bitcoin header height: ${height}`);
     return height;
   }
 
   syncBlockHeight(from: number, to: number) {
-    return range(from, to).pipe(
+    return range(from, to - from).pipe(
       concatMap(height => this.processor.processBlock$(height)),
       tap(() => OTLP_Validator().counter['process-block'].add(1)),
     );
@@ -67,6 +67,9 @@ export class DefaultValidatorService implements ValidatorService {
               toBlockHeight,
             })),
             concatMap(({ toBlockHeight, fromBlockHeight }) => {
+              if (toBlockHeight <= fromBlockHeight) {
+                return of({});
+              }
               this.logger.debug(
                 `- process fromBlockHeight: ${fromBlockHeight}, toBlockHeight: ${toBlockHeight}`,
               );
@@ -80,7 +83,11 @@ export class DefaultValidatorService implements ValidatorService {
           ),
         ),
       )
-      .subscribe();
+      .subscribe({
+        error: err => {
+          this.logger.error(`startIntervalSync error: ${err}`);
+        },
+      });
   }
 
   async start() {
