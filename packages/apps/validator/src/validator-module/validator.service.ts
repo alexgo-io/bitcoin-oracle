@@ -19,6 +19,8 @@ import { ValidatorService } from './validator.interface';
 export class DefaultValidatorService implements ValidatorService {
   private readonly logger = new Logger(DefaultValidatorService.name);
   private readonly api = new ApiClient(env().INDEXER_API_URL);
+  private hasFinishedAtLeastOneSync = false;
+
   constructor(
     @Inject(ValidatorProcessInterface)
     private readonly processor: ValidatorProcessInterface,
@@ -30,10 +32,18 @@ export class DefaultValidatorService implements ValidatorService {
       .get({ type: env().VALIDATOR_NAME });
     // this.logger.debug(`got: ${JSON.stringify(latestBlocks)}`);
 
-    return latestBlocks.latest_block_number
-      ? latestBlocks.latest_block_number -
-          env().VALIDATOR_STARTING_SYNC_BACK_BLOCK_HEIGHT
-      : env().VALIDATOR_GENESIS_BLOCK_HEIGHT;
+    const latestBlockNumber = latestBlocks.latest_block_number;
+    if (latestBlockNumber == null) {
+      return env().VALIDATOR_GENESIS_BLOCK_HEIGHT;
+    }
+
+    if (!this.hasFinishedAtLeastOneSync) {
+      return (
+        latestBlockNumber - env().VALIDATOR_STARTING_SYNC_BACK_BLOCK_HEIGHT
+      );
+    }
+
+    return latestBlockNumber;
   }
   async getToBlockHeight() {
     const height =
@@ -79,6 +89,8 @@ export class DefaultValidatorService implements ValidatorService {
               const now = Date.now();
               syncIntervalMetric.record(now - lastSync);
               lastSync = now;
+
+              this.hasFinishedAtLeastOneSync = true;
             }),
           ),
         ),
