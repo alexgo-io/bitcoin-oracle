@@ -149,8 +149,8 @@
 	)
 )
 
-(define-read-only (get-bitcoin-tx-mined-or-default (tx (buff 4096)))
-	(contract-call? .indexer-registry get-bitcoin-tx-mined-or-default tx)
+(define-read-only (get-bitcoin-tx-mined-or-fail (tx (buff 4096)))
+	(contract-call? .indexer-registry get-bitcoin-tx-mined-or-fail tx)
 )
 
 (define-read-only (get-bitcoin-tx-indexed-or-fail (bitcoin-tx (buff 4096)) (output uint) (offset uint))
@@ -218,10 +218,10 @@
 			)
 			(asserts! (>= (len signature-packs) (var-get required-validators)) ERR-REQUIRED-VALIDATORS)
 
-			(and (not (get-bitcoin-tx-mined-or-default (get bitcoin-tx tx))) 
+			(and (is-err (get-bitcoin-tx-mined-or-fail (get bitcoin-tx tx))) 
 				(begin 
 					(try! (verify-mined (get bitcoin-tx tx) (get block signed-tx) (get proof signed-tx)))
-					(as-contract (try! (contract-call? .indexer-registry set-tx-mined (get bitcoin-tx tx) true)))
+					(as-contract (try! (contract-call? .indexer-registry set-tx-mined (get bitcoin-tx tx) (get height (get block signed-tx)))))
 				)
 			)
 
