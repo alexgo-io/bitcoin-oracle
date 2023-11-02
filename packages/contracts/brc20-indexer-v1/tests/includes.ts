@@ -175,6 +175,12 @@ export function prepareChainBasicTest(
       deployer.address,
     ),
     Tx.contractCall(
+      'indexer-registry',
+      'set-paused',
+      [types.bool(false)],
+      deployer.address,
+    ),
+    Tx.contractCall(
       'indexer',
       'set-paused',
       [types.bool(false)],
