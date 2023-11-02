@@ -64,6 +64,7 @@
 (define-public (set-tick-decimals (tick (string-utf8 4)) (decimals uint))
 	(begin 
 		(try! (check-is-approved))
+		(asserts! (not (var-get is-paused)) ERR-PAUSED)
 		(print { type: "tick-decimals-updated", tick: tick, decimals: decimals})
 		(ok (map-set tick-decimals tick decimals))
 	)
@@ -72,12 +73,14 @@
 (define-public (set-user-balance (key { user: (buff 128), tick: (string-utf8 4) }) (value { balance: uint, up-to-block: uint }))
 	(begin
 		(try! (check-is-approved))
+		(asserts! (not (var-get is-paused)) ERR-PAUSED)
 		(print { type: "user-balance-updated", user: (get user key), tick: (get tick key), balance: (get balance value), up-to-block: (get up-to-block value) })
 		(ok (map-set user-balance key value))))
 
 (define-public (set-tx-mined (key (buff 4096)) (value uint))
 	(begin 
 		(try! (check-is-approved))
+		(asserts! (not (var-get is-paused)) ERR-PAUSED)
 		(print { type: "tx-mined", tx-hash: key })
 		(ok (map-set bitcoin-tx-mined key value))
 	)
@@ -86,6 +89,7 @@
 (define-public (set-tx-indexed (key { tx-hash: (buff 4096), output: uint, offset: uint }) (value { tick: (string-utf8 4), amt: uint, from: (buff 128), to: (buff 128) }))
 	(begin 
 		(try! (check-is-approved))
+		(asserts! (not (var-get is-paused)) ERR-PAUSED)
 		(print { type: "tx-indexed", tx-hash: (get tx-hash key), output: (get output key), offset: (get offset key), tick: (get tick value), amt: (get amt value), from: (get from value), to: (get to value) })
 		(ok (map-set bitcoin-tx-indexed key value))
 	)
