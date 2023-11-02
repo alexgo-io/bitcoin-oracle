@@ -45,19 +45,16 @@
 	(var-get is-paused))
 
 (define-read-only (get-approved-operator-or-default (operator principal))
-	(default-to false (map-get? approved-operators operator))
-)
+	(default-to false (map-get? approved-operators operator)))
 
 (define-read-only (get-user-balance-or-default (user (buff 128)) (tick (string-utf8 4)))
 	(default-to { balance: u0, up-to-block: u0 } (map-get? user-balance { user: user, tick: tick })))
 
-(define-read-only (get-bitcoin-tx-mined-or-fail (tx (buff 4096)))
-	(ok (unwrap! (map-get? bitcoin-tx-mined tx) ERR-TX-NOT-MINED))
-)
-
 (define-read-only (get-tick-decimals-or-default (tick (string-utf8 4)))
-	(default-to u18 (map-get? tick-decimals tick))
-)
+	(default-to u18 (map-get? tick-decimals tick)))
+
+(define-read-only (get-bitcoin-tx-mined-or-fail (tx (buff 4096)))
+	(ok (unwrap! (map-get? bitcoin-tx-mined tx) ERR-TX-NOT-MINED)))
 
 (define-read-only (get-bitcoin-tx-indexed-or-fail (bitcoin-tx (buff 4096)) (output uint) (offset uint))
 	(ok (unwrap! (map-get? bitcoin-tx-indexed { tx-hash: bitcoin-tx, output: output, offset: offset }) ERR-TX-NOT-INDEXED)))
