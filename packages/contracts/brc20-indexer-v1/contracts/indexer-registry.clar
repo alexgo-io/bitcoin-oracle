@@ -5,16 +5,16 @@
 
 (define-constant ERR-NOT-AUTHORIZED (err u1000))
 (define-constant ERR-PAUSED (err u1001))
-(define-constant ERR-TX-NOT-INDEXED (err u1002))
+(define-constant ERR-TX-NOT-MINED (err u1002))
+(define-constant ERR-TX-NOT-INDEXED (err u1003))
 
 (define-data-var contract-owner principal tx-sender)
 (define-map approved-operators principal bool)
 
 (define-data-var is-paused bool true)
 
-(define-map bitcoin-tx-mined (buff 4096) bool)
+(define-map bitcoin-tx-mined (buff 4096) uint)
 (define-map bitcoin-tx-indexed { tx-hash: (buff 4096), output: uint, offset: uint } { tick: (string-utf8 4), amt: uint, from: (buff 128), to: (buff 128) })
-
 
 (define-map user-balance { user: (buff 128), tick: (string-utf8 4) } { balance: uint, up-to-block: uint })
 (define-map tick-decimals (string-utf8 4) uint)
@@ -45,19 +45,16 @@
 	(var-get is-paused))
 
 (define-read-only (get-approved-operator-or-default (operator principal))
-	(default-to false (map-get? approved-operators operator))
-)
+	(default-to false (map-get? approved-operators operator)))
 
 (define-read-only (get-user-balance-or-default (user (buff 128)) (tick (string-utf8 4)))
 	(default-to { balance: u0, up-to-block: u0 } (map-get? user-balance { user: user, tick: tick })))
 
-(define-read-only (get-bitcoin-tx-mined-or-default (tx (buff 4096)))
-	(default-to false (map-get? bitcoin-tx-mined tx))
-)
-
 (define-read-only (get-tick-decimals-or-default (tick (string-utf8 4)))
-	(default-to u18 (map-get? tick-decimals tick))
-)
+	(default-to u18 (map-get? tick-decimals tick)))
+
+(define-read-only (get-bitcoin-tx-mined-or-fail (tx (buff 4096)))
+	(ok (unwrap! (map-get? bitcoin-tx-mined tx) ERR-TX-NOT-MINED)))
 
 (define-read-only (get-bitcoin-tx-indexed-or-fail (bitcoin-tx (buff 4096)) (output uint) (offset uint))
 	(ok (unwrap! (map-get? bitcoin-tx-indexed { tx-hash: bitcoin-tx, output: output, offset: offset }) ERR-TX-NOT-INDEXED)))
@@ -78,7 +75,7 @@
 		(print { type: "user-balance-updated", user: (get user key), tick: (get tick key), balance: (get balance value), up-to-block: (get up-to-block value) })
 		(ok (map-set user-balance key value))))
 
-(define-public (set-tx-mined (key (buff 4096)) (value bool))
+(define-public (set-tx-mined (key (buff 4096)) (value uint))
 	(begin 
 		(try! (check-is-approved))
 		(print { type: "tx-mined", tx-hash: key })

@@ -86,11 +86,7 @@
 ;; read-only functions
 
 (define-read-only (message-domain)
-	(if (is-eq chain-id u1)
-		message-domain-mainnet
-		message-domain-testnet
-	)
-)
+	(if (is-eq chain-id u1) message-domain-mainnet message-domain-testnet))
 
 (define-read-only (get-contract-owner)
 	(var-get contract-owner))
@@ -111,8 +107,13 @@
 	(contract-call? .indexer-registry get-user-balance-or-default user tick))
 
 (define-read-only (get-tick-decimals-or-default (tick (string-utf8 4)))
-	(contract-call? .indexer-registry get-tick-decimals-or-default tick)
-)
+	(contract-call? .indexer-registry get-tick-decimals-or-default tick))
+
+(define-read-only (get-bitcoin-tx-mined-or-fail (tx (buff 4096)))
+	(contract-call? .indexer-registry get-bitcoin-tx-mined-or-fail tx))
+
+(define-read-only (get-bitcoin-tx-indexed-or-fail (bitcoin-tx (buff 4096)) (output uint) (offset uint))
+	(contract-call? .indexer-registry get-bitcoin-tx-indexed-or-fail bitcoin-tx output offset))
 
 ;; validate-tx
 ;;
@@ -137,25 +138,12 @@
 			(
 				(response (if (try! (contract-call? .clarity-bitcoin is-segwit-tx tx)) 
 					(contract-call? .clarity-bitcoin was-segwit-tx-mined? block tx proof)
-					(contract-call? .clarity-bitcoin was-tx-mined? block tx proof))
-				)
-			)
+					(contract-call? .clarity-bitcoin was-tx-mined? block tx proof))))
 			(if (or (is-err response) (not (unwrap-panic response)))
 				ERR-BITCOIN-TX-NOT-MINED
-				(ok true)
-			)
-		)
-		(ok true) ;; if not mainnet, assume verified
-	)
-)
-
-(define-read-only (get-bitcoin-tx-mined-or-default (tx (buff 4096)))
-	(contract-call? .indexer-registry get-bitcoin-tx-mined-or-default tx)
-)
-
-(define-read-only (get-bitcoin-tx-indexed-or-fail (bitcoin-tx (buff 4096)) (output uint) (offset uint))
-	(contract-call? .indexer-registry get-bitcoin-tx-indexed-or-fail bitcoin-tx output offset)
-)
+				(ok true)))
+		;; if not mainnet, assume verified
+		(ok true)))
 
 ;; external functions
 
@@ -198,7 +186,6 @@
 ;; (b) updates the user balances,
 ;; (c) updates token tick info (duplicate, but cheap)
 ;;
-;; TODO check if bitcoin-tx actually includes output?
 (define-private (index-tx-iter
 		(signed-tx {
 			tx: { bitcoin-tx: (buff 4096), output: uint, offset: uint, tick: (string-utf8 4), amt: uint, from: (buff 128), to: (buff 128), from-bal: uint, to-bal: uint, decimals: uint },
@@ -218,10 +205,10 @@
 			)
 			(asserts! (>= (len signature-packs) (var-get required-validators)) ERR-REQUIRED-VALIDATORS)
 
-			(and (not (get-bitcoin-tx-mined-or-default (get bitcoin-tx tx))) 
+			(and (is-err (get-bitcoin-tx-mined-or-fail (get bitcoin-tx tx))) 
 				(begin 
 					(try! (verify-mined (get bitcoin-tx tx) (get block signed-tx) (get proof signed-tx)))
-					(as-contract (try! (contract-call? .indexer-registry set-tx-mined (get bitcoin-tx tx) true)))
+					(as-contract (try! (contract-call? .indexer-registry set-tx-mined (get bitcoin-tx tx) (get height (get block signed-tx)))))
 				)
 			)
 
