@@ -30,7 +30,7 @@ function structuredDataHash(structuredData: ClarityValue): Buffer {
 
 const domainHash = structuredDataHash(
   tupleCV({
-    name: stringAsciiCV('ALEX BRC20 Indexer'),
+    name: stringAsciiCV('ALEX BRC20 oracle-v1-01'),
     version: stringAsciiCV('0.0.1'),
     // "chain-id": uintCV(new StacksMainnet().chainId),
     'chain-id': uintCV(new StacksMocknet().chainId),

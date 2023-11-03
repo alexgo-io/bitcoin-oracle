@@ -1,13 +1,13 @@
 {
-  "name": "contracts-brc20-indexer-v1",
+  "name": "contracts-bitcoin-oracle",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/contracts/brc20-indexer-v1/src",
+  "sourceRoot": "packages/contracts/bitcoin-oracle/src",
   "projectType": "library",
   "targets": {
     "clarinet-test": {
       "command": "clarinet test",
       "options": {
-        "cwd": "packages/contracts/brc20-indexer-v1",
+        "cwd": "packages/contracts/bitcoin-oracle",
         "color": true
       }
     },
@@ -16,8 +16,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "packages/contracts/brc20-indexer-v1/**/*.ts",
-          "packages/contracts/brc20-indexer-v1/package.json"
+          "packages/contracts/bitcoin-oracle/**/*.ts",
+          "packages/contracts/bitcoin-oracle/package.json"
         ]
       }
     }

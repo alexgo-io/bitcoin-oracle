@@ -22,8 +22,8 @@ export {
 export type { Account };
 
 const contractNames = {
-  indexer: 'indexer',
-  registry: 'indexer-registry',
+  oracle: 'oracle-v1-01',
+  registry: 'oracle-registry-v1-01',
 };
 
 const uintCV = types.uint;
@@ -169,44 +169,44 @@ export function prepareChainBasicTest(
 
   return chain.mineBlock([
     Tx.contractCall(
-      'indexer-registry',
+      'oracle-registry-v1-01',
       'approve-operator',
-      ['.' + contractNames.indexer, types.bool(true)],
+      ['.' + contractNames.oracle, types.bool(true)],
       deployer.address,
     ),
     Tx.contractCall(
-      'indexer-registry',
+      'oracle-registry-v1-01',
       'set-paused',
       [types.bool(false)],
       deployer.address,
     ),
     Tx.contractCall(
-      'indexer',
+      'oracle-v1-01',
       'set-paused',
       [types.bool(false)],
       deployer.address,
     ),
     Tx.contractCall(
-      'indexer',
+      'oracle-v1-01',
       'set-required-validators',
       [types.uint(1)],
       deployer.address,
     ),
     Tx.contractCall(
-      'indexer',
+      'oracle-v1-01',
       'add-validator',
       [buff(wallet_1_pubkey), types.principal(wallet_1.address)],
       deployer.address,
     ),
     Tx.contractCall(
-      'indexer',
+      'oracle-v1-01',
       'approve-relayer',
       [types.principal(wallet_2.address), types.bool(true)],
       deployer.address,
     ),
     Tx.contractCall(
       // for live-testing
-      'indexer',
+      'oracle-v1-01',
       'add-validator',
       [
         buff(
@@ -218,7 +218,7 @@ export function prepareChainBasicTest(
     ),
     Tx.contractCall(
       // for live-testing
-      'indexer',
+      'oracle-v1-01',
       'approve-relayer',
       [
         types.principal('SPMTYQTVWDH61Z0354KHD8EQQ36V8DX5R67P3DD0'),

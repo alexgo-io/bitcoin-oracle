@@ -1,4 +1,4 @@
-;; indexer
+;; oracle-v1-01
 ;;
 ;; guardians validate tx submitted
 ;; verifies tx submitted was mined
@@ -23,7 +23,7 @@
 (define-constant structured-data-prefix 0x534950303138)
 ;; const domainHash = structuredDataHash(
 ;;   tupleCV({
-;;     name: stringAsciiCV('ALEX BRC20 Indexer'),
+;;     name: stringAsciiCV('ALEX BRC20 oracle-v1-01'),
 ;;     version: stringAsciiCV('0.0.1'),
 ;;     'chain-id': uintCV(new StacksMainnet().chainId) | uintCV(new StacksMocknet().chainId),
 ;;   }),
@@ -104,16 +104,16 @@
 	(var-get is-paused))
 
 (define-read-only (get-user-balance-or-default (user (buff 128)) (tick (string-utf8 4)))
-	(contract-call? .indexer-registry get-user-balance-or-default user tick))
+	(contract-call? .oracle-registry-v1-01 get-user-balance-or-default user tick))
 
 (define-read-only (get-tick-decimals-or-default (tick (string-utf8 4)))
-	(contract-call? .indexer-registry get-tick-decimals-or-default tick))
+	(contract-call? .oracle-registry-v1-01 get-tick-decimals-or-default tick))
 
 (define-read-only (get-bitcoin-tx-mined-or-fail (tx (buff 4096)))
-	(contract-call? .indexer-registry get-bitcoin-tx-mined-or-fail tx))
+	(contract-call? .oracle-registry-v1-01 get-bitcoin-tx-mined-or-fail tx))
 
 (define-read-only (get-bitcoin-tx-indexed-or-fail (bitcoin-tx (buff 4096)) (output uint) (offset uint))
-	(contract-call? .indexer-registry get-bitcoin-tx-indexed-or-fail bitcoin-tx output offset))
+	(contract-call? .oracle-registry-v1-01 get-bitcoin-tx-indexed-or-fail bitcoin-tx output offset))
 
 ;; validate-tx
 ;;
@@ -136,9 +136,9 @@
 	(if (is-eq chain-id u1)		
 		(let
 			(
-				(response (if (try! (contract-call? .clarity-bitcoin is-segwit-tx tx)) 
-					(contract-call? .clarity-bitcoin was-segwit-tx-mined? block tx proof)
-					(contract-call? .clarity-bitcoin was-tx-mined? block tx proof))))
+				(response (if (try! (contract-call? .clarity-bitcoin-v1-01 is-segwit-tx tx)) 
+					(contract-call? .clarity-bitcoin-v1-01 was-segwit-tx-mined? block tx proof)
+					(contract-call? .clarity-bitcoin-v1-01 was-tx-mined? block tx proof))))
 			(if (or (is-err response) (not (unwrap-panic response)))
 				ERR-BITCOIN-TX-NOT-MINED
 				(ok true)))
@@ -208,17 +208,17 @@
 			(and (is-err (get-bitcoin-tx-mined-or-fail (get bitcoin-tx tx))) 
 				(begin 
 					(try! (verify-mined (get bitcoin-tx tx) (get block signed-tx) (get proof signed-tx)))
-					(as-contract (try! (contract-call? .indexer-registry set-tx-mined (get bitcoin-tx tx) (get height (get block signed-tx)))))
+					(as-contract (try! (contract-call? .oracle-registry-v1-01 set-tx-mined (get bitcoin-tx tx) (get height (get block signed-tx)))))
 				)
 			)
 
 			(var-set tx-hash-to-iter tx-hash)
 			(try! (fold validate-signature-iter signature-packs (ok true)))
 
-			(as-contract (try! (contract-call? .indexer-registry set-tx-indexed { tx-hash: (get bitcoin-tx tx), output: (get output tx), offset: (get offset tx) } { tick: (get tick tx), amt: (get amt tx), from: (get from tx), to: (get to tx) })))
-			(and (> height (get up-to-block from-bal)) (as-contract (try! (contract-call? .indexer-registry set-user-balance { user: (get from tx), tick: (get tick tx) } { balance: (get from-bal tx), up-to-block: height }))))
-			(and (> height (get up-to-block to-bal)) (as-contract (try! (contract-call? .indexer-registry set-user-balance { user: (get to tx), tick: (get tick tx) } { balance: (get to-bal tx), up-to-block: height }))))
-			(as-contract (try! (contract-call? .indexer-registry set-tick-decimals (get tick tx) (get decimals tx))))
+			(as-contract (try! (contract-call? .oracle-registry-v1-01 set-tx-indexed { tx-hash: (get bitcoin-tx tx), output: (get output tx), offset: (get offset tx) } { tick: (get tick tx), amt: (get amt tx), from: (get from tx), to: (get to tx) })))
+			(and (> height (get up-to-block from-bal)) (as-contract (try! (contract-call? .oracle-registry-v1-01 set-user-balance { user: (get from tx), tick: (get tick tx) } { balance: (get from-bal tx), up-to-block: height }))))
+			(and (> height (get up-to-block to-bal)) (as-contract (try! (contract-call? .oracle-registry-v1-01 set-user-balance { user: (get to tx), tick: (get tick tx) } { balance: (get to-bal tx), up-to-block: height }))))
+			(as-contract (try! (contract-call? .oracle-registry-v1-01 set-tick-decimals (get tick tx) (get decimals tx))))
 			(ok true))
 		prev-err
 		previous-response))

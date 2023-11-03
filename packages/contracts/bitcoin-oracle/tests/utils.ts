@@ -3,14 +3,14 @@ export function hexToBytes(hexString: string) {
     return new Uint8Array(0);
   } else {
     return Uint8Array.from(
-      hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)),
+      hexString.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)),
     );
   }
 }
 
 const byteToHexCache: string[] = new Array(0xff);
 for (let n = 0; n <= 0xff; ++n) {
-  byteToHexCache[n] = n.toString(16).padStart(2, "0");
+  byteToHexCache[n] = n.toString(16).padStart(2, '0');
 }
 
 export function bytesToHex(uint8a: Uint8Array) {
@@ -18,7 +18,7 @@ export function bytesToHex(uint8a: Uint8Array) {
   for (let i = 0; i < uint8a.length; ++i) {
     hexOctets[i] = byteToHexCache[uint8a[i]];
   }
-  return hexOctets.join("");
+  return hexOctets.join('');
 }
 
 export function hexReverse(hexString: string) {
@@ -47,9 +47,11 @@ export interface SegwitTxObject extends TxObject {
 function isSegwitTxObject(
   obj: TxObject | SegwitTxObject,
 ): obj is SegwitTxObject {
-  return (obj as SegwitTxObject).segwitMarker !== undefined &&
+  return (
+    (obj as SegwitTxObject).segwitMarker !== undefined &&
     (obj as SegwitTxObject).segwitVersion !== undefined &&
-    (obj as SegwitTxObject).witnesses !== undefined;
+    (obj as SegwitTxObject).witnesses !== undefined
+  );
 }
 
 export function expectHeaderObject(
@@ -66,7 +68,7 @@ export function expectHeaderObject(
   const headerObject = block.receipts[0].result.expectOk().expectTuple();
   headerObject.version.expectUint(expectedHeaderObject.version);
   headerObject.parent.expectBuff(hexToBytes(expectedHeaderObject.parent));
-  headerObject["merkle-root"].expectBuff(
+  headerObject['merkle-root'].expectBuff(
     hexToBytes(expectedHeaderObject.merkleRoot),
   );
   headerObject.timestamp.expectUint(expectedHeaderObject.timestamp);
@@ -106,8 +108,9 @@ export function expectTxObject(
 
   if (isSegwitTxObject(expectedTxObject)) {
     for (let index = 0; index < expectedTxObject.witnesses.length; index++) {
-      const witnessObject = resultTxObject.witnesses.expectList()[index]
-        .expectList();
+      const witnessObject = resultTxObject.witnesses
+        .expectList()
+        [index].expectList();
       if (witnessObject.length) {
         for (
           let witnessItemIndex = 0;
@@ -120,7 +123,7 @@ export function expectTxObject(
         }
       } else {
         if (expectedTxObject.witnesses[index].length > 0) {
-          throw new Error("Expected witness item list to be empty");
+          throw new Error('Expected witness item list to be empty');
         }
       }
     }
