@@ -41,7 +41,7 @@
     "contract-deploy": {
       "executor": "nx-stacks:deploy",
       "options": {
-        "clarinetPath": "packages/contracts/brc20-indexer-v1",
+        "clarinetPath": "packages/contracts/bitcoin-oracle",
         "contracts": [
           "clarity-bitcoin",
           "utils",
@@ -88,11 +88,7 @@
           {
             "name": "indexer",
             "principal": "${STACKS_DEPLOYER_ACCOUNT_ADDRESS}",
-            "contracts": [
-              "clarity-bitcoin",
-              "indexer",
-              "indexer-registry"
-            ],
+            "contracts": ["clarity-bitcoin", "indexer", "indexer-registry"],
             "packageName": "../codegenImport"
           }
         ]
@@ -104,8 +100,8 @@
         "outputPath": "packages/libs/brc20-indexer/src/generated",
         "clarinetDirectoryGenerateTargets": [
           {
-            "clarinetConfigPath": "packages/contracts/brc20-indexer-v1/Clarinet.toml",
-            "outputPath": "packages/libs/brc20-indexer/src/generated/brc20-indexer-v1.json"
+            "clarinetConfigPath": "packages/contracts/bitcoin-oracle/Clarinet.toml",
+            "outputPath": "packages/libs/brc20-indexer/src/generated/bitcoin-oracle.json"
           }
         ]
       }

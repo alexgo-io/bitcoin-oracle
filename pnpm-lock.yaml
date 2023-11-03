@@ -311,7 +311,7 @@ importers:
 
   packages/apps/cli: {}
 
-  packages/contracts/brc20-indexer-v1:
+  packages/contracts/bitcoin-oracle:
     dependencies:
       '@iarna/toml':
         specifier: ^2.2.5
