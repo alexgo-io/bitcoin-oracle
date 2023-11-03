@@ -1,4 +1,4 @@
-;; indexer-registry
+;; oracle-registry-v1-01
 ;;
 ;; store the state (user balance, inscription usage)
 ;;

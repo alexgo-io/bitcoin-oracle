@@ -4,7 +4,7 @@ name: CI Clarinet
 on:
   push:
     paths:
-      - 'packages/contracts/brc20-indexer-v1/**'
+      - 'packages/contracts/bitcoin-oracle/**'
 
 concurrency:
   group: 'ci-clarinet-${{ github.ref }}'
@@ -25,7 +25,7 @@ jobs:
         uses: docker://hirosystems/clarinet:1.5.4
         with:
           entrypoint: 'bash'
-          args: -c "cd packages/contracts/brc20-indexer-v1; clarinet check"
+          args: -c "cd packages/contracts/bitcoin-oracle; clarinet check"
   test:
     name: test - ${{ github.ref_name }}
     runs-on: ubuntu-22.04
@@ -40,4 +40,4 @@ jobs:
         uses: docker://hirosystems/clarinet:1.5.4
         with:
           entrypoint: 'bash'
-          args: -c "cd packages/contracts/brc20-indexer-v1; clarinet test"
+          args: -c "cd packages/contracts/bitcoin-oracle; clarinet test"

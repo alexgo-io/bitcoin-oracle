@@ -11,5 +11,5 @@
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
   ],
-  "exclude": ["brc20-indexer-v1/**/*"]
+  "exclude": ["bitcoin-oracle/**/*"]
 }

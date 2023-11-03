@@ -1,4 +1,4 @@
-declare module "electrum-client-sl" {
+declare module 'electrum-client-sl' {
   export interface Unspent {
     height: number;
     tx_pos: number;
@@ -59,7 +59,7 @@ declare module "electrum-client-sl" {
           asm: string;
           hex: string;
           reqSigs: number;
-          type: "scripthash";
+          type: 'scripthash';
           addresses: string[];
           address: string;
         };
