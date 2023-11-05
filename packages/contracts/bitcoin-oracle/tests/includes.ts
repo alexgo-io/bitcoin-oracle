@@ -22,7 +22,7 @@ export {
 export type { Account };
 
 const contractNames = {
-  oracle: 'oracle-v1-01',
+  oracle: 'oracle-v1-02',
   registry: 'oracle-registry-v1-01',
 };
 
@@ -181,32 +181,32 @@ export function prepareChainBasicTest(
       deployer.address,
     ),
     Tx.contractCall(
-      'oracle-v1-01',
+      'oracle-v1-02',
       'set-paused',
       [types.bool(false)],
       deployer.address,
     ),
     Tx.contractCall(
-      'oracle-v1-01',
+      'oracle-v1-02',
       'set-required-validators',
       [types.uint(1)],
       deployer.address,
     ),
     Tx.contractCall(
-      'oracle-v1-01',
+      'oracle-v1-02',
       'add-validator',
       [buff(wallet_1_pubkey), types.principal(wallet_1.address)],
       deployer.address,
     ),
     Tx.contractCall(
-      'oracle-v1-01',
+      'oracle-v1-02',
       'approve-relayer',
       [types.principal(wallet_2.address), types.bool(true)],
       deployer.address,
     ),
     Tx.contractCall(
       // for live-testing
-      'oracle-v1-01',
+      'oracle-v1-02',
       'add-validator',
       [
         buff(
@@ -218,7 +218,7 @@ export function prepareChainBasicTest(
     ),
     Tx.contractCall(
       // for live-testing
-      'oracle-v1-01',
+      'oracle-v1-02',
       'approve-relayer',
       [
         types.principal('SPMTYQTVWDH61Z0354KHD8EQQ36V8DX5R67P3DD0'),
