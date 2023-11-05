@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
   .:
     dependencies:
@@ -47,7 +51,7 @@ importers:
         version: 6.9.0
       '@t3-oss/env-core':
         specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.4)
+        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
       axios:
         specifier: ^1.6.0
         version: 1.6.0
@@ -89,7 +93,7 @@ importers:
         version: 3.5.0(@nestjs/common@10.2.8)(pino-http@8.5.1)
       nestjs-zod:
         specifier: ^3.0.0
-        version: 3.0.0(@nestjs/common@10.2.8)(@nestjs/core@10.2.8)(@nestjs/swagger@7.1.10)(zod@3.22.4)
+        version: 3.0.0(@nestjs/common@10.2.8)(@nestjs/core@10.2.8)(@nestjs/swagger@7.1.10)(zod@3.22.3)
       node-fetch:
         specifier: ^2.7.0
         version: 2.7.0
@@ -125,7 +129,7 @@ importers:
         version: 1.0.1
       slonik:
         specifier: ^37.2.0
-        version: 37.2.0(zod@3.22.4)
+        version: 37.2.0(zod@3.22.3)
       slonik-interceptor-query-logging:
         specifier: ^1.4.7
         version: 1.4.7(slonik@37.2.0)
@@ -133,8 +137,8 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
       zod:
-        specifier: ^3.22.4
-        version: 3.22.4
+        specifier: 3.22.3
+        version: 3.22.3
     devDependencies:
       '@milahu/patch-package':
         specifier: ^6.4.14
@@ -5945,19 +5949,6 @@ packages:
     dependencies:
       typescript: 5.2.2
       zod: 3.22.3
-    dev: false
-
-  /@t3-oss/env-core@0.6.1(typescript@5.2.2)(zod@3.22.4):
-    resolution:
-      {
-        integrity: sha512-KQD7qEDJtkWIWWmTVjNvk0wnHpkvAQ6CRbUxbWMFNG/fiosBQDQvtRpBNu6USxBscJCoC4z6y7P9MN52/mLOzw==,
-      }
-    peerDependencies:
-      typescript: '>=4.7.2'
-      zod: ^3.0.0
-    dependencies:
-      typescript: 5.2.2
-      zod: 3.22.4
     dev: false
 
   /@tootallnate/once@1.1.2:
@@ -15858,7 +15849,7 @@ packages:
       pino-http: 8.5.1
     dev: false
 
-  /nestjs-zod@3.0.0(@nestjs/common@10.2.8)(@nestjs/core@10.2.8)(@nestjs/swagger@7.1.10)(zod@3.22.4):
+  /nestjs-zod@3.0.0(@nestjs/common@10.2.8)(@nestjs/core@10.2.8)(@nestjs/swagger@7.1.10)(zod@3.22.3):
     resolution:
       {
         integrity: sha512-vL9CHShCVj6TmjCVPOd4my46D8d7FdoB4nQvvh+lmVTuzvnwuD+slSxjT4EDdPDWDFtjhfpvQnnkr55/80KHEQ==,
@@ -15880,7 +15871,7 @@ packages:
       '@nestjs/core': 10.2.8(@nestjs/common@10.2.8)(@nestjs/platform-express@10.2.8)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@nestjs/swagger': 7.1.10(@nestjs/common@10.2.8)(@nestjs/core@10.2.8)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)
       merge-deep: 3.0.3
-      zod: 3.22.4
+      zod: 3.22.3
     dev: false
 
   /next-tick@1.1.0:
@@ -19248,6 +19239,7 @@ packages:
       {
         integrity: sha512-0s+oAmw9zLl1V1cS9BtZN7JAd0cW5e0QH4W3LWEK6a4LaLEA2OTpGYWDY+6XasBLtz6wkm3u1xRw95mRuJ59WA==,
       }
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -19699,7 +19691,7 @@ packages:
       crack-json: 1.3.0
       pretty-ms: 7.0.1
       serialize-error: 8.1.0
-      slonik: 37.2.0(zod@3.22.4)
+      slonik: 37.2.0(zod@3.22.3)
     dev: false
 
   /slonik@37.0.1(zod@3.22.3):
@@ -19729,7 +19721,7 @@ packages:
       - pg-native
     dev: false
 
-  /slonik@37.2.0(zod@3.22.4):
+  /slonik@37.2.0(zod@3.22.3):
     resolution:
       {
         integrity: sha512-G4giLtT+PWrHJcjhNrYZpQmDNb4aehugP8IF6MYHAvP39ewGb+EdBaB94MUwPqU9+nu9aNEFLLpy1y2tyHNb4w==,
@@ -19751,7 +19743,7 @@ packages:
       roarr: 7.18.3
       safe-stable-stringify: 2.4.3
       serialize-error: 8.1.0
-      zod: 3.22.4
+      zod: 3.22.3
     transitivePeerDependencies:
       - pg-native
     dev: false
@@ -22389,13 +22381,6 @@ packages:
       }
     dev: false
 
-  /zod@3.22.4:
-    resolution:
-      {
-        integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==,
-      }
-    dev: false
-
   /zone-file@2.0.0-beta.3:
     resolution:
       {
@@ -22403,7 +22388,3 @@ packages:
       }
     engines: { node: '>=10' }
     dev: false
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
