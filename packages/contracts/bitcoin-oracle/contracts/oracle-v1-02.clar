@@ -1,4 +1,4 @@
-;; oracle-v1-01
+;; oracle-v1-02
 ;;
 ;; guardians validate tx submitted
 ;; verifies tx submitted was mined
@@ -23,7 +23,7 @@
 (define-constant structured-data-prefix 0x534950303138)
 ;; const domainHash = structuredDataHash(
 ;;   tupleCV({
-;;     name: stringAsciiCV('ALEX BRC20 oracle-v1-01'),
+;;     name: stringAsciiCV('ALEX BRC20 oracle-v1-02'),
 ;;     version: stringAsciiCV('0.0.1'),
 ;;     'chain-id': uintCV(new StacksMainnet().chainId) | uintCV(new StacksMocknet().chainId),
 ;;   }),
