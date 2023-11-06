@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
-    "clarity-codegen": "^0.2.6",
+    "clarity-codegen": "^0.3.4",
     "@stacks/network": "^6.5.5",
     "@stacks/transactions": "^6.7.0",
-    "@t3-oss/env-core": "^0.6.1",
+    "@t3-oss/env-core": "^0.7.1",
     "memoizee": "^0.4.15",
     "zod": "^3.22.3",
     "@nestjs/common": "^10.2.4",

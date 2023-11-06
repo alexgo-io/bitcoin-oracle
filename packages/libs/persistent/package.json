@@ -4,7 +4,7 @@
   "type": "commonjs",
   "dependencies": {
     "@meta-protocols-oracle/commons": "*",
-    "@t3-oss/env-core": "^0.6.1",
+    "@t3-oss/env-core": "^0.7.1",
     "zod": "^3.22.3",
     "memoizee": "^0.4.15",
     "@nestjs/common": "^10.2.4",

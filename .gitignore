@@ -41,3 +41,5 @@ Thumbs.db
 .envrc.override
 
 packages/dev/database/bin/cli-hasura-*
+
+.nx/cache

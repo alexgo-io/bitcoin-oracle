@@ -6,7 +6,7 @@
     "@meta-protocols-oracle/types": "*",
     "slonik": "^37.0.1",
     "zod": "^3.22.3",
-    "@t3-oss/env-core": "^0.6.1",
+    "@t3-oss/env-core": "^0.7.1",
     "@nestjs/common": "^10.2.4",
     "class-validator": "^0.14.0",
     "safe-json-stringify": "^1.2.0",

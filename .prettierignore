@@ -42,3 +42,5 @@ Thumbs.db
 /.nx-container/
 
 /packages/dev/database/bin/cli-hasura-*
+
+/.nx/cache
