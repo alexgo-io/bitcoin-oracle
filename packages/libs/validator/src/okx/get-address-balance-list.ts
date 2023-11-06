@@ -52,7 +52,7 @@ curl --location --globoff 'https://www.okx.com/api/v1/endpoints/btc/address-bala
 import got from 'got-cjs';
 import { z } from 'zod';
 import { kOKXBaseURL } from './base';
-import { env } from "./env";
+import { env } from './env';
 
 const GetAddressBalanceListRequestSchema = z.object({
   address: z.string(),

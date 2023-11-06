@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 services:
   relayer:
     image: us-central1-docker.pkg.dev/fifth-compiler-334213/alexgo/b20/relayer:main

@@ -2,9 +2,7 @@
   "name": "dev-stacks",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/dev/stacks/src",
-  "implicitDependencies": [
-    "dev-network"
-  ],
+  "implicitDependencies": ["dev-network"],
   "projectType": "application",
   "targets": {
     "up": {

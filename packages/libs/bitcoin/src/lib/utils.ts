@@ -1,8 +1,8 @@
 import { address as bAddress, networks, payments } from 'bitcoinjs-lib';
-import { Address, OutScript } from 'scure-btc-signer-cjs';
 import { bytesToBigInt } from 'micro-stacks/common';
 import { base58checkEncode, hashRipemd160 } from 'micro-stacks/crypto';
 import { hashSha256 } from 'micro-stacks/crypto-sha';
+import { Address, OutScript } from 'scure-btc-signer-cjs';
 
 export let btcNetwork: networks.Network;
 
