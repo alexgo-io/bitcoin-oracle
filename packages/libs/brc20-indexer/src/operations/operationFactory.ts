@@ -7,7 +7,7 @@ import {
 } from 'clarity-codegen';
 import { ReadonlyFunctionDescriptor } from 'clarity-codegen/lib/runtime/contractBase';
 import { indexerContracts } from '../generated/contracts_indexer';
-import { CallbackOptions, PublicCall } from "./operation";
+import { CallbackOptions, PublicCall } from './operation';
 
 const contracts = indexerContracts;
 export type Contracts = typeof indexerContracts;
@@ -23,7 +23,10 @@ export const callPublic = <
     ? ParameterObjOfDescriptor<Contracts[T][F]>
     : never,
   options?: {
-    onBroadcast?: (result: TxBroadcastResult, options: CallbackOptions) => Promise<void>;
+    onBroadcast?: (
+      result: TxBroadcastResult,
+      options: CallbackOptions,
+    ) => Promise<void>;
     onSettled?: (op: PublicCall) => Promise<void>;
   },
 ): PublicCall => {

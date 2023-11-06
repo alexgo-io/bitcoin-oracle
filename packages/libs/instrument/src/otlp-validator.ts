@@ -56,6 +56,13 @@ export const OTLP_Validator = memoizee(() => {
       'get-balance-on-block': meter.createCounter('get-balance-on-block', {
         description: `get balance of a address on block from validator api, it can be called multiple times if pagination is needed`,
       }),
+      'get-batch-balance-on-block': meter.createCounter(
+        'get-batch-balance-on-block',
+        {
+          description: `get balance of multiple addresses on block from validator api`,
+        },
+      ),
+
       'get-token-info': meter.createCounter('get-token-info', {
         description: `get token info from validator api`,
       }),

@@ -5,19 +5,16 @@ export function stringifyJSON(obj: any, space = 0) {
     (_, v) => {
       if (typeof v === 'bigint') {
         return `${v}n`;
-      }
-      else if (v instanceof Uint8Array) {
+      } else if (v instanceof Uint8Array) {
         return '0x' + Buffer.from(v).toString('hex');
-      }
-      else if (v?.type == 'Buffer' && Array.isArray(v?.data)) {
+      } else if (v?.type == 'Buffer' && Array.isArray(v?.data)) {
         // Buffer.from('').toJSON(); is used to construct this object
         try {
           return '0x' + Buffer.from(v.data).toString('hex');
         } catch (e) {
           return v;
         }
-      }
-      else {
+      } else {
         return v;
       }
     },

@@ -1,4 +1,4 @@
-import { Logger } from "@nestjs/common";
+import { Logger } from '@nestjs/common';
 
 export class StatusTracker {
   public status: 'online' | 'offline' | 'unknown' = 'unknown';
