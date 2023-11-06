@@ -1,6 +1,6 @@
 import { createEnv } from '@t3-oss/env-core';
+import memoizee from 'memoizee';
 import { z } from 'zod';
-import memoizee from "memoizee";
 
 export const env = memoizee(() =>
   createEnv({
@@ -8,4 +8,5 @@ export const env = memoizee(() =>
       NODE_DATABASE_URL: z.string().min(1),
     },
     runtimeEnv: process.env,
-  }));
+  }),
+);

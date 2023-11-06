@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable } from 'rxjs';
 
 export class Nothing {
   // This lets us do `Exclude<T, Nothing>`

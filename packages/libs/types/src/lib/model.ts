@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ZodType } from 'zod';
 import { indexerAPI } from './api-model';
-import { Enums } from './enums-model';
 import { indexer } from './db-model';
+import { Enums } from './enums-model';
 
 export const Models = {
   database: {

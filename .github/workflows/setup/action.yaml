@@ -58,4 +58,3 @@ runs:
           STRATEGY="affected --base=$(git log --reverse --pretty=format:"%H" | head -1 || if [[ $? -eq 141 ]]; then true; else exit $?; fi)"
         fi
         echo "NX_STRATEGY=$STRATEGY" >> "${GITHUB_OUTPUT}"
-

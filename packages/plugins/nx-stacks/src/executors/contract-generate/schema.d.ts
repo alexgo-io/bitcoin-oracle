@@ -10,5 +10,4 @@ export interface ContractGenerateExecutorSchema extends EnvironmentOptions {
   targets: ContractGenerateTarget[];
   outputPath: string;
   stacksAPIURL: string;
-
 }

@@ -6,4 +6,3 @@ export class ApiClient {
     return indexer(this.baseURL);
   }
 }
-

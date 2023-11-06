@@ -1,8 +1,8 @@
+import { Logger } from '@nestjs/common';
 import { Command, Flags } from '@oclif/core';
-import { Logger } from "@nestjs/common";
 
 export default class Check extends Command {
-  private readonly logger = new Logger(Check.name)
+  private readonly logger = new Logger(Check.name);
 
   static flags = {
     tx_id: Flags.string({
@@ -15,7 +15,6 @@ export default class Check extends Command {
     const {
       flags: { tx_id },
     } = await this.parse(Check);
-    this.logger.log(`tx_id: ${tx_id}`)
-
+    this.logger.log(`tx_id: ${tx_id}`);
   }
 }
