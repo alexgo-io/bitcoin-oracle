@@ -383,8 +383,8 @@ importers:
         specifier: ^6.7.0
         version: 6.7.0
       '@t3-oss/env-core':
-        specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -410,8 +410,8 @@ importers:
         specifier: '*'
         version: link:../types
       '@t3-oss/env-core':
-        specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
       got-cjs:
         specifier: ^12.5.4
         version: 12.5.4
@@ -431,8 +431,8 @@ importers:
         specifier: '*'
         version: link:../commons
       '@t3-oss/env-core':
-        specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
       bitcoinjs-lib:
         specifier: ^6.1.3
         version: 6.1.3
@@ -479,11 +479,11 @@ importers:
         specifier: ^6.7.0
         version: 6.7.0
       '@t3-oss/env-core':
-        specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
       clarity-codegen:
-        specifier: ^0.2.6
-        version: 0.2.6(@stacks/transactions@6.7.0)
+        specifier: ^0.3.4
+        version: 0.3.4(@stacks/transactions@6.7.0)
       got-cjs:
         specifier: ^12.5.4
         version: 12.5.4
@@ -515,8 +515,8 @@ importers:
         specifier: ^10.2.4
         version: 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@t3-oss/env-core':
-        specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
       class-validator:
         specifier: ^0.14.0
         version: 0.14.0
@@ -575,8 +575,8 @@ importers:
         specifier: ^1.17.1
         version: 1.17.1
       '@t3-oss/env-core':
-        specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -596,8 +596,8 @@ importers:
         specifier: ^10.2.4
         version: 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@t3-oss/env-core':
-        specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -638,8 +638,8 @@ importers:
         specifier: '*'
         version: link:../commons
       '@t3-oss/env-core':
-        specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
       got-cjs:
         specifier: ^12.5.4
         version: 12.5.4
@@ -686,8 +686,8 @@ importers:
         specifier: ^10.2.4
         version: 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@t3-oss/env-core':
-        specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
       got-cjs:
         specifier: ^12.5.4
         version: 12.5.4
@@ -731,8 +731,8 @@ importers:
         specifier: ^10.2.4
         version: 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@t3-oss/env-core':
-        specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.22.3)
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
       got-cjs:
         specifier: ^12.5.4
         version: 12.5.4
@@ -5964,19 +5964,6 @@ packages:
       defer-to-connect: 2.0.1
     dev: true
 
-  /@t3-oss/env-core@0.6.1(typescript@5.2.2)(zod@3.22.3):
-    resolution:
-      {
-        integrity: sha512-KQD7qEDJtkWIWWmTVjNvk0wnHpkvAQ6CRbUxbWMFNG/fiosBQDQvtRpBNu6USxBscJCoC4z6y7P9MN52/mLOzw==,
-      }
-    peerDependencies:
-      typescript: '>=4.7.2'
-      zod: ^3.0.0
-    dependencies:
-      typescript: 5.2.2
-      zod: 3.22.3
-    dev: false
-
   /@t3-oss/env-core@0.7.1(typescript@5.2.2)(zod@3.22.3):
     resolution:
       {
@@ -9108,6 +9095,25 @@ packages:
       '@stacks/transactions': '*'
     dependencies:
       '@stacks/stacks-blockchain-api-types': 7.3.0
+      '@stacks/transactions': 6.7.0
+      axios: 1.6.0
+      lodash: 4.17.21
+      yargs: 17.7.2
+      yqueue: 1.0.1
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /clarity-codegen@0.3.4(@stacks/transactions@6.7.0):
+    resolution:
+      {
+        integrity: sha512-wH5tcUGodvKqCrIFEgnWWTX31BifCVqgTcPZcC80Tju/vCdN1y8fKr/X/3eXLxwDphZfoQibZw0HXi5zwONy8g==,
+      }
+    hasBin: true
+    peerDependencies:
+      '@stacks/transactions': '*'
+    dependencies:
+      '@stacks/stacks-blockchain-api-types': 7.3.2
       '@stacks/transactions': 6.7.0
       axios: 1.6.0
       lodash: 4.17.21
