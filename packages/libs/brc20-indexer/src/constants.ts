@@ -1,4 +1,2 @@
-export const kIndexerContractName = 'indexer' as const;
-// export const kIndexerContractName = 'indexer' as const;
-export const kIndexerRegistryName = 'indexer-registry' as const;
-// export const kIndexerRegistryName = 'indexer-registry' as const;
+export const kIndexerContractName = 'oracle-v1-02' as const;
+export const kIndexerRegistryName = 'oracle-registry-v1-01' as const;
