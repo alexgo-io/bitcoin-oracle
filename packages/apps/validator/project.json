@@ -40,7 +40,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["packages/apps/validator/**/*.ts"]
@@ -65,9 +65,7 @@
       "options": {
         "load": true,
         "metadata": {
-          "images": [
-            "$DOCKER_IMAGE_TAG_GROUP/validator"
-          ],
+          "images": ["$DOCKER_IMAGE_TAG_GROUP/validator"],
           "tags": [
             "type=schedule",
             "type=ref,event=branch",
