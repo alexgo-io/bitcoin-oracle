@@ -17,7 +17,8 @@ import { envTest } from '../env-test';
 describe('Indexer', () => {
   const readonlyCall = callReadonlyWith(
     envTest().STACKS_DEPLOYER_ACCOUNT_ADDRESS,
-    new StacksMocknet({ url: env().STACKS_API_URL, fetchFn: fetch }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    new StacksMocknet({ url: env().STACKS_API_URL, fetchFn: fetch as any }),
     envTest().STACKS_DEPLOYER_ACCOUNT_ADDRESS,
   );
   const bisData = {
