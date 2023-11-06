@@ -9,7 +9,7 @@
     "@meta-protocols-oracle/commons": "*",
     "zod": "^3.22.3",
     "scure-btc-signer-cjs": "^1.0.1",
-    "@t3-oss/env-core": "^0.6.1",
+    "@t3-oss/env-core": "^0.7.1",
     "memoizee": "^0.4.15",
     "@meta-protocols-oracle/brc20-indexer": "*",
     "@stacks/network": "^6.5.5",

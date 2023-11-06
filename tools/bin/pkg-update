@@ -2,4 +2,4 @@
 set -euo pipefail
 
 # pin ethers.js v5, v6 has breaking changes
-ncu -u -x p-queue,p-retry,chalk,nanoid,node-fetch,slonik,normalize-url,query-string,prettier
+ncu -u -x p-queue,p-retry,chalk,nanoid,node-fetch,slonik,normalize-url,query-string,prettier,@opentelemetry/exporter-metrics-otlp-http,@opentelemetry/exporter-trace-otlp-http,zod

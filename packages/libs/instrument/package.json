@@ -2,7 +2,7 @@
   "name": "@bitcoin-oracle/instrument",
   "version": "0.0.1",
   "dependencies": {
-    "@t3-oss/env-core": "^0.6.1",
+    "@t3-oss/env-core": "^0.7.1",
     "memoizee": "^0.4.15",
     "zod": "^3.22.3",
     "@opentelemetry/api": "^1.6.0",
