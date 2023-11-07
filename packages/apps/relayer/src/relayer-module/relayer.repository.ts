@@ -32,7 +32,11 @@ export class RelayerRepository {
                                                  from indexer.submitted_tx
                                                  where txs.id = submitted_tx.id)
                                  and error is null
-                                 and length(tx_hash) <= 4096),
+                                 and length(tx_hash) <= 4096
+                               and height >= ${
+                                 env().RELAYER_MINIMAL_BLOCK_HEIGHT
+                               }
+                               ),
                qualified_txs as (select pt.id, count(*)
                                  from pending_txs pt
                                           join indexer.proofs pf on pt.id = pf.id
@@ -47,6 +51,7 @@ export class RelayerRepository {
 
           select *
           from qualified_txs_with_proof
+          order by height asc
           ;
       `);
 

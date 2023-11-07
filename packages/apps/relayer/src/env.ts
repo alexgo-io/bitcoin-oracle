@@ -9,6 +9,7 @@ export const env = memoizee(() =>
       STACKS_RELAYER_ACCOUNT_SECRET: z.string().min(1),
       STACKS_DEPLOYER_ACCOUNT_ADDRESS: z.string().min(1),
       RELAYER_SYNC_POLL_INTERVAL: z.coerce.number().default(15e3),
+      RELAYER_MINIMAL_BLOCK_HEIGHT: z.coerce.number().default(0),
     },
     runtimeEnv: process.env,
   }),
