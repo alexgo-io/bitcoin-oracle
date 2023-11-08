@@ -49,6 +49,9 @@ export class DefaultRelayerService implements RelayerService {
     const lastSync = Date.now();
     const rows = await this.relayerRepository.getPendingSubmitTx();
 
+    console.log(`rows: ${rows.length}`);
+    return;
+
     const TxManyInputEncoder =
       indexerContracts[kIndexerContractName]['index-tx-many']['input'][0].type
         .encode;
