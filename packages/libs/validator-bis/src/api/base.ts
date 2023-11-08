@@ -6,6 +6,16 @@ import { ZodRawShape, z } from 'zod';
 
 export const kBiSBaseURL = 'https://api.bestinslot.xyz';
 
+export type ResultType<T> =
+  | {
+      type: 'success';
+      data: T;
+    }
+  | {
+      type: 'error';
+      error: string;
+    };
+
 export const BISActivityTypeSchema = z.enum([
   'transfer-transfer',
   'transfer-inscribe',
@@ -58,3 +68,18 @@ export const BISTickerInfoSchema = z.object({
   decimals: BigIntSchema,
 });
 export const BISTickerInfoResponseSchema = withDataSchema(BISTickerInfoSchema);
+
+export const BISBatchBalanceSchema = z.object({
+  tick: UpperCaseStringSchema,
+  balance: z.coerce.string().default('0'),
+  transferrable_balance: z.string(),
+  pkscript: z.string(),
+  block_height: z.number(),
+});
+export type BISBatchBalance = z.infer<typeof BISBatchBalanceSchema>;
+export const BISBatchBalanceOnBlockResponseSchema = z.object({
+  data: z.array(BISBatchBalanceSchema),
+});
+export type BISBatchBalanceOnBlockResponse = z.infer<
+  typeof BISBatchBalanceOnBlockResponseSchema
+>;
