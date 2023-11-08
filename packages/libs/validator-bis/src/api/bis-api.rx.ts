@@ -8,6 +8,7 @@ import {
   mergeMap,
   share,
 } from 'rxjs';
+import { env } from '../env';
 import { getBISQueue } from '../queue';
 import { BISBatchBalance } from './base';
 import {
@@ -96,7 +97,7 @@ type BISRequestBalance = {
 
 const requestBalanceSubject = new Subject<BISRequestBalance>();
 const responseBalanceResponse$ = requestBalanceSubject.pipe(
-  windowTimeSize(20, 1000),
+  windowTimeSize(env().BIS_BALANCE_BATCH_SIZE, 1000),
   mergeMap(requests => {
     return safeGetBatchBalanceOnBlock(requests);
   }),
