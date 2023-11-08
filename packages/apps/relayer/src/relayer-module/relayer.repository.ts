@@ -5,6 +5,7 @@ import { m, ModelIndexer } from '@meta-protocols-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
 import { z } from 'zod';
 import { env } from '../env';
+import { getWhitelistBRC20TokensCached } from './relayer.utils';
 
 export class RelayerRepository {
   private readonly logger = new Logger(RelayerRepository.name);
@@ -25,6 +26,11 @@ export class RelayerRepository {
         }),
       );
 
+      const tokenList = await getWhitelistBRC20TokensCached();
+
+      this.logger.debug(
+        `whitelist token list: ${tokenList.length}, getting pending tx...`,
+      );
       const pendingTxs = await conn.query(SQL.type(txs_schema)`
           with pending_txs as (select *
                                from indexer.txs
@@ -33,13 +39,17 @@ export class RelayerRepository {
                                                  where txs.id = submitted_tx.id)
                                  and error is null
                                  and length(tx_hash) <= 4096
-                               and height >= ${
-                                 env().RELAYER_MINIMAL_BLOCK_HEIGHT
-                               }
+                                 and height >= ${
+                                   env().RELAYER_MINIMAL_BLOCK_HEIGHT
+                                 }
                                ),
                qualified_txs as (select pt.id, count(*)
                                  from pending_txs pt
                                           join indexer.proofs pf on pt.id = pf.id
+                                 where tick = ANY(${SQL.array(
+                                   tokenList,
+                                   'text',
+                                 )})
                                  group by 1
                                  having count(*) >=
                                         (select minimal_proof_count
@@ -54,6 +64,9 @@ export class RelayerRepository {
           order by height asc
           ;
       `);
+      this.logger.debug(
+        `got pendingTxs: ${pendingTxs.rows.length}, building proofs...`,
+      );
 
       type ResultType = z.infer<typeof txs_join_proof_schema>;
 
@@ -73,7 +86,7 @@ export class RelayerRepository {
         );
       }
 
-      this.logger.verbose(`getPendingSubmitTx: ${results.length}`);
+      this.logger.verbose(`built tx with proofs: ${results.length}`);
 
       return results;
     });
