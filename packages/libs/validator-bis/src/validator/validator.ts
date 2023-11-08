@@ -21,38 +21,18 @@ import {
   map,
   mergeAll,
   mergeMap,
-  of,
   retry,
   tap,
 } from 'rxjs';
-import { BISBalance } from '../api/base';
 import {
   getActivityOnBlock$,
-  getBalanceOnBlock$,
+  getBalanceOnBlockInBatchQueue$,
   getTokenInfo$,
 } from '../api/bis-api.rx';
 import { env } from '../env';
 import { getElectrumQueue } from '../queue';
 
 const logger = getLogger('validator-bis');
-function getBalanceOnBlockCached$({
-  address,
-  block,
-}: {
-  address?: string | null;
-  block: number;
-}) {
-  if (address == null) {
-    return of(null);
-  }
-  return getBalanceOnBlock$(address, block).pipe(map(result => result.data));
-}
-function getBalance(balances: BISBalance[] | null, tick: string) {
-  if (balances == null) {
-    return null;
-  }
-  return balances.find(balance => balance.tick === tick);
-}
 export function getBisTxOnBlock$(block: number) {
   return getActivityOnBlock$(block).pipe(
     retry(10),
@@ -63,24 +43,29 @@ export function getBisTxOnBlock$(block: number) {
     }),
     mergeAll(),
     mergeMap(activity => {
+      if (activity.old_pkscript == null || activity.new_pkscript == null) {
+        logger.error(
+          `old_pkscript or new_pkscript is null for ${activity.id}, inscription_id: ${activity.inscription_id}`,
+        );
+        return EMPTY;
+      }
       return combineLatest([
-        getBalanceOnBlockCached$({
-          address: activity.old_pkscript,
-          block: block + 1,
+        getBalanceOnBlockInBatchQueue$({
+          pkscript: activity.old_pkscript,
+          block_height: block + 1,
+          ticker: activity.tick,
         }),
-        getBalanceOnBlockCached$({
-          address: activity.new_pkscript,
-          block: block + 1,
+        getBalanceOnBlockInBatchQueue$({
+          pkscript: activity.new_pkscript,
+          block_height: block + 1,
+          ticker: activity.tick,
         }),
       ]).pipe(
-        retry(5),
-        map(([oldBalances, newBalances]) => {
-          const oldBalance = getBalance(oldBalances, activity.tick);
-          const newBalance = getBalance(newBalances, activity.tick);
+        map(([oldBalance, newBalance]) => {
           return {
             ...activity,
-            from_bal: oldBalance?.balance ?? '0',
-            to_bal: newBalance?.balance ?? '0',
+            from_bal: oldBalance.balance,
+            to_bal: newBalance.balance,
           };
         }),
       );

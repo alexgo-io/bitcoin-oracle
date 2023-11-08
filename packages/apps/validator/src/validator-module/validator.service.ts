@@ -1,6 +1,7 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import { ApiClient } from '@meta-protocols-oracle/api-client';
 import { getCurrentBitcoinHeader } from '@meta-protocols-oracle/bitcoin';
+import { parseErrorDetail } from '@meta-protocols-oracle/commons';
 import { ValidatorProcessInterface } from '@meta-protocols-oracle/validator';
 import { Inject, Logger } from '@nestjs/common';
 import {
@@ -97,7 +98,9 @@ export class DefaultValidatorService implements ValidatorService {
       )
       .subscribe({
         error: err => {
-          this.logger.error(`startIntervalSync error: ${err}`);
+          this.logger.error(
+            `startIntervalSync error: ${parseErrorDetail(err)}`,
+          );
         },
       });
   }

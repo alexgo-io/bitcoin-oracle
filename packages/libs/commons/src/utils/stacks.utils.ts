@@ -34,5 +34,5 @@ export function sha256(data: Uint8Array): Buffer {
 }
 
 export function assertNever(x: never) {
-  throw new Error('Unexpected object: ' + x);
+  throw new Error('Unexpected never: ' + x);
 }

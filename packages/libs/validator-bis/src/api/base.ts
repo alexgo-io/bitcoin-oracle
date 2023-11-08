@@ -71,7 +71,7 @@ export const BISTickerInfoResponseSchema = withDataSchema(BISTickerInfoSchema);
 
 export const BISBatchBalanceSchema = z.object({
   tick: UpperCaseStringSchema,
-  balance: z.string(),
+  balance: z.coerce.string().default('0'),
   transferrable_balance: z.string(),
   pkscript: z.string(),
   block_height: z.number(),

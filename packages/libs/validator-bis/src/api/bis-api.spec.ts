@@ -1,4 +1,4 @@
-import { getActivityOnBlock, getBalanceOnBlock } from './bis-api';
+import { getActivityOnBlock } from './bis-api';
 
 describe('BiS API', function () {
   it.skip('should get activity', async function () {
@@ -35742,37 +35742,6 @@ describe('BiS API', function () {
           "old_satpoint": "",
           "old_wallet": "",
           "tick": "sats",
-        },
-      ]
-    `);
-  });
-
-  // it('should get activity in batch', async function () {
-  //   const queue = new PQueue({ concurrency: 10 });
-  //   for (let i = 802396; i < 802398; i++) {
-  //     queue.add(async () => {
-  //       console.log(`getting: ${i}`);
-  //       const data = await getActivityOnBlock(i);
-  //       expect(data).toBeDefined();
-  //     });
-  //   }
-  //
-  //   await queue.onIdle();
-  // }, 1200e3);
-
-  it.skip('should get balance', async function () {
-    const data = await getBalanceOnBlock(
-      '0014ad42179475826f3cae94c1c3bae2797c6933a53a',
-      802397,
-    );
-
-    expect(data).toBeDefined();
-    expect(data.data).toMatchInlineSnapshot(`
-      [
-        {
-          "balance": "10000000000000000000000",
-          "tick": "rdex",
-          "transferrable_balance": "0",
         },
       ]
     `);
