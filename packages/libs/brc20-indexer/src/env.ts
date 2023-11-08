@@ -11,6 +11,7 @@ export const env = memoizee(() =>
       STACKS_NETWORK_TYPE: z.string(),
       STACKS_API_URL: z.string(),
       ALERT_URL: z.string().optional(),
+      STACKS_MAX_TX_PER_BLOCK: z.number().default(25),
     },
     runtimeEnv: process.env,
   }),

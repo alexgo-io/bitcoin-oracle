@@ -24,6 +24,7 @@ import * as fs from 'fs';
 import got from 'got-cjs';
 import fetch from 'node-fetch';
 import { alertToTelegram } from '../alert';
+import { env } from '../env';
 import {
   DeployContract,
   Operation,
@@ -72,7 +73,7 @@ export const processOperations =
     },
   ) =>
   async (operations: Operation[]) => {
-    const kStacksMaxTxPerBlockPerAccount = 18;
+    const kStacksMaxTxPerBlockPerAccount = env().STACKS_MAX_TX_PER_BLOCK;
     let currentMaxTxPerBlockPerAccount = kStacksMaxTxPerBlockPerAccount;
     const stacksAPIURL = options.stacksAPIURL;
     const chainID = options.chainID ?? ChainID.Testnet;
