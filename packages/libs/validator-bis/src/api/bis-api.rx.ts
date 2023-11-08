@@ -17,38 +17,45 @@ import {
   safeGetBatchBalanceOnBlock,
 } from './bis-api';
 
-const getActivityOnBlockMemoized = memoizee(getActivityOnBlock, {
+async function getActivityOnBlockInQueue(block: number) {
+  return getBISQueue()
+    .add(() => getActivityOnBlock(block))
+    .then(r => {
+      getLogger('bis-queue').debug(
+        `queue size: ${
+          getBISQueue().size
+        }. getActivityOnBlock, block: ${block}, result: ${r.data.length}`,
+      );
+      return r;
+    });
+}
+
+const getActivityOnBlockMemoized = memoizee(getActivityOnBlockInQueue, {
   promise: true,
   maxAge: 300e3,
 });
+
 export function getActivityOnBlock$(block: number) {
-  return from(
-    getBISQueue().add(() =>
-      getActivityOnBlockMemoized(block).then(r => {
-        getLogger('bis-queue').debug(
-          `queue size: ${getBISQueue().size}. getActivityOnBlock`,
-        );
-        return r;
-      }),
-    ),
-  );
+  return from(getActivityOnBlockMemoized(block));
 }
 
-const getTokenInfoMemoized = memoizee(getTokenInfo, {
+async function getTokenInfoInQueue(token: string) {
+  return getBISQueue()
+    .add(() => getTokenInfo(token))
+    .then(r => {
+      getLogger('bis-queue').debug(
+        `queue size: ${getBISQueue().size}. getTokenInfo [${token}]`,
+      );
+      return r;
+    });
+}
+
+const getTokenInfoMemoized = memoizee(getTokenInfoInQueue, {
   promise: true,
 });
 
 export function getTokenInfo$(token: string) {
-  return from(
-    getBISQueue().add(() =>
-      getTokenInfoMemoized(token).then(r => {
-        getLogger('bis-queue').debug(
-          `queue size: ${getBISQueue().size}. getTokenInfo`,
-        );
-        return r;
-      }),
-    ),
-  );
+  return from(getTokenInfoMemoized(token));
 }
 
 /*
