@@ -10,6 +10,7 @@ export const env = memoizee(() =>
       STACKS_VALIDATOR_ACCOUNT_ADDRESS: z.string().min(1),
       STACKS_VALIDATOR_ACCOUNT_SECRET: z.string().min(1),
       VALIDATOR_GENESIS_BLOCK_HEIGHT: z.coerce.number(),
+      RATE_LIMIT_PER_MINUTE: z.coerce.number().default(60),
     },
     runtimeEnv: process.env,
   }),
