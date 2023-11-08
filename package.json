@@ -107,7 +107,6 @@
     "ts-node": "10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2",
-    "verdaccio": "^5.27.0",
     "@nx/eslint": "17.0.3"
   },
   "nx": {
