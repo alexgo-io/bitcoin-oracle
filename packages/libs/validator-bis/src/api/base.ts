@@ -57,7 +57,6 @@ export const BISActivityOnBlockResponseSchema =
 export const BISBalanceSchema = z.object({
   tick: UpperCaseStringSchema,
   balance: z.string(),
-  transferrable_balance: z.string(),
 });
 export type BISBalance = z.infer<typeof BISBalanceSchema>;
 export const BISBalanceOnBlockResponseSchema =
@@ -72,7 +71,6 @@ export const BISTickerInfoResponseSchema = withDataSchema(BISTickerInfoSchema);
 export const BISBatchBalanceSchema = z.object({
   tick: UpperCaseStringSchema,
   balance: z.coerce.string().default('0'),
-  transferrable_balance: z.string(),
   pkscript: z.string(),
   block_height: z.number(),
 });
