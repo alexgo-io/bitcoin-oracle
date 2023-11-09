@@ -67,7 +67,10 @@ export async function getBatchBalanceOnBlock(
     const rawResult = await got
       .post(url, {
         json: {
-          queries: batches,
+          queries: batches.map(batch => ({
+            ...batch,
+            ticker: batch.ticker.toLowerCase(),
+          })),
         },
         headers: {
           'x-api-key': env().BIS_ACCESS_KEY,
