@@ -10,6 +10,9 @@ export async function getActivityOnBlock(
   const rawResult = await got(
     `${env().HIRO_B20_API_URL}/ordinals/v1/brc-20/activity`,
     {
+      headers: {
+        'x-hiro-api-key': env().HIRO_API_KEY,
+      },
       searchParams: {
         block_height: block,
         operation: 'transfer_send',
@@ -33,6 +36,9 @@ export async function getBalanceOnBlock(
   const rawResult = await got(
     `${env().HIRO_B20_API_URL}/ordinals/v1/brc-20/balances/${address}`,
     {
+      headers: {
+        'x-hiro-api-key': env().HIRO_API_KEY,
+      },
       searchParams: {
         block_height: block,
         offset,
@@ -51,6 +57,11 @@ export async function getTokenInfo(token: string) {
     `${env().HIRO_B20_API_URL}/ordinals/v1/brc-20/tokens/${encodeURIComponent(
       token,
     )}`,
+    {
+      headers: {
+        'x-hiro-api-key': env().HIRO_API_KEY,
+      },
+    },
   ).json();
 
   OTLP_Validator().counter['get-token-info'].add(1);

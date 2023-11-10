@@ -6,6 +6,7 @@ export const env = memoizee(() =>
   createEnv({
     server: {
       HIRO_B20_API_URL: z.string().default('https://api.hiro.so'),
+      HIRO_API_KEY: z.string().default(''),
       INDEXER_API_URL: z.string().default('http://localhost:8716'),
       STACKS_VALIDATOR_ACCOUNT_ADDRESS: z.string().min(1),
       STACKS_VALIDATOR_ACCOUNT_SECRET: z.string().min(1),
