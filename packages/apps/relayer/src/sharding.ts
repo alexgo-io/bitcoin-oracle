@@ -22,5 +22,5 @@ function shardIndex(key: string): bigint {
   );
 }
 export function shouldHandleForKey(key: string): boolean {
-  return shardIndex(key) === BigInt(env().SHARD_RELAYER_INDEX);
+  return shardIndex(key) === env().SHARD_RELAYER_INDEX;
 }
