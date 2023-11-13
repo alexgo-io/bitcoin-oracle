@@ -13,6 +13,7 @@ import PQueue from 'p-queue';
 import { exhaustMap, from, interval } from 'rxjs';
 import { Transaction } from 'scure-btc-signer-cjs';
 import { env } from '../env';
+import { shouldHandleForKey } from '../sharding';
 import { RelayerService } from './relayer.interface';
 import { RelayerRepository } from './relayer.repository';
 
@@ -54,7 +55,14 @@ export class DefaultRelayerService implements RelayerService {
         .encode;
     type TxManyInput = Parameters<typeof TxManyInputEncoder>[0][number];
     const txManyInputs: TxManyInput[] = [];
-    this.logger.log(`processing: ${rows.length} rows transactions`);
+    const shardRows = rows.filter(row =>
+      shouldHandleForKey(row.tx_id.toString('hex')),
+    );
+    this.logger.log(
+      `processing[${env().SHARD_RELAYER_INDEX}]: ${shardRows.length}/${
+        rows.length
+      } rows transactions`,
+    );
 
     const queue = new PQueue({ concurrency: 25 });
     const indexedTxs: {
@@ -70,7 +78,7 @@ export class DefaultRelayerService implements RelayerService {
       error: string;
     }[] = [];
 
-    for (const tx of rows) {
+    for (const tx of shardRows) {
       if (tx.tx_hash.length > 4096) {
         const tx_id = Transaction.fromRaw(tx.tx_id).id;
         this.logger.error(
