@@ -54,7 +54,6 @@ export class DefaultRelayerService implements RelayerService {
         .encode;
     type TxManyInput = Parameters<typeof TxManyInputEncoder>[0][number];
     const txManyInputs: TxManyInput[] = [];
-    this.logger.log(`processing: ${rows.length} rows transactions`);
 
     const queue = new PQueue({ concurrency: 25 });
     const indexedTxs: {

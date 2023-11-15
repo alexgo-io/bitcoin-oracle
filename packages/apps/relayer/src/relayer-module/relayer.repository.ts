@@ -5,6 +5,7 @@ import { m, ModelIndexer } from '@meta-protocols-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
 import { z } from 'zod';
 import { env } from '../env';
+import { shouldHandleForKey } from '../sharding';
 import { getWhitelistBRC20TokensCached } from './relayer.utils';
 
 export class RelayerRepository {
@@ -64,15 +65,20 @@ export class RelayerRepository {
           order by height asc
           ;
       `);
+
+      const shardPendingTxs = pendingTxs.rows.filter(tx =>
+        shouldHandleForKey(tx.tx_id.toString('hex')),
+      );
+
       this.logger.debug(
-        `got pendingTxs: ${pendingTxs.rows.length}, building proofs...`,
+        `got pendingTxs: ${shardPendingTxs.length}/${pendingTxs.rows.length}, building proofs...`,
       );
 
       type ResultType = z.infer<typeof txs_join_proof_schema>;
 
       const results: ResultType[] = [];
 
-      for (const tx of pendingTxs.rows) {
+      for (const tx of shardPendingTxs) {
         const proofs = await conn.many(SQL.type(proof_schema)`
           select *
           from indexer.proofs p
