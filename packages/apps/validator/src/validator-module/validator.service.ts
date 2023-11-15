@@ -1,19 +1,13 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import { ApiClient } from '@meta-protocols-oracle/api-client';
 import { getCurrentBitcoinHeader } from '@meta-protocols-oracle/bitcoin';
-import { parseErrorDetail } from '@meta-protocols-oracle/commons';
+import {
+  loopWithInterval,
+  parseErrorDetail,
+} from '@meta-protocols-oracle/commons';
 import { ValidatorProcessInterface } from '@meta-protocols-oracle/validator';
 import { Inject, Logger } from '@nestjs/common';
-import {
-  combineLatest,
-  concatMap,
-  exhaustMap,
-  interval,
-  map,
-  of,
-  range,
-  tap,
-} from 'rxjs';
+import { combineLatest, concatMap, map, of, range, tap } from 'rxjs';
 import { env } from '../env';
 import { ValidatorService } from './validator.interface';
 
@@ -62,47 +56,46 @@ export class DefaultValidatorService implements ValidatorService {
     );
   }
 
+  syncOnce() {
+    return combineLatest([
+      this.getFromBlockHeight(),
+      this.getToBlockHeight(),
+    ]).pipe(
+      map(([fromBlockHeight, toBlockHeight]) => ({
+        fromBlockHeight,
+        toBlockHeight,
+      })),
+      concatMap(({ toBlockHeight, fromBlockHeight }) => {
+        if (toBlockHeight <= fromBlockHeight) {
+          return of({});
+        }
+        this.logger.debug(
+          `- process fromBlockHeight: ${fromBlockHeight}, toBlockHeight: ${toBlockHeight}`,
+        );
+        return this.syncBlockHeight(fromBlockHeight, toBlockHeight);
+      }),
+    );
+  }
+
   startIntervalSync() {
     const syncIntervalMetric = OTLP_Validator().histogram['sync-duration'];
     let lastSync = Date.now();
 
-    interval(env().VALIDATOR_SYNC_POLL_INTERVAL)
-      .pipe(
-        exhaustMap(() =>
-          combineLatest([
-            this.getFromBlockHeight(),
-            this.getToBlockHeight(),
-          ]).pipe(
-            map(([fromBlockHeight, toBlockHeight]) => ({
-              fromBlockHeight,
-              toBlockHeight,
-            })),
-            concatMap(({ toBlockHeight, fromBlockHeight }) => {
-              if (toBlockHeight <= fromBlockHeight) {
-                return of({});
-              }
-              this.logger.debug(
-                `- process fromBlockHeight: ${fromBlockHeight}, toBlockHeight: ${toBlockHeight}`,
-              );
-              return this.syncBlockHeight(fromBlockHeight, toBlockHeight);
-            }),
-            tap(() => {
-              const now = Date.now();
-              syncIntervalMetric.record(now - lastSync);
-              lastSync = now;
+    loopWithInterval(
+      () => this.syncOnce(),
+      env().VALIDATOR_SYNC_POLL_INTERVAL,
+    ).subscribe({
+      error: err => {
+        this.logger.error(`startIntervalSync error: ${parseErrorDetail(err)}`);
+      },
+      next: () => {
+        const now = Date.now();
+        syncIntervalMetric.record(now - lastSync);
+        lastSync = now;
 
-              this.hasFinishedAtLeastOneSync = true;
-            }),
-          ),
-        ),
-      )
-      .subscribe({
-        error: err => {
-          this.logger.error(
-            `startIntervalSync error: ${parseErrorDetail(err)}`,
-          );
-        },
-      });
+        this.hasFinishedAtLeastOneSync = true;
+      },
+    });
   }
 
   async start() {

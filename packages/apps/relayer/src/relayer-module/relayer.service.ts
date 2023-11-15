@@ -6,11 +6,16 @@ import {
   kIndexerRegistryName,
   StacksCaller,
 } from '@meta-protocols-oracle/brc20-indexer';
-import { fastRetry, noAwait, toBuffer } from '@meta-protocols-oracle/commons';
+import {
+  fastRetry,
+  loopWithInterval,
+  noAwait,
+  toBuffer,
+} from '@meta-protocols-oracle/commons';
 import { Inject, Logger } from '@nestjs/common';
 import { chunk } from 'lodash';
 import PQueue from 'p-queue';
-import { exhaustMap, from, interval } from 'rxjs';
+import { from } from 'rxjs';
 import { Transaction } from 'scure-btc-signer-cjs';
 import { env } from '../env';
 import { RelayerService } from './relayer.interface';
@@ -36,13 +41,15 @@ export class DefaultRelayerService implements RelayerService {
   }
 
   async startRelayer() {
-    interval(env().RELAYER_SYNC_POLL_INTERVAL)
-      .pipe(
-        exhaustMap(() => {
-          return from(this.syncOnce());
-        }),
-      )
-      .subscribe();
+    loopWithInterval(
+      () => from(this.syncOnce()),
+      env().RELAYER_SYNC_POLL_INTERVAL,
+    ).subscribe({
+      error: err => {
+        this.logger.error(`syncOnce error: ${err}`);
+        throw err;
+      },
+    });
   }
 
   async syncOnce(): Promise<void> {
