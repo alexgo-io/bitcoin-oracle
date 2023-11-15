@@ -48,5 +48,13 @@ export const OTLP_BitcoinSync = memoizee(() => {
         unit: 'ms',
       }),
     },
+    gauge: {
+      height: meter.createObservableGauge(
+        'bitcoin-sync.latest-process-height',
+        {
+          description: `the latest txs height processed`,
+        },
+      ),
+    },
   };
 });

@@ -41,7 +41,13 @@ export class DefaultRelayerService implements RelayerService {
         submitted_by: env().STACKS_RELAYER_ACCOUNT_ADDRESS,
       });
     };
+
+    otlp.gauge.height.addCallback(ob => {
+      ob.observe(this.lastProcessedHeight);
+    });
   }
+
+  private lastProcessedHeight = -1;
 
   async startRelayer() {
     loopWithInterval(
@@ -248,6 +254,8 @@ export class DefaultRelayerService implements RelayerService {
               },
               'signature-packs': signaturePacks,
             });
+
+            otlp.counter['package-transfer'].add(1);
           } else {
             otlp.counter['update-already-indexed'].add(1);
             indexedTxs.push({
@@ -302,6 +310,13 @@ export class DefaultRelayerService implements RelayerService {
               result.error == null
                 ? otlp.counter['broadcast-indexer-tx'].add(1)
                 : otlp.counter['broadcast-indexer-tx-error'].add(1);
+
+              // update lastProcessedHeight for OTLP
+              if (inputs.length > 0) {
+                this.lastProcessedHeight = Number(
+                  inputs[inputs.length - 1].block.height,
+                );
+              }
 
               return this.relayerRepository.upsertSubmittedTx(
                 inputs.map(input => ({

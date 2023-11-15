@@ -15,11 +15,16 @@ export class DefaultValidatorService implements ValidatorService {
   private readonly logger = new Logger(DefaultValidatorService.name);
   private readonly api = new ApiClient(env().INDEXER_API_URL);
   private hasFinishedAtLeastOneSync = false;
+  private latestProcessedBlockHeight = -1;
 
   constructor(
     @Inject(ValidatorProcessInterface)
     private readonly processor: ValidatorProcessInterface,
-  ) {}
+  ) {
+    OTLP_Validator().gauge.height.addCallback(ob => {
+      ob.observe(this.latestProcessedBlockHeight);
+    });
+  }
   async getFromBlockHeight() {
     const latestBlocks = await this.api
       .indexer()
@@ -51,7 +56,11 @@ export class DefaultValidatorService implements ValidatorService {
 
   syncBlockHeight(from: number, to: number) {
     return range(from, to - from + 1).pipe(
-      concatMap(height => this.processor.processBlock$(height)),
+      concatMap(height =>
+        this.processor
+          .processBlock$(height)
+          .pipe(tap(() => (this.latestProcessedBlockHeight = height))),
+      ),
       tap(() => OTLP_Validator().counter['process-block'].add(1)),
     );
   }

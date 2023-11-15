@@ -37,6 +37,11 @@ export const OTLP_Relayer = memoizee((shard: string) => {
   const meter = meterProvider.getMeter(`relayer`);
 
   return {
+    gauge: {
+      height: meter.createObservableGauge('relayer.broadcast-tx-height', {
+        description: `the latest txs height broadcast by the relayer`,
+      }),
+    },
     counter: {
       'error-tx-hash-too-long': meter.createCounter(
         'relayer.error.tx-hash-too-long',
@@ -59,6 +64,9 @@ export const OTLP_Relayer = memoizee((shard: string) => {
           description: `update a tx that is already indexed`,
         },
       ),
+      'package-transfer': meter.createCounter('relayer.package-transfer', {
+        description: `relayer package a transfer into a bundle to submit to indexer`,
+      }),
       'broadcast-indexer-tx': meter.createCounter(
         'relayer.broadcast-indexer-tx',
         {

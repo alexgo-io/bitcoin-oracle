@@ -80,5 +80,10 @@ export const OTLP_Validator = memoizee(() => {
         valueType: ValueType.INT,
       }),
     },
+    gauge: {
+      height: meter.createObservableGauge('validator.latest-process-height', {
+        description: `the latest txs height processed by the validator`,
+      }),
+    },
   };
 });
