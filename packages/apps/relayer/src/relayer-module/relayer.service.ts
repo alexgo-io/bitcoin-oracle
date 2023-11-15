@@ -76,13 +76,15 @@ export class DefaultRelayerService implements RelayerService {
       error: string;
     }[] = [];
 
+    const otlp = OTLP_Relayer(`${env().SHARD_RELAYER_INDEX}`);
+
     for (const tx of rows) {
       if (tx.tx_hash.length > 4096) {
         const tx_id = Transaction.fromRaw(tx.tx_id).id;
         this.logger.error(
           `tx_hash too long: ${tx.tx_hash.length}, tx_id: ${tx_id}, output: ${tx.output}, satpoint: ${tx.satpoint}`,
         );
-        OTLP_Relayer().counter['error-tx-hash-too-long'].add(1);
+        otlp.counter['error-tx-hash-too-long'].add(1);
         txErrors.push({
           satpoint: tx.satpoint,
           output: tx.output,
@@ -171,7 +173,7 @@ export class DefaultRelayerService implements RelayerService {
 
             // mark the tx as error if any of the proofs does not match
             if (validateError.length > 0) {
-              OTLP_Relayer().counter['error-mismatch'].add(1);
+              otlp.counter['error-mismatch'].add(1);
               txErrors.push({
                 satpoint: tx.satpoint,
                 output: tx.output,
@@ -209,7 +211,7 @@ export class DefaultRelayerService implements RelayerService {
               serverOrderHashBuffer.toString('hex') !=
               firstProof.order_hash.toString('hex')
             ) {
-              OTLP_Relayer().counter['error-server-hash-mismatch'].add(1);
+              otlp.counter['error-server-hash-mismatch'].add(1);
               txErrors.push({
                 satpoint: tx.satpoint,
                 output: tx.output,
@@ -246,7 +248,7 @@ export class DefaultRelayerService implements RelayerService {
               'signature-packs': signaturePacks,
             });
           } else {
-            OTLP_Relayer().counter['update-already-indexed'].add(1);
+            otlp.counter['update-already-indexed'].add(1);
             indexedTxs.push({
               'bitcoin-tx': tx.tx_hash,
               offset: tx.satpoint,
@@ -285,7 +287,7 @@ export class DefaultRelayerService implements RelayerService {
           },
           {
             onSettled: () => {
-              OTLP_Relayer().counter['settle-indexer-tx'].add(1);
+              otlp.counter['settle-indexer-tx'].add(1);
               return this.relayerRepository.upsertSubmittedTx(
                 inputs.map(input => ({
                   tx_hash: Buffer.from(input.tx['bitcoin-tx']),
@@ -297,8 +299,8 @@ export class DefaultRelayerService implements RelayerService {
             },
             onBroadcast: (result, options) => {
               result.error == null
-                ? OTLP_Relayer().counter['broadcast-indexer-tx'].add(1)
-                : OTLP_Relayer().counter['broadcast-indexer-tx-error'].add(1);
+                ? otlp.counter['broadcast-indexer-tx'].add(1)
+                : otlp.counter['broadcast-indexer-tx-error'].add(1);
 
               return this.relayerRepository.upsertSubmittedTx(
                 inputs.map(input => ({
@@ -324,7 +326,7 @@ export class DefaultRelayerService implements RelayerService {
     await this.stacks.flushProcessOperation();
 
     const now = Date.now();
-    OTLP_Relayer().histogram['relay-duration'].record(now - lastSync);
+    otlp.histogram['relay-duration'].record(now - lastSync);
   }
 }
 

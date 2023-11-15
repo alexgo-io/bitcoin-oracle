@@ -10,10 +10,10 @@ import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
 import memoizee from 'memoizee';
 import { env } from './env';
 
-export const OTLP_Relayer = memoizee(() => {
+export const OTLP_Relayer = memoizee((shard: string) => {
   const meterProvider = new MeterProvider({
     resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: `relayer-app`,
+      [SemanticResourceAttributes.SERVICE_NAME]: `relayer-app-${shard}`,
     }),
   });
 
