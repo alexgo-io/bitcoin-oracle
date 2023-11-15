@@ -13,7 +13,8 @@ import { env } from './env';
 export const OTLP_Relayer = memoizee((shard: string) => {
   const meterProvider = new MeterProvider({
     resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: `relayer-app-${shard}`,
+      [SemanticResourceAttributes.SERVICE_NAME]: `bitcoin-oracle-relayer-${shard}`,
+      [SemanticResourceAttributes.SERVICE_VERSION]: '0.1.0',
     }),
   });
 
@@ -37,36 +38,48 @@ export const OTLP_Relayer = memoizee((shard: string) => {
 
   return {
     counter: {
-      'error-tx-hash-too-long': meter.createCounter('error-tx-hash-too-long', {
-        description: `encounter a tx hash too long error`,
-      }),
-      'error-mismatch': meter.createCounter('error-mismatch', {
+      'error-tx-hash-too-long': meter.createCounter(
+        'relayer.error.tx-hash-too-long',
+        {
+          description: `encounter a tx hash too long error`,
+        },
+      ),
+      'error-mismatch': meter.createCounter('relayer.error.hash-mismatch', {
         description: `encounter a mismatch error, validators submitted info does not match`,
       }),
       'error-server-hash-mismatch': meter.createCounter(
-        'error-server-hash-mismatch',
+        'relayer.error.server-hash-mismatch',
         {
           description: `encounter a server hash mismatch error`,
         },
       ),
-      'update-already-indexed': meter.createCounter('update-already-indexed', {
-        description: `update a tx that is already indexed`,
-      }),
-      'broadcast-indexer-tx': meter.createCounter('broadcast-indexer-tx', {
-        description: `broadcast a indexer tx`,
-      }),
+      'update-already-indexed': meter.createCounter(
+        'relayer.update-already-indexed',
+        {
+          description: `update a tx that is already indexed`,
+        },
+      ),
+      'broadcast-indexer-tx': meter.createCounter(
+        'relayer.broadcast-indexer-tx',
+        {
+          description: `broadcast a indexer tx`,
+        },
+      ),
       'broadcast-indexer-tx-error': meter.createCounter(
-        'broadcast-indexer-tx-error',
+        'relayer.error.broadcast-indexer-tx',
         {
           description: `broadcast a indexer tx failed`,
         },
       ),
-      'settle-indexer-tx': meter.createCounter('settle-indexer-tx', {
+      'settle-indexer-tx': meter.createCounter('relayer.settle-indexer-tx', {
         description: `a indexer tx is settled`,
+      }),
+      'did-RBF-broadcast': meter.createCounter('relayer.did-RBF-broadcast', {
+        description: `a tx is RBF`,
       }),
     },
     histogram: {
-      'relay-duration': meter.createHistogram('relay.duration', {
+      'relay-duration': meter.createHistogram('relayer.relay-duration', {
         description: `the time to take to relay in a loop`,
         valueType: ValueType.INT,
         unit: 'ms',

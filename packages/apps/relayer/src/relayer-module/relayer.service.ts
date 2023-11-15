@@ -21,6 +21,8 @@ import { env } from '../env';
 import { RelayerService } from './relayer.interface';
 import { RelayerRepository } from './relayer.repository';
 
+const otlp = OTLP_Relayer(`${env().SHARD_RELAYER_INDEX}`);
+
 export class DefaultRelayerService implements RelayerService {
   private readonly stacks = new StacksCaller(
     env().STACKS_RELAYER_ACCOUNT_SECRET,
@@ -32,6 +34,7 @@ export class DefaultRelayerService implements RelayerService {
     public readonly relayerRepository: RelayerRepository,
   ) {
     this.stacks.didRBFBroadcast = async ({ newTxId, nonce }) => {
+      otlp.counter['did-RBF-broadcast'].add(1);
       await this.relayerRepository.onRBFTx({
         newTxId: Buffer.from(newTxId),
         nonce,
@@ -75,8 +78,6 @@ export class DefaultRelayerService implements RelayerService {
       output: bigint;
       error: string;
     }[] = [];
-
-    const otlp = OTLP_Relayer(`${env().SHARD_RELAYER_INDEX}`);
 
     for (const tx of rows) {
       if (tx.tx_hash.length > 4096) {
