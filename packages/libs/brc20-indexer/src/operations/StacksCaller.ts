@@ -16,7 +16,6 @@ import { processOperations } from './processOperations';
 export class StacksCaller {
   private readonly logger = new Logger(StacksCaller.name, { timestamp: true });
   readonly address: string;
-  private readonly process: (operations: Operation[]) => Promise<number>;
   public operations: Operation[] = [];
 
   constructor(
@@ -27,10 +26,13 @@ export class StacksCaller {
       privateKey,
       getEnvStacksTransactionVersion(),
     );
-    this.process = processOperations(this.privateKey, {
+  }
+
+  private get process(): (operations: Operation[]) => Promise<number> {
+    return processOperations(this.privateKey, {
       stacksAPIURL: env().STACKS_API_URL,
       chainID: getEnvStacksChainID(),
-      contractAddress,
+      contractAddress: this.contractAddress,
       feeMultiplier: 2,
       puppetURL: env().STACKS_PUPPET_URL,
       didRBFBroadcast: this.didRBFBroadcast,

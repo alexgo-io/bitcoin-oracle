@@ -21,6 +21,8 @@ import { env } from '../env';
 import { RelayerService } from './relayer.interface';
 import { RelayerRepository } from './relayer.repository';
 
+const otlp = OTLP_Relayer(`${env().SHARD_RELAYER_INDEX}`);
+
 export class DefaultRelayerService implements RelayerService {
   private readonly stacks = new StacksCaller(
     env().STACKS_RELAYER_ACCOUNT_SECRET,
@@ -32,13 +34,20 @@ export class DefaultRelayerService implements RelayerService {
     public readonly relayerRepository: RelayerRepository,
   ) {
     this.stacks.didRBFBroadcast = async ({ newTxId, nonce }) => {
+      otlp.counter['did-RBF-broadcast'].add(1);
       await this.relayerRepository.onRBFTx({
         newTxId: Buffer.from(newTxId),
         nonce,
         submitted_by: env().STACKS_RELAYER_ACCOUNT_ADDRESS,
       });
     };
+
+    otlp.gauge.height.addCallback(ob => {
+      ob.observe(this.lastProcessedHeight);
+    });
   }
+
+  private lastProcessedHeight = -1;
 
   async startRelayer() {
     loopWithInterval(
@@ -82,7 +91,7 @@ export class DefaultRelayerService implements RelayerService {
         this.logger.error(
           `tx_hash too long: ${tx.tx_hash.length}, tx_id: ${tx_id}, output: ${tx.output}, satpoint: ${tx.satpoint}`,
         );
-        OTLP_Relayer().counter['error-tx-hash-too-long'].add(1);
+        otlp.counter['error-tx-hash-too-long'].add(1);
         txErrors.push({
           satpoint: tx.satpoint,
           output: tx.output,
@@ -171,7 +180,7 @@ export class DefaultRelayerService implements RelayerService {
 
             // mark the tx as error if any of the proofs does not match
             if (validateError.length > 0) {
-              OTLP_Relayer().counter['error-mismatch'].add(1);
+              otlp.counter['error-mismatch'].add(1);
               txErrors.push({
                 satpoint: tx.satpoint,
                 output: tx.output,
@@ -209,7 +218,7 @@ export class DefaultRelayerService implements RelayerService {
               serverOrderHashBuffer.toString('hex') !=
               firstProof.order_hash.toString('hex')
             ) {
-              OTLP_Relayer().counter['error-server-hash-mismatch'].add(1);
+              otlp.counter['error-server-hash-mismatch'].add(1);
               txErrors.push({
                 satpoint: tx.satpoint,
                 output: tx.output,
@@ -245,8 +254,10 @@ export class DefaultRelayerService implements RelayerService {
               },
               'signature-packs': signaturePacks,
             });
+
+            otlp.counter['package-transfer'].add(1);
           } else {
-            OTLP_Relayer().counter['update-already-indexed'].add(1);
+            otlp.counter['update-already-indexed'].add(1);
             indexedTxs.push({
               'bitcoin-tx': tx.tx_hash,
               offset: tx.satpoint,
@@ -285,7 +296,7 @@ export class DefaultRelayerService implements RelayerService {
           },
           {
             onSettled: () => {
-              OTLP_Relayer().counter['settle-indexer-tx'].add(1);
+              otlp.counter['settle-indexer-tx'].add(1);
               return this.relayerRepository.upsertSubmittedTx(
                 inputs.map(input => ({
                   tx_hash: Buffer.from(input.tx['bitcoin-tx']),
@@ -297,8 +308,15 @@ export class DefaultRelayerService implements RelayerService {
             },
             onBroadcast: (result, options) => {
               result.error == null
-                ? OTLP_Relayer().counter['broadcast-indexer-tx'].add(1)
-                : OTLP_Relayer().counter['broadcast-indexer-tx-error'].add(1);
+                ? otlp.counter['broadcast-indexer-tx'].add(1)
+                : otlp.counter['broadcast-indexer-tx-error'].add(1);
+
+              // update lastProcessedHeight for OTLP
+              if (inputs.length > 0) {
+                this.lastProcessedHeight = Number(
+                  inputs[inputs.length - 1].block.height,
+                );
+              }
 
               return this.relayerRepository.upsertSubmittedTx(
                 inputs.map(input => ({
@@ -324,7 +342,7 @@ export class DefaultRelayerService implements RelayerService {
     await this.stacks.flushProcessOperation();
 
     const now = Date.now();
-    OTLP_Relayer().histogram['relay-duration'].record(now - lastSync);
+    otlp.histogram['relay-duration'].record(now - lastSync);
   }
 }
 

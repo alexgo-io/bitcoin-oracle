@@ -15,10 +15,16 @@ export class DefaultBitcoinSyncWorkerService
   implements BitcoinSyncWorkerService
 {
   private readonly logger = new Logger(DefaultBitcoinSyncWorkerService.name);
+
+  private latestProcessedBlockHeight = -1;
   constructor(
     @Inject(BitcoinSyncWorkerRepository)
     private readonly repository: BitcoinSyncWorkerRepository,
-  ) {}
+  ) {
+    OTLP_BitcoinSync().gauge.height.addCallback(ob => {
+      ob.observe(this.latestProcessedBlockHeight);
+    });
+  }
   async start(): Promise<void> {
     this.logger.verbose(`starting sync`);
     await this.sync();
@@ -78,6 +84,8 @@ export class DefaultBitcoinSyncWorkerService
   }
 
   async insertBlock(header: string, height: number) {
+    this.latestProcessedBlockHeight = height;
+
     const headBuf = Buffer.from(header, 'hex');
     const rows = await this.repository.upsertBlock({
       height: BigInt(height),

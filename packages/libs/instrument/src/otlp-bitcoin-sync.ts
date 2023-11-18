@@ -13,7 +13,7 @@ import { env } from './env';
 export const OTLP_BitcoinSync = memoizee(() => {
   const meterProvider = new MeterProvider({
     resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: `bitcoin-sync-app`,
+      [SemanticResourceAttributes.SERVICE_NAME]: `bitcoin-oracle-bitcoin-sync`,
     }),
   });
 
@@ -37,16 +37,24 @@ export const OTLP_BitcoinSync = memoizee(() => {
 
   return {
     counter: {
-      upsertBlock: meter.createCounter('block.upsert', {
+      upsertBlock: meter.createCounter('bitcoin-sync.block-upsert', {
         description: `upsert block into database, either new or update existing`,
       }),
     },
     histogram: {
-      sync: meter.createHistogram('sync.duration', {
+      sync: meter.createHistogram('bitcoin-sync.sync-duration', {
         description: `the time to take to run sync once in a loop`,
         valueType: ValueType.INT,
         unit: 'ms',
       }),
+    },
+    gauge: {
+      height: meter.createObservableGauge(
+        'bitcoin-sync.latest-process-height',
+        {
+          description: `the latest txs height processed`,
+        },
+      ),
     },
   };
 });
