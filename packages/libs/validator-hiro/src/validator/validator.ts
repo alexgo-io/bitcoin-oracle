@@ -41,7 +41,12 @@ export function getHiroTxOnBlock$(block: number) {
   return getAllActivitiesOnBlock$(block, 60).pipe(
     retry(10),
     map(result => {
-      return result.filter(activity => activity.transfer_send != null);
+      return result.filter(
+        activity =>
+          activity.transfer_send != null &&
+          activity.transfer_send.from_address.length > 0 &&
+          activity.transfer_send.to_address.length > 0,
+      );
     }),
     mergeAll(),
     mergeMap(activity => {
