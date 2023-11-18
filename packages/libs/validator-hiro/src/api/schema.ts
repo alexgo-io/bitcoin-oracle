@@ -22,11 +22,8 @@ const HiroAmountBigIntSchema = z.preprocess((val, ctx) => {
 const HiroAddressToPKScriptSchema = z.preprocess((val, ctx) => {
   if (typeof val === 'string') {
     if (val.length === 0) {
-      ctx.addIssue({
-        code: 'custom',
-        message: `Invalid HiroAddressToPKScriptSchema: empty string`,
-      });
-      return z.never();
+      // decode as empty string to be filter out later
+      return '';
     }
     try {
       return Buffer.from(OutScript.encode(Address().decode(val))).toString(
