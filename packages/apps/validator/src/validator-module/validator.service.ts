@@ -2,6 +2,7 @@ import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import { ApiClient } from '@meta-protocols-oracle/api-client';
 import { getCurrentBitcoinHeader } from '@meta-protocols-oracle/bitcoin';
 import {
+  IntervalSignal,
   loopWithInterval,
   parseErrorDetail,
 } from '@meta-protocols-oracle/commons';
@@ -97,12 +98,14 @@ export class DefaultValidatorService implements ValidatorService {
       error: err => {
         this.logger.error(`startIntervalSync error: ${parseErrorDetail(err)}`);
       },
-      next: () => {
-        const now = Date.now();
-        syncIntervalMetric.record(now - lastSync);
-        lastSync = now;
+      next: result => {
+        if (result === IntervalSignal) {
+          const now = Date.now();
+          syncIntervalMetric.record(now - lastSync);
+          lastSync = now;
 
-        this.hasFinishedAtLeastOneSync = true;
+          this.hasFinishedAtLeastOneSync = true;
+        }
       },
     });
   }
