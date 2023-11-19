@@ -282,6 +282,12 @@ export class DefaultRelayerService implements RelayerService {
       await this.relayerRepository.setTxsWithError(txErrors);
     }
 
+    if (txManyInputs.length == 0) {
+      this.logger.debug(`No txManyInputs to index`);
+      // skip early to avoid reporting sync event
+      return;
+    }
+
     const kChunkSize = 25;
 
     const chunkInputs = chunk(txManyInputs, kChunkSize);
