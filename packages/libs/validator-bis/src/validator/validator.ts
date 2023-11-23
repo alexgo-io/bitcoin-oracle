@@ -21,6 +21,7 @@ import {
   map,
   mergeAll,
   mergeMap,
+  of,
   retry,
   tap,
 } from 'rxjs';
@@ -69,12 +70,21 @@ export function getBisTxOnBlock$(block: number) {
           ticker: activity.tick,
         }),
       ]).pipe(
-        map(([oldBalance, newBalance]) => {
-          return {
+        concatMap(([oldBalance, newBalance]) => {
+          if (
+            BigInt(oldBalance.balance) < 0 ||
+            BigInt(newBalance.balance) < 0
+          ) {
+            logger.error(
+              `balance less than 0 for ${activity.id}, inscription_id: ${activity.inscription_id}`,
+            );
+            return EMPTY;
+          }
+          return of({
             ...activity,
             from_bal: oldBalance.balance,
             to_bal: newBalance.balance,
-          };
+          });
         }),
       );
     }),
