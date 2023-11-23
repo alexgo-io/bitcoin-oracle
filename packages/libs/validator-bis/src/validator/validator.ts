@@ -49,6 +49,14 @@ export function getBisTxOnBlock$(block: number) {
         );
         return EMPTY;
       }
+
+      if (BigInt(activity.amount) <= 0) {
+        logger.error(
+          `amount (${activity.amount}) less than 0 for ${activity.id}, inscription_id: ${activity.inscription_id}`,
+        );
+        return EMPTY;
+      }
+
       return combineLatest([
         getBalanceOnBlockInBatchQueue$({
           pkscript: activity.old_pkscript,

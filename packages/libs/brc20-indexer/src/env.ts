@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { StacksMainnet, StacksMocknet } from '@stacks/network';
 import { ChainID, TransactionVersion } from '@stacks/transactions';
 import { createEnv } from '@t3-oss/env-core';
 import memoizee from 'memoizee';
+import fetch from 'node-fetch';
 import { z } from 'zod';
 
 export const env = memoizee(() =>
@@ -45,9 +47,15 @@ export function getEnvStacksChainID() {
 export function getEnvStacksNetwork() {
   const chainId = getEnvStacksChainID();
   if (chainId === ChainID.Mainnet) {
-    return new StacksMainnet({ url: env().STACKS_API_URL });
+    return new StacksMainnet({
+      url: env().STACKS_API_URL,
+      fetchFn: fetch as any,
+    });
   } else if (chainId === ChainID.Testnet) {
-    return new StacksMocknet({ url: env().STACKS_API_URL });
+    return new StacksMocknet({
+      url: env().STACKS_API_URL,
+      fetchFn: fetch as any,
+    });
   } else {
     throw new Error(`Unknown network type: ${env().STACKS_NETWORK_TYPE}`);
   }
