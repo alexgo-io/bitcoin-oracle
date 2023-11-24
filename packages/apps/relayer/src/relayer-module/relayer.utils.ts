@@ -1,4 +1,5 @@
 import { filterNotEmpty } from '@meta-protocols-oracle/commons';
+import assert from 'assert';
 import got from 'got-cjs';
 import memoizee from 'memoizee';
 
@@ -17,12 +18,14 @@ async function getWhitelistBRC20Tokens() {
   const brc20Tokens = items
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((item: any) => {
-      const m = item['id'].match(/^brc20-(.*)$/);
-      if (m != null) {
-        return m[1].toUpperCase();
-      } else {
-        return null;
+      const id = item['id'];
+      if (id.startsWith('brc20-')) {
+        const name = item['name'];
+        assert(name, `name is null for ${id}`);
+        return name.toUpperCase();
       }
+
+      return null;
     })
     .filter(filterNotEmpty);
 
