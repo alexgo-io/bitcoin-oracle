@@ -27,12 +27,17 @@ export class RelayerRepository {
         }),
       );
 
-      const tokenList = await getWhitelistBRC20TokensCached();
+      const isWhitelistEnabled = env().IS_WHITELIST_ENABLED;
+      const tokenList = isWhitelistEnabled
+        ? await getWhitelistBRC20TokensCached()
+        : [];
 
       this.logger.debug(
         `whitelist token list: ${tokenList.length}, getting pending tx...`,
       );
-      const pendingTxs = await conn.query(SQL.type(txs_schema)`
+      const pendingTxs = isWhitelistEnabled
+        ? // get pending txs with whitelist token list
+          await conn.query(SQL.type(txs_schema)`
           with pending_txs as (select *
                                from indexer.txs
                                where not exists (select 1
@@ -51,6 +56,36 @@ export class RelayerRepository {
                                    tokenList,
                                    'text',
                                  )})
+                                 group by 1
+                                 having count(*) >=
+                                        (select minimal_proof_count
+                                         from indexer_config.relayer_configs
+                                         limit 1)),
+               qualified_txs_with_proof as (select *
+                                            from qualified_txs
+                                                     join pending_txs p on qualified_txs.id = p.id)
+
+          select *
+          from qualified_txs_with_proof
+          order by height asc
+          ;
+      `)
+        : // get pending txs without whitelist token list
+          await conn.query(SQL.type(txs_schema)`
+          with pending_txs as (select *
+                               from indexer.txs
+                               where not exists (select 1
+                                                 from indexer.submitted_tx
+                                                 where txs.id = submitted_tx.id)
+                                 and error is null
+                                 and length(tx_hash) <= 4096
+                                 and height >= ${
+                                   env().RELAYER_MINIMAL_BLOCK_HEIGHT
+                                 }
+                               ),
+               qualified_txs as (select pt.id, count(*)
+                                 from pending_txs pt
+                                          join indexer.proofs pf on pt.id = pf.id
                                  group by 1
                                  having count(*) >=
                                         (select minimal_proof_count
