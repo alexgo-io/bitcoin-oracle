@@ -40,5 +40,3 @@ export const getWhitelistBRC20TokensCached = memoizee(getWhitelistBRC20Tokens, {
   maxAge: 1000 * 60 * 60,
   promise: true,
 });
-
-getWhitelistBRC20TokensCached(); //?
