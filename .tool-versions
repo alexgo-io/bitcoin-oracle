@@ -4,3 +4,4 @@ direnv 2.32.2
 yarn 1.22.19
 yq 4.25.1
 deno 1.37.0
+postgres 15.5
