@@ -24,6 +24,11 @@ async function _getActivityOnBlock(
         start,
         limit,
       },
+      retry: {
+        limit: 10,
+        // add retrying for 403 error code, due to unisat report 403 when rate limit hit
+        statusCodes: [403, 408, 413, 429, 500, 502, 503, 504, 521, 522, 524],
+      },
     },
   ).json();
 
@@ -59,6 +64,11 @@ async function _getBalanceOnBlock(
       searchParams: {
         start,
         limit,
+      },
+      retry: {
+        limit: 10,
+        // add retrying for 403 error code, due to unisat report 403 when rate limit hit
+        statusCodes: [403, 408, 413, 429, 500, 502, 503, 504, 521, 522, 524],
       },
     },
   ).json();
