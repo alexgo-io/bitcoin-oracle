@@ -11,7 +11,8 @@
     "micro-stacks": "^1.2.1",
     "p-queue": "^6.6.2",
     "scure-btc-signer-cjs": "^1.0.1",
-    "bitcoinjs-lib": "^6.1.3"
+    "bitcoinjs-lib": "^6.1.3",
+    "p-retry": "^4.6.2"
   },
   "type": "module",
   "main": "./src/index.js",
