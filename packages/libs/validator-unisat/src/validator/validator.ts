@@ -23,6 +23,7 @@ import {
   of,
   retry,
 } from 'rxjs';
+import { parseUnits } from 'viem';
 import {
   PKScriptToUnisatAddressSchema,
   UnisatType,
@@ -30,6 +31,7 @@ import {
   getAllBalancesOnBlock$,
 } from '../api';
 import { env } from '../env';
+import { getUnisatQueue } from '../queue';
 
 const logger = new Logger('unisat', { timestamp: true });
 function getBalance(balances: UnisatType<'balance'>[] | null, tick: string) {
@@ -64,7 +66,9 @@ export function getUnisatTxOnBlock$(block: number) {
         retry(5),
         concatMap(([oldBalances, newBalances]) => {
           logger.verbose(
-            `got [getUnisatTxOnBlock$] for tx ${activity.txid} - ${block}`,
+            `got [getUnisatTxOnBlock$] for tx ${
+              activity.txid
+            } - ${block} - [q:${getUnisatQueue().size}]`,
           );
 
           const oldBalance = getBalance(oldBalances, activity.ticker);
@@ -102,33 +106,20 @@ export function getIndexerTxOnBlock$(block: number) {
   );
 }
 
-function convertToBigInt(
-  decimalFloatString: string,
-  scaleFactor: number,
-): bigint {
-  // Remove the decimal point from the string and parse it as BigInt
-  const [integerPart, fractionalPart] = decimalFloatString.split('.');
-  if (fractionalPart == null) {
-    return BigInt(integerPart.padEnd(scaleFactor, '0'));
-  }
-  const withoutDecimal = integerPart + fractionalPart.padEnd(scaleFactor, '0');
-  return BigInt(withoutDecimal.slice(0, integerPart.length + scaleFactor));
-}
-
 async function submitIndexerTx(
   tx: Unobservable<ReturnType<typeof getIndexerTxOnBlock$>>,
 ) {
   const order_hash = generateOrderHash({
-    amt: convertToBigInt(tx.amount, tx.decimals),
+    amt: parseUnits(tx.amount, tx.decimals),
     decimals: BigInt(tx.decimals),
     from: Buffer.from(tx.from, 'hex'),
     to: Buffer.from(tx.to, 'hex'),
-    'from-bal': BigInt(tx.from_bal),
-    'to-bal': BigInt(tx.to_bal),
+    'from-bal': parseUnits(tx.from_bal, tx.decimals),
+    'to-bal': parseUnits(tx.to_bal, tx.decimals),
     'bitcoin-tx': Buffer.from(tx.tx, 'hex'),
     tick: tx.ticker,
     output: BigInt(tx.vout),
-    offset: BigInt(tx.satoshi),
+    offset: BigInt(tx.offset),
   });
   const signature = await signOrderHash(
     env().STACKS_VALIDATOR_ACCOUNT_SECRET,
@@ -144,7 +135,7 @@ async function submitIndexerTx(
       header: tx.header,
       height: tx.height,
       tx_hash: tx.tx,
-      satpoint: tx.satoshi.toString(),
+      satpoint: tx.offset.toString(),
       proof_hashes: tx.proof.hashes,
       tx_index: tx.proof['tx-index'].toString(10),
       tree_depth: tx.proof['tree-depth'].toString(10),
@@ -152,10 +143,10 @@ async function submitIndexerTx(
       to: tx.to,
       output: tx.vout.toString(),
       tick: tx.ticker,
-      amt: tx.amount.toString(),
+      amt: parseUnits(tx.amount, tx.decimals).toString(10),
       decimals: tx.decimals.toString(),
-      from_bal: tx.from_bal.toString(),
-      to_bal: tx.to_bal.toString(),
+      from_bal: parseUnits(tx.from_bal, tx.decimals).toString(10),
+      to_bal: parseUnits(tx.to_bal, tx.decimals).toString(10),
       order_hash: order_hash.toString('hex'),
       signature: signature.toString('hex'),
       signer: env().STACKS_VALIDATOR_ACCOUNT_ADDRESS,

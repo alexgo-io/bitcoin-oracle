@@ -83,6 +83,7 @@ const UnisatTypeSchema = z.enum([
   'transfer',
   'inscribe-transfer',
   'inscribe-mint',
+  'inscribe-deploy',
 ]);
 
 const activity = z.object({
@@ -94,7 +95,7 @@ const activity = z.object({
   txid: z.string(),
   amount: z.string(),
   vout: z.number(),
-  satoshi: z.number(),
+  offset: z.number(),
 });
 
 function createPaginationSchema<T extends z.ZodTypeAny>(schema: T) {
