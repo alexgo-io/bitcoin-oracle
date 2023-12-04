@@ -79,15 +79,15 @@ export async function findStacksBlockAtHeight(
     electrumClient.blockchain_block_header(height),
     getStacksHeight(height),
   ]);
-  if (typeof stacksHeight !== 'undefined') {
-    return {
-      header,
-      prevBlocks,
-      stacksHeight,
-    };
-  }
-  prevBlocks.unshift(header);
-  return findStacksBlockAtHeight(height + 1, prevBlocks, electrumClient);
+  // if (typeof stacksHeight !== 'undefined') {
+  return {
+    header,
+    prevBlocks,
+    stacksHeight,
+  };
+  // }
+  // prevBlocks.unshift(header);
+  // return findStacksBlockAtHeight(height + 1, prevBlocks, electrumClient);
 }
 
 export async function getStacksHeight(burnHeight: number) {
@@ -142,7 +142,7 @@ export async function getTxData(txid: string) {
       height: stacksHeight,
     };
 
-    const txHex = getTxHex(tx.hex);
+    // const txHex = getTxHex(tx.hex);
 
     const proofArg = {
       hashes: hashes,

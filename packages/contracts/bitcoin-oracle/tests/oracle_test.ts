@@ -5,6 +5,7 @@ import {
   buff,
   Chain,
   Clarinet,
+  contractNames,
   headerToTupleCV,
   prepareChainBasicTest,
   proofToTupleCV,
@@ -119,13 +120,13 @@ const transfer_event = {
 };
 
 Clarinet.test({
-  name: 'clarity-bitcoin-v1-02: can parse and verify tx',
+  name: `${contractNames.clarityBitcoin} can parse and verify tx`,
   async fn(chain: Chain, accounts: Map<string, Account>) {
     const deployer = accounts.get('deployer')!;
 
     const transferrable_parsed = chain
       .callReadOnlyFn(
-        'clarity-bitcoin-v1-02',
+        contractNames.clarityBitcoin,
         'parse-wtx',
         [buff(transferrable_data.tx)],
         deployer.address,
@@ -134,7 +135,7 @@ Clarinet.test({
       .expectTuple();
     const transfer_parsed = chain
       .callReadOnlyFn(
-        'clarity-bitcoin-v1-02',
+        contractNames.clarityBitcoin,
         'parse-wtx',
         [buff(transfer_data.tx)],
         deployer.address,
@@ -143,14 +144,14 @@ Clarinet.test({
       .expectTuple();
 
     const inscribe_header_hash = chain.callReadOnlyFn(
-      'clarity-bitcoin-v1-02',
+      contractNames.clarityBitcoin,
       'get-txid',
       [buff(transferrable_data.header)],
       deployer.address,
     ).result;
     let block = chain.mineBlock([
       Tx.contractCall(
-        'clarity-bitcoin-v1-02',
+        contractNames.clarityBitcoin,
         'mock-add-burnchain-block-header-hash',
         [types.uint(transferrable_data.burnHeight), inscribe_header_hash],
         deployer.address,
@@ -163,7 +164,7 @@ Clarinet.test({
     console.log(
       `can get classic txid of segwit tx: ${
         chain.callReadOnlyFn(
-          'clarity-bitcoin-v1-02',
+          contractNames.clarityBitcoin,
           'get-segwit-txid',
           [buff(transferrable_data.tx)],
           deployer.address,
@@ -173,7 +174,7 @@ Clarinet.test({
     console.log(
       `can get wtxid of segwit tx: ${
         chain.callReadOnlyFn(
-          'clarity-bitcoin-v1-02',
+          contractNames.clarityBitcoin,
           'get-txid',
           [buff(transferrable_data.tx)],
           deployer.address,
@@ -184,7 +185,7 @@ Clarinet.test({
     console.log(
       `can verify block header: ${
         chain.callReadOnlyFn(
-          'clarity-bitcoin-v1-02',
+          contractNames.clarityBitcoin,
           'verify-block-header',
           [
             buff(transferrable_data.header),
@@ -198,7 +199,7 @@ Clarinet.test({
     console.log(
       `can verify if segwit tx was mined ${
         chain.callReadOnlyFn(
-          'clarity-bitcoin-v1-02',
+          contractNames.clarityBitcoin,
           'was-segwit-tx-mined?',
           [
             headerToTupleCV({
@@ -210,13 +211,13 @@ Clarinet.test({
           ],
           deployer.address,
         ).result
-      }`,
+      } `,
     );
   },
 });
 
 Clarinet.test({
-  name: 'oracle-v1-02: can hash, validate and index',
+  name: `${contractNames.oracle} can hash, validate and index`,
   async fn(chain: Chain, accounts: Map<string, Account>) {
     const deployer = accounts.get('deployer')!;
     const validator = accounts.get('wallet_1')!;
@@ -249,28 +250,28 @@ Clarinet.test({
     };
 
     const hashed = chain.callReadOnlyFn(
-      'oracle-v1-02',
+      contractNames.oracle,
       'hash-tx',
       [txToTupleCV(tx)],
       deployer.address,
     ).result;
     assertEquals(hashed, txHash);
-    console.log(`can hash tx correctly: ${hashed == txHash}`);
+    console.log(`can hash tx correctly: ${hashed == txHash} `);
 
     console.log(
       `can validate tx: ${
         chain.callReadOnlyFn(
-          'oracle-v1-02',
+          contractNames.oracle,
           'validate-tx',
           [txHash, signPackToTupleCV(signaturePack)],
           deployer.address,
         ).result
-      }`,
+      } `,
     );
 
     let block = chain.mineBlock([
       Tx.contractCall(
-        'oracle-v1-02',
+        contractNames.oracle,
         'index-tx-many',
         [
           types.list([

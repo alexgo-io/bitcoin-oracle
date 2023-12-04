@@ -11,7 +11,6 @@ export {
   Chain,
   Clarinet,
   Tx,
-  contractNames,
   noneCV,
   principalCV,
   someCV,
@@ -21,9 +20,10 @@ export {
 };
 export type { Account };
 
-const contractNames = {
-  oracle: 'oracle-v1-02',
+export const contractNames = {
+  oracle: 'oracle-v1-03',
   registry: 'oracle-registry-v1-01',
+  clarityBitcoin: 'clarity-bitcoin-v1-03',
 };
 
 const uintCV = types.uint;
@@ -169,44 +169,44 @@ export function prepareChainBasicTest(
 
   return chain.mineBlock([
     Tx.contractCall(
-      'oracle-registry-v1-01',
+      contractNames.registry,
       'approve-operator',
       ['.' + contractNames.oracle, types.bool(true)],
       deployer.address,
     ),
     Tx.contractCall(
-      'oracle-registry-v1-01',
+      contractNames.registry,
       'set-paused',
       [types.bool(false)],
       deployer.address,
     ),
     Tx.contractCall(
-      'oracle-v1-02',
+      contractNames.oracle,
       'set-paused',
       [types.bool(false)],
       deployer.address,
     ),
     Tx.contractCall(
-      'oracle-v1-02',
+      contractNames.oracle,
       'set-required-validators',
       [types.uint(1)],
       deployer.address,
     ),
     Tx.contractCall(
-      'oracle-v1-02',
+      contractNames.oracle,
       'add-validator',
       [buff(wallet_1_pubkey), types.principal(wallet_1.address)],
       deployer.address,
     ),
     Tx.contractCall(
-      'oracle-v1-02',
+      contractNames.oracle,
       'approve-relayer',
       [types.principal(wallet_2.address), types.bool(true)],
       deployer.address,
     ),
     Tx.contractCall(
       // for live-testing
-      'oracle-v1-02',
+      contractNames.oracle,
       'add-validator',
       [
         buff(
@@ -218,7 +218,7 @@ export function prepareChainBasicTest(
     ),
     Tx.contractCall(
       // for live-testing
-      'oracle-v1-02',
+      contractNames.oracle,
       'approve-relayer',
       [
         types.principal('SPMTYQTVWDH61Z0354KHD8EQQ36V8DX5R67P3DD0'),
