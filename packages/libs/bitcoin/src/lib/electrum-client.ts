@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { default as ElectrumClientSL } from 'electrum-client-sl';
+import pRetry from 'p-retry';
 import { env } from '../env';
 
 export interface Unspent {
@@ -80,10 +81,13 @@ export interface TypedElectrumClient {
 export async function withElectrumClient<T = void>(
   cb: (client: TypedElectrumClient) => Promise<T>,
 ): Promise<T> {
-  const client = new ElectrumClientSL(
-    env.ELECTRUM_HOST,
-    env.ELECTRUM_PORT,
-    env.ELECTRUM_PROTOCOL,
+  const client = await pRetry(
+    () =>
+      new ElectrumClientSL(
+        env.ELECTRUM_HOST,
+        env.ELECTRUM_PORT,
+        env.ELECTRUM_PROTOCOL,
+      ),
   );
   await client.connect();
 

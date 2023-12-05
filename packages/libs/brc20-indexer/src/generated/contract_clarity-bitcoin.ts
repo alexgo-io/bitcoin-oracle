@@ -85,11 +85,6 @@ export const clarityBitcoin = defineContract({
       output: booleanT,
       mode: 'readonly',
     },
-    'is-segwit-tx': {
-      input: [{ name: 'tx', type: bufferT }],
-      output: responseSimpleT(booleanT),
-      mode: 'readonly',
-    },
     'parse-block-header': {
       input: [{ name: 'headerbuff', type: bufferT }],
       output: responseSimpleT(

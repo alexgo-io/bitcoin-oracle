@@ -45,8 +45,8 @@
         "contracts": [
           "clarity-bitcoin",
           "utils",
-          "indexer-registry",
-          "indexer"
+          "oracle-registry-v1-01",
+          "oracle-v1-02"
         ],
         "deployerSecretKey": "${STACKS_DEPLOYER_ACCOUNT_SECRET}",
         "puppetURL": "${STACKS_PUPPET_URL}",
@@ -88,7 +88,11 @@
           {
             "name": "indexer",
             "principal": "${STACKS_DEPLOYER_ACCOUNT_ADDRESS}",
-            "contracts": ["clarity-bitcoin", "indexer", "indexer-registry"],
+            "contracts": [
+              "clarity-bitcoin",
+              "oracle-registry-v1-01",
+              "oracle-v1-02"
+            ],
             "packageName": "../codegenImport"
           }
         ]

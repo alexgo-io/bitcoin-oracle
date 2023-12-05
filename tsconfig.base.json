@@ -40,6 +40,9 @@
       "@meta-protocols-oracle/validator-hiro": [
         "packages/libs/validator-hiro/src/index.ts"
       ],
+      "@meta-protocols-oracle/validator-unisat": [
+        "packages/libs/validator-unisat/src/index.ts"
+      ],
       "nx-stacks": ["packages/plugins/nx-stacks/src/index.ts"]
     }
   },

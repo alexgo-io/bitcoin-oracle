@@ -1,25 +1,28 @@
 import { getLogger } from '@meta-protocols-oracle/commons';
 import memoizee from 'memoizee';
 import { EMPTY, expand, from, reduce } from 'rxjs';
-import { getHiroQueue } from '../queue';
-import { getActivityOnBlock, getBalanceOnBlock, getTokenInfo } from './api.raw';
-import { HiroAPISchema, HiroType } from './schema';
+import { getUnisatQueue } from '../queue';
+import {
+  getActivityOnBlock,
+  getBalanceOnBlock,
+  kUnisatPageLimit,
+} from './api.raw';
+import { UnisatAPISchema, UnisatType } from './schema';
 
-const getActivityOnBlockMemoized = memoizee(getActivityOnBlock, {
-  promise: true,
-  maxAge: 300e3,
-  length: 3,
-});
-export function getActivityOnBlock$(block: number, offset = 0, limit = 60) {
+export function getActivityOnBlock$(
+  block: number,
+  offset = 0,
+  limit = kUnisatPageLimit,
+) {
   return from(
-    getHiroQueue().add(() =>
-      getActivityOnBlockMemoized(block, offset, limit).then(activity => {
-        const result = HiroAPISchema.activity.safeParse(activity);
+    getUnisatQueue().add(() =>
+      getActivityOnBlock(block, offset, limit).then(activity => {
+        const result = UnisatAPISchema.activity.safeParse(activity);
         if (result.success) {
-          return result.data;
+          return result.data.data.data;
         }
 
-        getLogger('hiro-api-parsing').error(
+        getLogger('unisat-api-parsing').error(
           `Failed to parse activity on block ${block} at offset ${offset} with limit ${limit}, error: ${result.error}`,
         );
 
@@ -33,13 +36,13 @@ export function getActivityOnBlock$(block: number, offset = 0, limit = 60) {
 
 export function getAllActivitiesOnBlock$(
   block: number,
-  pageLimit = 60,
+  pageLimit = kUnisatPageLimit,
   totalLimit = Number.MAX_SAFE_INTEGER,
 ) {
   let offset = 0;
   return getActivityOnBlock$(block, 0, pageLimit).pipe(
     expand(value => {
-      if (value.results.length === 0) {
+      if (value.detail.length === 0) {
         return EMPTY;
       }
       if (value?.total == null) {
@@ -55,8 +58,8 @@ export function getAllActivitiesOnBlock$(
       return getActivityOnBlock$(block, offset, pageLimit);
     }),
     reduce(
-      (acc, current) => acc.concat(current.results),
-      [] as HiroType<'activity'>[],
+      (acc, current) => acc.concat(current.detail),
+      [] as UnisatType<'activity'>[],
     ),
   );
 }
@@ -71,12 +74,12 @@ export function getBalanceOnBlock$(
   address: string,
   block: number,
   offset = 0,
-  limit = 60,
+  limit = kUnisatPageLimit,
 ) {
   return from(
-    getHiroQueue().add(() =>
+    getUnisatQueue().add(() =>
       getBalanceOnBlockMemoized(address, block, offset, limit).then(
-        HiroAPISchema.balance.parse,
+        UnisatAPISchema.balance.parse,
       ),
     ),
   );
@@ -85,19 +88,19 @@ export function getBalanceOnBlock$(
 export function getAllBalancesOnBlock$(
   block: number,
   address: string,
-  pageLimit = 60,
+  pageLimit = kUnisatPageLimit,
   totalLimit = Number.MAX_SAFE_INTEGER,
 ) {
   let offset = 0;
   return getBalanceOnBlock$(address, block, 0, pageLimit).pipe(
     expand(value => {
-      if (value.results.length === 0) {
+      if (value.data.data.detail.length === 0) {
         return EMPTY;
       }
-      if (value?.total == null) {
+      if (value?.data.data.total == null) {
         return EMPTY;
       }
-      if (offset + pageLimit >= value.total) {
+      if (offset + pageLimit >= value.data.data.total) {
         return EMPTY;
       }
       if (offset + pageLimit >= totalLimit) {
@@ -107,18 +110,8 @@ export function getAllBalancesOnBlock$(
       return getBalanceOnBlock$(address, block, offset, pageLimit);
     }),
     reduce(
-      (acc, current) => acc.concat(current.results),
-      [] as HiroType<'balance'>[],
-    ),
-  );
-}
-
-export const getTokenInfoMemoized = memoizee(getTokenInfo, { promise: true });
-
-export function getTokenInfo$(token: string) {
-  return from(
-    getHiroQueue().add(() =>
-      getTokenInfoMemoized(token).then(HiroAPISchema.tokens.parse),
+      (acc, current) => acc.concat(current.data.data.detail),
+      [] as UnisatType<'balance'>[],
     ),
   );
 }
