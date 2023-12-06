@@ -1,3 +1,4 @@
+import { getLogger } from '@meta-protocols-oracle/commons';
 import { UpperCaseStringSchema } from '@meta-protocols-oracle/types';
 import { Address, OutScript } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
@@ -13,10 +14,9 @@ const UnisatAddressToPKScriptSchema = z.preprocess((val, ctx) => {
         'hex',
       );
     } catch (e) {
-      ctx.addIssue({
-        code: 'custom',
-        message: `Invalid UnisatAddressToPKScriptSchema: [${val}]. ${e}`,
-      });
+      const message = `Invalid UnisatAddressToPKScriptSchema: [${val}]. ${e}`;
+      getLogger('address-to-pkscript').warn(message);
+      return '';
     }
   } else {
     ctx.addIssue({
@@ -40,10 +40,9 @@ export const PKScriptToUnisatAddressSchema = z.preprocess((val, ctx) => {
     try {
       return Address().encode(OutScript.decode(Buffer.from(val, 'hex')));
     } catch (e) {
-      ctx.addIssue({
-        code: 'custom',
-        message: `Invalid PKScriptToUnisatAddressSchema: [${val}]. ${e}`,
-      });
+      const message = `Invalid PKScriptToUnisatAddressSchema: [${val}]. ${e}`;
+      getLogger('address-to-pkscript').warn(message);
+      return '';
     }
   } else {
     ctx.addIssue({
