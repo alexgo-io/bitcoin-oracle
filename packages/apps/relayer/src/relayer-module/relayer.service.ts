@@ -20,6 +20,7 @@ import { Transaction } from 'scure-btc-signer-cjs';
 import { env } from '../env';
 import { RelayerService } from './relayer.interface';
 import { RelayerRepository } from './relayer.repository';
+import { getMajorityProofs } from './relayer.utils';
 
 const otlp = OTLP_Relayer(`${env().SHARD_RELAYER_INDEX}`);
 
@@ -118,68 +119,74 @@ export class DefaultRelayerService implements RelayerService {
 
           // error: the tx is not indexed yet
           if (isIndexedTx.type === 'error') {
-            const firstProof = tx.proofs[0];
-            let validateError = '';
-            tx.proofs.forEach(proof => {
-              if (
-                proof.from.toString('hex') != firstProof.from.toString('hex')
-              ) {
-                validateError += `from: ${proof.from.toString('hex')}[${
-                  proof.type
-                }] != ${firstProof.from.toString('hex')}[${
-                  firstProof.type
-                }].\n`;
-              }
-              if (proof.to.toString('hex') != firstProof.to.toString('hex')) {
-                validateError += `to: ${proof.to.toString('hex')}[${
-                  proof.type
-                }] != ${firstProof.to.toString('hex')}[${firstProof.type}].\n`;
-              }
-              if (proof.amt != firstProof.amt) {
-                validateError += `amt: ${proof.amt}[${proof.type}] != ${firstProof.amt}[${firstProof.type}].\n`;
-              }
-              if (proof.from_bal != firstProof.from_bal) {
-                validateError += `from_bal: ${proof.from_bal}[${proof.type}] != ${firstProof.from_bal}[${firstProof.type}].\n`;
-              }
-              if (proof.to_bal != firstProof.to_bal) {
-                validateError += `to_bal: ${proof.to_bal}[${proof.type}] != ${firstProof.to_bal}[${firstProof.type}].\n`;
-              }
-              if (proof.satpoint != firstProof.satpoint) {
-                validateError += `satpoint: ${proof.satpoint}[${proof.type}] != ${firstProof.satpoint}[${firstProof.type}].\n`;
-              }
-              if (proof.output != firstProof.output) {
-                validateError += `output: ${proof.output}[${proof.type}] != ${firstProof.output}[${firstProof.type}].\n`;
-              }
-              if (proof.tick != firstProof.tick) {
-                validateError += `tick: ${proof.tick}[${proof.type}] != ${firstProof.tick}[${firstProof.type}].\n`;
-              }
-              if (proof.decimals != firstProof.decimals) {
-                validateError += `decimals: ${proof.decimals}[${proof.type}] != ${firstProof.decimals}[${firstProof.type}].\n`;
-              }
+            const majorityProofs = getMajorityProofs(tx.proofs);
+            const firstProof = majorityProofs?.[0];
+            if (majorityProofs == null || firstProof == null) {
+              let validateError = '';
+              // validator can't agree on majority proof
+              // then we build error message
+              const firstProof = tx.proofs[0];
+              tx.proofs.forEach(proof => {
+                if (
+                  proof.from.toString('hex') != firstProof.from.toString('hex')
+                ) {
+                  validateError += `from: ${proof.from.toString('hex')}[${
+                    proof.type
+                  }] != ${firstProof.from.toString('hex')}[${
+                    firstProof.type
+                  }].\n`;
+                }
+                if (proof.to.toString('hex') != firstProof.to.toString('hex')) {
+                  validateError += `to: ${proof.to.toString('hex')}[${
+                    proof.type
+                  }] != ${firstProof.to.toString('hex')}[${
+                    firstProof.type
+                  }].\n`;
+                }
+                if (proof.amt != firstProof.amt) {
+                  validateError += `amt: ${proof.amt}[${proof.type}] != ${firstProof.amt}[${firstProof.type}].\n`;
+                }
+                if (proof.from_bal != firstProof.from_bal) {
+                  validateError += `from_bal: ${proof.from_bal}[${proof.type}] != ${firstProof.from_bal}[${firstProof.type}].\n`;
+                }
+                if (proof.to_bal != firstProof.to_bal) {
+                  validateError += `to_bal: ${proof.to_bal}[${proof.type}] != ${firstProof.to_bal}[${firstProof.type}].\n`;
+                }
+                if (proof.satpoint != firstProof.satpoint) {
+                  validateError += `satpoint: ${proof.satpoint}[${proof.type}] != ${firstProof.satpoint}[${firstProof.type}].\n`;
+                }
+                if (proof.output != firstProof.output) {
+                  validateError += `output: ${proof.output}[${proof.type}] != ${firstProof.output}[${firstProof.type}].\n`;
+                }
+                if (proof.tick != firstProof.tick) {
+                  validateError += `tick: ${proof.tick}[${proof.type}] != ${firstProof.tick}[${firstProof.type}].\n`;
+                }
+                if (proof.decimals != firstProof.decimals) {
+                  validateError += `decimals: ${proof.decimals}[${proof.type}] != ${firstProof.decimals}[${firstProof.type}].\n`;
+                }
 
-              if (
-                proof.tx_id.toString('hex') != firstProof.tx_id.toString('hex')
-              ) {
-                validateError += `tx_id: ${proof.tx_id.toString('hex')}[${
-                  proof.type
-                }] != ${firstProof.tx_id.toString('hex')}[${
-                  firstProof.type
-                }].\n`;
-              }
-              if (
-                proof.order_hash.toString('hex') !=
-                firstProof.order_hash.toString('hex')
-              ) {
-                validateError += `order_hash: ${proof.order_hash.toString(
-                  'hex',
-                )}[${proof.type}] != ${firstProof.order_hash.toString('hex')}[${
-                  firstProof.type
-                }].\n`;
-              }
-            });
+                if (
+                  proof.tx_id.toString('hex') !=
+                  firstProof.tx_id.toString('hex')
+                ) {
+                  validateError += `tx_id: ${proof.tx_id.toString('hex')}[${
+                    proof.type
+                  }] != ${firstProof.tx_id.toString('hex')}[${
+                    firstProof.type
+                  }].\n`;
+                }
+                if (
+                  proof.order_hash.toString('hex') !=
+                  firstProof.order_hash.toString('hex')
+                ) {
+                  validateError += `order_hash: ${proof.order_hash.toString(
+                    'hex',
+                  )}[${proof.type}] != ${firstProof.order_hash.toString(
+                    'hex',
+                  )}[${firstProof.type}].\n`;
+                }
+              });
 
-            // mark the tx as error if any of the proofs does not match
-            if (validateError.length > 0) {
               otlp.counter['error-mismatch'].add(1);
               txErrors.push({
                 satpoint: tx.satpoint,
