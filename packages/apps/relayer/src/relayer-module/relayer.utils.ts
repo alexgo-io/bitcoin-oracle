@@ -3,7 +3,6 @@ import assert from 'assert';
 import got from 'got-cjs';
 import memoizee from 'memoizee';
 import { countBy, pipe, sort, toPairs } from 'ramda';
-import { env } from '../env';
 
 async function getWhitelistBRC20Tokens() {
   const data = await got('https://hasura-console.alexlab.co/v1/graphql', {
@@ -45,6 +44,7 @@ export const getWhitelistBRC20TokensCached = memoizee(getWhitelistBRC20Tokens, {
 
 export function getMajorityProofs<T extends { signature: Buffer }>(
   proofs: T[],
+  minimalProofCount: number,
 ) {
   const count = pipe(
     countBy((p: { signature: Buffer }) => p.signature.toString('hex')),
@@ -52,12 +52,12 @@ export function getMajorityProofs<T extends { signature: Buffer }>(
     sort((a, b) => b[1] - a[1]),
   )(proofs);
 
-  const winnerProofs = count[0];
+  const winnerProofs = count[0]; //?
   if (winnerProofs == null) {
     return null;
   }
 
-  if (winnerProofs[1] < env().RELAYER_MINIMAL_AGREEMENT_COUNT) {
+  if (winnerProofs[1] < minimalProofCount) {
     return null;
   }
 
@@ -73,10 +73,11 @@ export function getMajorityProofs<T extends { signature: Buffer }>(
 /*?
 getMajorityProofs(
   [
-    { signature: Buffer.from('0') },
-    { signature: Buffer.from('1') },
-    { signature: Buffer.from('1') },
+    { signature: Buffer.from('2'), a: 1 },
+    { signature: Buffer.from('1'), b: 2 },
+    { signature: Buffer.from('1'), c: 3 },
+    { signature: Buffer.from('1'), c: 3 },
   ],
   2,
 );
- */
+*/

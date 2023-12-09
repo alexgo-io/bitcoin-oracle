@@ -13,6 +13,7 @@ import {
   toBuffer,
 } from '@meta-protocols-oracle/commons';
 import { Inject, Logger } from '@nestjs/common';
+import assert from 'assert';
 import { chunk } from 'lodash';
 import PQueue from 'p-queue';
 import { from } from 'rxjs';
@@ -119,13 +120,17 @@ export class DefaultRelayerService implements RelayerService {
 
           // error: the tx is not indexed yet
           if (isIndexedTx.type === 'error') {
-            const majorityProofs = getMajorityProofs(tx.proofs);
+            const majorityProofs = getMajorityProofs(
+              tx.proofs,
+              env().RELAYER_MINIMAL_AGREEMENT_COUNT,
+            );
             const firstProof = majorityProofs?.[0];
-            if (majorityProofs == null || firstProof == null) {
+            assert(firstProof != null, `!firstProof-null`);
+
+            if (majorityProofs == null) {
               let validateError = '';
               // validator can't agree on majority proof
               // then we build error message
-              const firstProof = tx.proofs[0];
               tx.proofs.forEach(proof => {
                 if (
                   proof.from.toString('hex') != firstProof.from.toString('hex')
