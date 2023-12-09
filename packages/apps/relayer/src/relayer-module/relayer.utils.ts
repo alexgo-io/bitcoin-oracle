@@ -42,12 +42,12 @@ export const getWhitelistBRC20TokensCached = memoizee(getWhitelistBRC20Tokens, {
   promise: true,
 });
 
-export function getMajorityProofs<T extends { signature: Buffer }>(
+export function getMajorityProofs<T extends { order_hash: Buffer }>(
   proofs: T[],
   minimalProofCount: number,
 ) {
   const count = pipe(
-    countBy((p: { signature: Buffer }) => p.signature.toString('hex')),
+    countBy((p: { order_hash: Buffer }) => p.order_hash.toString('hex')),
     toPairs,
     sort((a, b) => b[1] - a[1]),
   )(proofs);
@@ -61,10 +61,10 @@ export function getMajorityProofs<T extends { signature: Buffer }>(
     return null;
   }
 
-  const winnerSignature = winnerProofs[0];
+  const winnerOrderHash = winnerProofs[0];
 
   const selectedProofs = proofs.filter(
-    p => p.signature.toString('hex') === winnerSignature,
+    p => p.order_hash.toString('hex') === winnerOrderHash,
   );
 
   return selectedProofs;
@@ -73,10 +73,10 @@ export function getMajorityProofs<T extends { signature: Buffer }>(
 /*?
 getMajorityProofs(
   [
-    { signature: Buffer.from('2'), a: 1 },
-    { signature: Buffer.from('1'), b: 2 },
-    { signature: Buffer.from('1'), c: 3 },
-    { signature: Buffer.from('1'), c: 3 },
+    { order_hash: Buffer.from('2'), a: 1 },
+    { order_hash: Buffer.from('1'), b: 2 },
+    { order_hash: Buffer.from('1'), c: 3 },
+    { order_hash: Buffer.from('1'), c: 3 },
   ],
   2,
 );
