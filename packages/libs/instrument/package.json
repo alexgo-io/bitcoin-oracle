@@ -11,6 +11,7 @@
     "@opentelemetry/sdk-metrics": "^1.17.1",
     "@opentelemetry/semantic-conventions": "^1.17.1",
     "tslib": "^2.6.2",
-    "@meta-protocols-oracle/types": "*"
+    "@meta-protocols-oracle/types": "*",
+    "@meta-protocols-oracle/commons": "*"
   }
 }

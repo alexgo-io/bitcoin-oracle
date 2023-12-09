@@ -1,3 +1,4 @@
+import { getLogger } from '@meta-protocols-oracle/commons';
 import { ValueType } from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { Resource } from '@opentelemetry/resources';
@@ -29,6 +30,18 @@ export const OTLP_Validator = memoizee(() => {
   meterProvider.addMetricReader(metricReader);
 
   const meter = meterProvider.getMeter(`validator`);
+  const processNewBlockCounter = meter.createCounter(
+    'validator.process-block',
+    {
+      description: `processor finish process a block, this does remove duplicated ones`,
+    },
+  );
+
+  const processNewBlockAddOne = memoizee((blockNumber: number) => {
+    getLogger('validator').verbose(`process nwe block ${blockNumber}`);
+    processNewBlockCounter.add(1);
+    return blockNumber;
+  });
 
   return {
     counter: {
@@ -42,8 +55,9 @@ export const OTLP_Validator = memoizee(() => {
         description: 'get a bitcoin tx from electrum client',
       }),
       'process-block': meter.createCounter('validator.process-block', {
-        description: `processor finish process a block`,
+        description: `processor finish process a block, this does not remove duplicated ones`,
       }),
+      'process-new-block': { addOne: processNewBlockAddOne },
       'submit-indexer-tx': meter.createCounter('validator.submit-indexer-tx', {
         description: `submit tx to indexer api`,
       }),

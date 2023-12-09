@@ -8,7 +8,7 @@ import {
 } from '@meta-protocols-oracle/commons';
 import { ValidatorProcessInterface } from '@meta-protocols-oracle/validator';
 import { Inject, Logger } from '@nestjs/common';
-import { combineLatest, concatMap, map, of, range, tap } from 'rxjs';
+import { combineLatest, concat, concatMap, defer, map, of, range } from 'rxjs';
 import { env } from '../env';
 import { ValidatorService } from './validator.interface';
 
@@ -58,11 +58,16 @@ export class DefaultValidatorService implements ValidatorService {
   syncBlockHeight(from: number, to: number) {
     return range(from, to - from + 1).pipe(
       concatMap(height =>
-        this.processor
-          .processBlock$(height)
-          .pipe(tap(() => (this.latestProcessedBlockHeight = height))),
+        concat(
+          this.processor.processBlock$(height),
+          defer(() => {
+            OTLP_Validator().counter['process-block'].add(1);
+            OTLP_Validator().counter['process-new-block'].addOne(height);
+            this.latestProcessedBlockHeight = height;
+            return of(height);
+          }),
+        ),
       ),
-      tap(() => OTLP_Validator().counter['process-block'].add(1)),
     );
   }
 
