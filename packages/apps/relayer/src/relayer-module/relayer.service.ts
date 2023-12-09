@@ -119,163 +119,167 @@ export class DefaultRelayerService implements RelayerService {
           );
 
           // error: the tx is not indexed yet
-          if (isIndexedTx.type === 'error') {
-            const majorityProofs = getMajorityProofs(
-              tx.proofs,
-              env().RELAYER_MINIMAL_AGREEMENT_COUNT,
+          if (isIndexedTx.type !== 'error') {
+            this.logger.debug(
+              `tx already indexed: ${tx.tx_hash}, type: ${isIndexedTx.type}`,
             );
-            const firstProof = majorityProofs?.[0];
-            assert(firstProof != null, `!firstProof-null`);
-
-            if (majorityProofs == null) {
-              let validateError = '';
-              // validator can't agree on majority proof
-              // then we build error message
-              tx.proofs.forEach(proof => {
-                if (
-                  proof.from.toString('hex') != firstProof.from.toString('hex')
-                ) {
-                  validateError += `from: ${proof.from.toString('hex')}[${
-                    proof.type
-                  }] != ${firstProof.from.toString('hex')}[${
-                    firstProof.type
-                  }].\n`;
-                }
-                if (proof.to.toString('hex') != firstProof.to.toString('hex')) {
-                  validateError += `to: ${proof.to.toString('hex')}[${
-                    proof.type
-                  }] != ${firstProof.to.toString('hex')}[${
-                    firstProof.type
-                  }].\n`;
-                }
-                if (proof.amt != firstProof.amt) {
-                  validateError += `amt: ${proof.amt}[${proof.type}] != ${firstProof.amt}[${firstProof.type}].\n`;
-                }
-                if (proof.from_bal != firstProof.from_bal) {
-                  validateError += `from_bal: ${proof.from_bal}[${proof.type}] != ${firstProof.from_bal}[${firstProof.type}].\n`;
-                }
-                if (proof.to_bal != firstProof.to_bal) {
-                  validateError += `to_bal: ${proof.to_bal}[${proof.type}] != ${firstProof.to_bal}[${firstProof.type}].\n`;
-                }
-                if (proof.satpoint != firstProof.satpoint) {
-                  validateError += `satpoint: ${proof.satpoint}[${proof.type}] != ${firstProof.satpoint}[${firstProof.type}].\n`;
-                }
-                if (proof.output != firstProof.output) {
-                  validateError += `output: ${proof.output}[${proof.type}] != ${firstProof.output}[${firstProof.type}].\n`;
-                }
-                if (proof.tick != firstProof.tick) {
-                  validateError += `tick: ${proof.tick}[${proof.type}] != ${firstProof.tick}[${firstProof.type}].\n`;
-                }
-                if (proof.decimals != firstProof.decimals) {
-                  validateError += `decimals: ${proof.decimals}[${proof.type}] != ${firstProof.decimals}[${firstProof.type}].\n`;
-                }
-
-                if (
-                  proof.tx_id.toString('hex') !=
-                  firstProof.tx_id.toString('hex')
-                ) {
-                  validateError += `tx_id: ${proof.tx_id.toString('hex')}[${
-                    proof.type
-                  }] != ${firstProof.tx_id.toString('hex')}[${
-                    firstProof.type
-                  }].\n`;
-                }
-                if (
-                  proof.order_hash.toString('hex') !=
-                  firstProof.order_hash.toString('hex')
-                ) {
-                  validateError += `order_hash: ${proof.order_hash.toString(
-                    'hex',
-                  )}[${proof.type}] != ${firstProof.order_hash.toString(
-                    'hex',
-                  )}[${firstProof.type}].\n`;
-                }
-              });
-
-              otlp.counter['error-mismatch'].add(1);
-              txErrors.push({
-                satpoint: tx.satpoint,
-                output: tx.output,
-                tx_hash: tx.tx_hash,
-                error: validateError,
-              });
-              return;
-            }
-
-            const signaturePacks = tx.proofs.map(proof => ({
-              signature: proof.signature,
-              signer: proof.signer,
-              'tx-hash': proof.order_hash,
-            }));
-
-            const serverOrderHash = await fastRetry(() =>
-              this.stacks.readonlyCaller()(kIndexerContractName, 'hash-tx', {
-                tx: {
-                  output: tx.output,
-                  'bitcoin-tx': tx.tx_hash,
-                  offset: tx.satpoint,
-                  decimals: firstProof.decimals,
-                  from: firstProof.from,
-                  to: firstProof.to,
-                  amt: firstProof.amt,
-                  'from-bal': firstProof.from_bal,
-                  'to-bal': firstProof.to_bal,
-                  tick: firstProof.tick,
-                },
-              }),
-            );
-
-            const serverOrderHashBuffer = Buffer.from(serverOrderHash);
-            if (
-              serverOrderHashBuffer.toString('hex') !=
-              firstProof.order_hash.toString('hex')
-            ) {
-              otlp.counter['error-server-hash-mismatch'].add(1);
-              txErrors.push({
-                satpoint: tx.satpoint,
-                output: tx.output,
-                tx_hash: tx.tx_hash,
-                error: `!server_order_hash-mismatch: server: ${serverOrderHashBuffer.toString(
-                  'hex',
-                )} != proof: ${firstProof.order_hash.toString('hex')}`,
-              });
-              return;
-            }
-
-            txManyInputs.push({
-              block: {
-                height: tx.height,
-                header: tx.header,
-              },
-              proof: {
-                'tx-index': tx.tx_index,
-                'tree-depth': tx.tree_depth,
-                hashes: tx.proof_hashes,
-              },
-              tx: {
-                output: tx.output,
-                offset: tx.satpoint,
-                'bitcoin-tx': tx.tx_hash,
-                decimals: firstProof.decimals,
-                from: firstProof.from,
-                tick: firstProof.tick,
-                'from-bal': firstProof.from_bal,
-                'to-bal': firstProof.to_bal,
-                to: firstProof.to,
-                amt: firstProof.amt,
-              },
-              'signature-packs': signaturePacks,
-            });
-
-            otlp.counter['package-transfer'].add(1);
-          } else {
             otlp.counter['update-already-indexed'].add(1);
             indexedTxs.push({
               'bitcoin-tx': tx.tx_hash,
               offset: tx.satpoint,
               output: tx.output,
             });
+            return;
           }
+
+          const majorityProofs = getMajorityProofs(
+            tx.proofs,
+            env().RELAYER_MINIMAL_AGREEMENT_COUNT,
+          );
+
+          if (majorityProofs == null) {
+            const firstProof = tx.proofs[0];
+            let validateError = '';
+            // validator can't agree on majority proof
+            // then we build error message
+            tx.proofs.forEach(proof => {
+              if (
+                proof.from.toString('hex') != firstProof.from.toString('hex')
+              ) {
+                validateError += `from: ${proof.from.toString('hex')}[${
+                  proof.type
+                }] != ${firstProof.from.toString('hex')}[${
+                  firstProof.type
+                }].\n`;
+              }
+              if (proof.to.toString('hex') != firstProof.to.toString('hex')) {
+                validateError += `to: ${proof.to.toString('hex')}[${
+                  proof.type
+                }] != ${firstProof.to.toString('hex')}[${firstProof.type}].\n`;
+              }
+              if (proof.amt != firstProof.amt) {
+                validateError += `amt: ${proof.amt}[${proof.type}] != ${firstProof.amt}[${firstProof.type}].\n`;
+              }
+              if (proof.from_bal != firstProof.from_bal) {
+                validateError += `from_bal: ${proof.from_bal}[${proof.type}] != ${firstProof.from_bal}[${firstProof.type}].\n`;
+              }
+              if (proof.to_bal != firstProof.to_bal) {
+                validateError += `to_bal: ${proof.to_bal}[${proof.type}] != ${firstProof.to_bal}[${firstProof.type}].\n`;
+              }
+              if (proof.satpoint != firstProof.satpoint) {
+                validateError += `satpoint: ${proof.satpoint}[${proof.type}] != ${firstProof.satpoint}[${firstProof.type}].\n`;
+              }
+              if (proof.output != firstProof.output) {
+                validateError += `output: ${proof.output}[${proof.type}] != ${firstProof.output}[${firstProof.type}].\n`;
+              }
+              if (proof.tick != firstProof.tick) {
+                validateError += `tick: ${proof.tick}[${proof.type}] != ${firstProof.tick}[${firstProof.type}].\n`;
+              }
+              if (proof.decimals != firstProof.decimals) {
+                validateError += `decimals: ${proof.decimals}[${proof.type}] != ${firstProof.decimals}[${firstProof.type}].\n`;
+              }
+
+              if (
+                proof.tx_id.toString('hex') != firstProof.tx_id.toString('hex')
+              ) {
+                validateError += `tx_id: ${proof.tx_id.toString('hex')}[${
+                  proof.type
+                }] != ${firstProof.tx_id.toString('hex')}[${
+                  firstProof.type
+                }].\n`;
+              }
+              if (
+                proof.order_hash.toString('hex') !=
+                firstProof.order_hash.toString('hex')
+              ) {
+                validateError += `order_hash: ${proof.order_hash.toString(
+                  'hex',
+                )}[${proof.type}] != ${firstProof.order_hash.toString('hex')}[${
+                  firstProof.type
+                }].\n`;
+              }
+            });
+
+            otlp.counter['error-mismatch'].add(1);
+            txErrors.push({
+              satpoint: tx.satpoint,
+              output: tx.output,
+              tx_hash: tx.tx_hash,
+              error: validateError,
+            });
+            return;
+          }
+
+          const firstProof = majorityProofs?.[0];
+          assert(firstProof != null, `!firstProof-null`);
+
+          const signaturePacks = majorityProofs.map(proof => ({
+            signature: proof.signature,
+            signer: proof.signer,
+            'tx-hash': proof.order_hash,
+          }));
+
+          const serverOrderHash = await fastRetry(() =>
+            this.stacks.readonlyCaller()(kIndexerContractName, 'hash-tx', {
+              tx: {
+                output: tx.output,
+                'bitcoin-tx': tx.tx_hash,
+                offset: tx.satpoint,
+                decimals: firstProof.decimals,
+                from: firstProof.from,
+                to: firstProof.to,
+                amt: firstProof.amt,
+                'from-bal': firstProof.from_bal,
+                'to-bal': firstProof.to_bal,
+                tick: firstProof.tick,
+              },
+            }),
+          );
+
+          const serverOrderHashBuffer = Buffer.from(serverOrderHash);
+          if (
+            serverOrderHashBuffer.toString('hex') !=
+            firstProof.order_hash.toString('hex')
+          ) {
+            otlp.counter['error-server-hash-mismatch'].add(1);
+            txErrors.push({
+              satpoint: tx.satpoint,
+              output: tx.output,
+              tx_hash: tx.tx_hash,
+              error: `!server_order_hash-mismatch: server: ${serverOrderHashBuffer.toString(
+                'hex',
+              )} != proof: ${firstProof.order_hash.toString('hex')}`,
+            });
+            return;
+          }
+
+          // passed validation, add to queue: txManyInputs
+          txManyInputs.push({
+            block: {
+              height: tx.height,
+              header: tx.header,
+            },
+            proof: {
+              'tx-index': tx.tx_index,
+              'tree-depth': tx.tree_depth,
+              hashes: tx.proof_hashes,
+            },
+            tx: {
+              output: tx.output,
+              offset: tx.satpoint,
+              'bitcoin-tx': tx.tx_hash,
+              decimals: firstProof.decimals,
+              from: firstProof.from,
+              tick: firstProof.tick,
+              'from-bal': firstProof.from_bal,
+              'to-bal': firstProof.to_bal,
+              to: firstProof.to,
+              amt: firstProof.amt,
+            },
+            'signature-packs': signaturePacks,
+          });
+
+          otlp.counter['package-transfer'].add(1);
         }),
       );
     }
