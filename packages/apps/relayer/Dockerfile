@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=node:20.5.1-bullseye-slim
+ARG BASE_IMAGE=node:20.9.0-bullseye-slim
 ARG PROJECT_NAME=relayer
 
 FROM $BASE_IMAGE as deps
