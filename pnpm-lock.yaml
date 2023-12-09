@@ -559,6 +559,9 @@ importers:
 
   packages/libs/instrument:
     dependencies:
+      '@meta-protocols-oracle/commons':
+        specifier: '*'
+        version: link:../commons
       '@meta-protocols-oracle/types':
         specifier: '*'
         version: link:../types
