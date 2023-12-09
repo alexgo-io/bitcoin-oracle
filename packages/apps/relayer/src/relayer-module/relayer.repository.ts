@@ -27,17 +27,13 @@ export class RelayerRepository {
         }),
       );
 
-      const isWhitelistEnabled = env().IS_WHITELIST_ENABLED;
-      const tokenList = isWhitelistEnabled
-        ? await getWhitelistBRC20TokensCached()
-        : [];
-
-      this.logger.debug(
-        `whitelist token list: ${tokenList.length}, getting pending tx...`,
-      );
-      const pendingTxs = isWhitelistEnabled
-        ? // get pending txs with whitelist token list
-          await conn.query(SQL.type(txs_schema)`
+      const pendingTxs = await (async () => {
+        if (env().IS_WHITELIST_ENABLED) {
+          const tokenList = await getWhitelistBRC20TokensCached();
+          this.logger.debug(
+            `whitelist token list: ${tokenList.length}, getting pending tx...`,
+          );
+          return await conn.query(SQL.type(txs_schema)`
           with pending_txs as (select *
                                from indexer.txs
                                where not exists (select 1
@@ -67,11 +63,13 @@ export class RelayerRepository {
 
           select *
           from qualified_txs_with_proof
-          order by height asc
+          order by height
           ;
-      `)
-        : // get pending txs without whitelist token list
-          await conn.query(SQL.type(txs_schema)`
+      `);
+        } else {
+          this.logger.debug(`getting all pending tx...`);
+
+          return await conn.query(SQL.type(txs_schema)`
           with pending_txs as (select *
                                from indexer.txs
                                where not exists (select 1
@@ -97,9 +95,11 @@ export class RelayerRepository {
 
           select *
           from qualified_txs_with_proof
-          order by height asc
+          order by height
           ;
       `);
+        }
+      })();
 
       const shardPendingTxs = pendingTxs.rows.filter(tx =>
         shouldHandleForKey(tx.tx_id.toString('hex')),
