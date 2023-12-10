@@ -34,6 +34,8 @@ export function indexer(baseURL: string) {
               })
               .json<APIOf<'txs', 'response', 'json'>>();
 
+            const uniqueId = `${params.order_hash}-${params.signature}`;
+            OTLP_Validator().counter['submit-new-indexer-tx'].addOne(uniqueId);
             OTLP_Validator().counter['submit-indexer-tx'].add(1);
 
             return rs;

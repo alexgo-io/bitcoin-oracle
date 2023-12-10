@@ -43,6 +43,20 @@ export const OTLP_Validator = memoizee(() => {
     return blockNumber;
   });
 
+  const submitNewIndexerTxCounter = meter.createCounter(
+    'validator.submit-new-indexer-tx',
+    {
+      description: `submit new tx to indexer api`,
+    },
+  );
+
+  const submitNewIndexerTx = memoizee((uniqueId: string) => {
+    getLogger('validator').verbose(`submit new indexer tx ${uniqueId}`);
+    submitNewIndexerTxCounter.add(1);
+
+    return uniqueId;
+  });
+
   return {
     counter: {
       'get-current-bitcoin-header': meter.createCounter(
@@ -58,6 +72,7 @@ export const OTLP_Validator = memoizee(() => {
         description: `processor finish process a block, this does not remove duplicated ones`,
       }),
       'process-new-block': { addOne: processNewBlockAddOne },
+      'submit-new-indexer-tx': { addOne: submitNewIndexerTx },
       'submit-indexer-tx': meter.createCounter('validator.submit-indexer-tx', {
         description: `submit tx to indexer api`,
       }),
