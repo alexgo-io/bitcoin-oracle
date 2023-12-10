@@ -7,6 +7,7 @@ export const env = memoizee(() =>
     server: {
       STACKS_RELAYER_ACCOUNT_SECRET: z.string().nullish(),
       STACKS_DEPLOYER_ACCOUNT_ADDRESS: z.string().nullish(),
+      NODE_DATABASE_URL: z.string().nullish(),
     },
     runtimeEnv: process.env,
   }),
