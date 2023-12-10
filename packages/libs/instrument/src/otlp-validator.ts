@@ -31,7 +31,7 @@ export const OTLP_Validator = memoizee(() => {
 
   const meter = meterProvider.getMeter(`validator`);
   const processNewBlockCounter = meter.createCounter(
-    'validator.process-block',
+    'validator.process-new-block',
     {
       description: `processor finish process a block, this does remove duplicated ones`,
     },
