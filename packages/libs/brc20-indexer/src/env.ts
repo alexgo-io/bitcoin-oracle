@@ -5,6 +5,37 @@ import { createEnv } from '@t3-oss/env-core';
 import memoizee from 'memoizee';
 import fetch from 'node-fetch';
 import { z } from 'zod';
+const StageFeeNumberSchema = z.preprocess((val, ctx) => {
+  if (typeof val !== 'string') {
+    ctx.addIssue({
+      code: 'invalid_type',
+      received: typeof val,
+      expected: 'string',
+    });
+    return z.NEVER;
+  }
+  const numbers = z.array(z.coerce.number()).parse(val.split(','));
+  // check duplication
+  if (numbers.length !== new Set(numbers).size) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Array contains duplicate values',
+    });
+    return z.NEVER;
+  }
+
+  // check if sorted ascending
+  const sortedNumbers = [...numbers].sort();
+  if (numbers.some((n, i) => n !== sortedNumbers[i])) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Array is not sorted ascending',
+    });
+    return z.NEVER;
+  }
+
+  return numbers;
+}, z.array(z.number()));
 
 export const env = memoizee(() =>
   createEnv({
@@ -14,6 +45,7 @@ export const env = memoizee(() =>
       STACKS_API_URL: z.string(),
       ALERT_URL: z.string().optional(),
       STACKS_MAX_TX_PER_BLOCK: z.number().default(25),
+      STACKS_RBF_STAGES: StageFeeNumberSchema.default('0.08, 0.12, 0.24, 0.48'),
     },
     runtimeEnv: process.env,
   }),

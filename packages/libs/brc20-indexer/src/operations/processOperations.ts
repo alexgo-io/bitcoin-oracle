@@ -378,7 +378,7 @@ export async function RBFIfNeeded(
     return;
   }
   const fee = Number(tx.fee_rate);
-  const feeLevels = [0.08, 0.12, 0.24, 0.48].map(x => x * 1e6);
+  const feeLevels = env().STACKS_RBF_STAGES.map(x => x * 1e6);
   const newFee = feeLevels.find(x => x > fee);
   if (!newFee) {
     if (maxFeeReachedNonce.includes(tx.nonce)) {
