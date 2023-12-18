@@ -23,6 +23,7 @@ import {
 import * as fs from 'fs';
 import got from 'got-cjs';
 import fetch from 'node-fetch';
+import { z } from 'zod';
 import { alertToTelegram } from '../alert';
 import { env } from '../env';
 import {
@@ -378,7 +379,11 @@ export async function RBFIfNeeded(
     return;
   }
   const fee = Number(tx.fee_rate);
-  const feeLevels = env().STACKS_RBF_STAGES.map(x => x * 1e6);
+  const IntegerFees = z.array(z.number().int());
+  const feeLevels = IntegerFees.parse(
+    env().STACKS_RBF_STAGES.map(x => x * 1e6),
+  );
+
   const newFee = feeLevels.find(x => x > fee);
   if (!newFee) {
     if (maxFeeReachedNonce.includes(tx.nonce)) {
