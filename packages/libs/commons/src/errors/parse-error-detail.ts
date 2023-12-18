@@ -14,8 +14,11 @@ stack: ${e.stack}
   }
 
   if (e instanceof Error) {
-    return `message: ${e.message}\nstack: ${e.stack}`;
+    return `error: ${e.message}
+stack: ${e.stack}`;
   }
 
-  return stringifyJSON(e);
+  return `non-error thrown, object:
+${stringifyJSON(e)}
+  `;
 }
