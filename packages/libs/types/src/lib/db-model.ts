@@ -97,6 +97,26 @@ const query_proofs = z.object({
 
 const has_id = z.object({ id: BufferHexSchema });
 
+const validated_txs = z.object({
+  tx_hash: BufferHexSchema,
+  order_hash: BufferHexSchema,
+  amt: BigIntSchema,
+  bitcoin_tx: BufferHexSchema,
+  decimals: BigIntSchema,
+  from: BufferHexSchema,
+  from_bal: BigIntSchema,
+  offset: BigIntSchema,
+  output: BigIntSchema,
+  tick: UpperCaseStringSchema,
+  to: BufferHexSchema,
+  to_bal: BigIntSchema,
+  tx_id: BufferHexSchema,
+  signers: z.array(z.string()),
+  signer_types: z.array(Enums.ValidatorName),
+  signatures: z.array(BufferHexSchema),
+  created_at: z.date().optional(),
+  updated_at: z.date().optional(),
+});
 export const indexer = {
   blocks,
   txs,
@@ -105,4 +125,5 @@ export const indexer = {
   submitted_tx,
   has_id,
   query_proofs,
+  validated_txs,
 };
