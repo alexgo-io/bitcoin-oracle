@@ -38,7 +38,6 @@ export function withDataSchema<T extends ZodRawShape>(schema: z.ZodObject<T>) {
 }
 
 export const BISActivitySchema = z.object({
-  id: z.number(),
   inscription_id: z.string(),
   old_satpoint: z.string(),
   old_pkscript: z.string().nullish(),

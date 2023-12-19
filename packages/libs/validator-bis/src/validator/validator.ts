@@ -46,14 +46,14 @@ export function getBisTxOnBlock$(block: number) {
     mergeMap(activity => {
       if (activity.old_pkscript == null || activity.new_pkscript == null) {
         logger.error(
-          `old_pkscript or new_pkscript is null for ${activity.id}, inscription_id: ${activity.inscription_id}`,
+          `old_pkscript or new_pkscript is null for , inscription_id: ${activity.inscription_id}`,
         );
         return EMPTY;
       }
 
       if (BigInt(activity.amount) <= 0) {
         logger.error(
-          `amount (${activity.amount}) less than 0 for ${activity.id}, inscription_id: ${activity.inscription_id}`,
+          `amount (${activity.amount}) less than 0 for inscription_id: ${activity.inscription_id}`,
         );
         return EMPTY;
       }
@@ -76,7 +76,7 @@ export function getBisTxOnBlock$(block: number) {
             BigInt(newBalance.balance) < 0
           ) {
             logger.error(
-              `balance less than 0 for ${activity.id}, inscription_id: ${activity.inscription_id}`,
+              `balance less than 0 for inscription_id: ${activity.inscription_id}`,
             );
             return EMPTY;
           }
