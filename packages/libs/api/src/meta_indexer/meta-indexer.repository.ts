@@ -1,3 +1,4 @@
+import { OTLP_Indexer } from '@bitcoin-oracle/instrument';
 import { SQL, stringifyJSON } from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';
 import { BufferStringSchema, ModelOf, m } from '@meta-protocols-oracle/types';
@@ -8,10 +9,15 @@ import { env } from '../env';
 
 export class MetaIndexerRepository {
   private readonly logger = new Logger(MetaIndexerRepository.name);
+  private lastProcessedHeight = -1;
   constructor(
     @Inject(PersistentService)
     private readonly persistent: PersistentService,
-  ) {}
+  ) {
+    OTLP_Indexer().gauge['last-height'].addCallback(result => {
+      result.observe(this.lastProcessedHeight);
+    });
+  }
 
   async insertValidatedTx(
     conn: DatabaseTransactionConnection,
@@ -70,11 +76,15 @@ export class MetaIndexerRepository {
 
         returning *;
     `);
+    OTLP_Indexer().counter['insert-validated-tx'].add(1);
 
     this.logger.verbose(`inserted validated_txs: ${rs.tx_id.toString('hex')}`);
 
     for (let i = 0; i < tx.signatures.length; i++) {
       const signature = tx.signatures[i];
+      const signer_type = tx.signer_types[i];
+      OTLP_Indexer().counter['insert-validated-proof'](signer_type).add(1);
+
       const updated = await conn.query(SQL.typeAlias('any')`
           UPDATE brc20_oracle_db.indexer.proofs
           set validated = true
@@ -91,6 +101,8 @@ export class MetaIndexerRepository {
         throw new Error('!invalid-signatures-validated-updates');
       }
     }
+
+    this.lastProcessedHeight = Number(tx.height);
   }
 
   async updateValidatedTx(
