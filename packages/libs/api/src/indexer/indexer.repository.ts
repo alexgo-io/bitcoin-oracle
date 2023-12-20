@@ -77,6 +77,7 @@ export class IndexerRepository {
           where tx_hash = ${SQL.binary(tx.tx_hash)}
             and header = ${SQL.binary(tx.header)}
             and output = ${tx.output.toString()}
+            and satpoint = ${tx.satpoint.toString()}
           ;
       `);
 

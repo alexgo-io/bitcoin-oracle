@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   BigIntSchema,
   BufferHexSchema,
+  DateSchema,
   UpperCaseStringSchema,
 } from './basic-model';
 import { Enums } from './enums-model';
@@ -114,8 +115,8 @@ const validated_txs = z.object({
   signers: z.array(z.string()),
   signer_types: z.array(Enums.ValidatorName),
   signatures: z.array(BufferHexSchema),
-  created_at: z.date().optional(),
-  updated_at: z.date().optional(),
+  created_at: DateSchema.optional(),
+  updated_at: DateSchema.optional(),
 });
 export const indexer = {
   blocks,
