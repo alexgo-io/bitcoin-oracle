@@ -40,17 +40,11 @@ create table indexer.txs
   "tx_id"        bytea       not null,
 
   "header"       bytea       not null,
--- bitcoin height
+
   "height"       integer     not null,
   "proof_hashes" bytea[]     not null,
   "tx_index"     integer     not null,
   "tree_depth"   integer     not null,
---   "from"         bytea       not null,
---   "to"           bytea       not null,
---   "tick"         text        not null,
---   "amt"          numeric     not null,
---   "from_bal"     numeric     not null,
---   "to_bal"       numeric     not null,
   "error"        text,
   "created_at"   timestamptz not null default now(),
   "updated_at"   timestamptz not null default now()

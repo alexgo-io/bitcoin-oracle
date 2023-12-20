@@ -1,5 +1,5 @@
 ARG BASE_IMAGE=node:20.9.0-bullseye-slim
-ARG PROJECT_NAME=validator
+ARG PROJECT_NAME=indexer
 
 FROM $BASE_IMAGE as deps
 ARG PROJECT_NAME

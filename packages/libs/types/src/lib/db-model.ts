@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   BigIntSchema,
   BufferHexSchema,
+  DateSchema,
   UpperCaseStringSchema,
 } from './basic-model';
 import { Enums } from './enums-model';
@@ -97,6 +98,30 @@ const query_proofs = z.object({
 
 const has_id = z.object({ id: BufferHexSchema });
 
+const validated_txs = z.object({
+  tx_hash: BufferHexSchema,
+  order_hash: BufferHexSchema,
+  amt: BigIntSchema,
+  bitcoin_tx: BufferHexSchema,
+  decimals: BigIntSchema,
+  from: BufferHexSchema,
+  from_bal: BigIntSchema,
+  offset: BigIntSchema,
+  output: BigIntSchema,
+  tick: UpperCaseStringSchema,
+  to: BufferHexSchema,
+  to_bal: BigIntSchema,
+  tx_id: BufferHexSchema,
+  proof_hashes: z.array(BufferHexSchema),
+  tx_index: BigIntSchema,
+  tree_depth: BigIntSchema,
+  height: BigIntSchema,
+  signers: z.array(z.string()),
+  signer_types: z.array(Enums.ValidatorName),
+  signatures: z.array(BufferHexSchema),
+  created_at: DateSchema.optional(),
+  updated_at: DateSchema.optional(),
+});
 export const indexer = {
   blocks,
   txs,
@@ -105,4 +130,5 @@ export const indexer = {
   submitted_tx,
   has_id,
   query_proofs,
+  validated_txs,
 };

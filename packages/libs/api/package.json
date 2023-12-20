@@ -13,7 +13,10 @@
     "memoizee": "^0.4.15",
     "@meta-protocols-oracle/brc20-indexer": "*",
     "@stacks/network": "^6.5.5",
-    "@stacks/transactions": "^6.7.0"
+    "@stacks/transactions": "^6.7.0",
+    "slonik": "^37.2.0",
+    "p-queue": "^6.6.2",
+    "@bitcoin-oracle/instrument": "*"
   },
   "type": "commonjs",
   "main": "./src/index.js",
