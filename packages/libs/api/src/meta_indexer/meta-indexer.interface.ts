@@ -1,1 +1,3 @@
-export abstract class MetaIndexerService {}
+export abstract class MetaIndexerService {
+  abstract startProcess(): void;
+}

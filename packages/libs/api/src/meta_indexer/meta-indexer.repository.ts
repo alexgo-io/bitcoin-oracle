@@ -128,7 +128,12 @@ export class MetaIndexerRepository {
 
   async process(option: { size: number }) {
     await this.persistent.pgPool.transaction(async conn => {
-      await this.processPendingProofs(conn, option);
+      for (;;) {
+        const processed = await this.processPendingProofs(conn, option);
+        if (processed === 0) {
+          break;
+        }
+      }
     });
   }
 
@@ -214,5 +219,7 @@ export class MetaIndexerRepository {
     for (const tx of validatedTxs) {
       await this.insertValidatedTx(conn, tx);
     }
+
+    return validatedTxs.length;
   }
 }

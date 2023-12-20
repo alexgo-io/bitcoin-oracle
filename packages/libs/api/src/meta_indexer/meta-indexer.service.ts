@@ -6,7 +6,7 @@ import { MetaIndexerService } from './meta-indexer.interface';
 import { MetaIndexerRepository } from './meta-indexer.repository';
 
 export class DefaultMetaIndexerService implements MetaIndexerService {
-  queue = new PQueue();
+  private queue = new PQueue();
 
   constructor(
     @Inject(MetaIndexerRepository)

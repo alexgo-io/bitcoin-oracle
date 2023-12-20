@@ -36,4 +36,4 @@ alter table indexer.proofs
 CREATE INDEX proof_order_signature ON indexer.proofs (signature);
 CREATE INDEX idx_proofs_validated ON indexer.proofs(validated);
 CREATE INDEX idx_proofs_order_hash_signer ON indexer.proofs(order_hash, signer);
-DROP INDEX indexer.proof_order_hash;
+DROP INDEX if exists indexer.proof_order_hash;
