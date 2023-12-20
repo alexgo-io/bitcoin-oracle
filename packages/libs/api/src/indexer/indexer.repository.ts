@@ -1,4 +1,4 @@
-import { SQL } from '@meta-protocols-oracle/commons';
+import { computeTxsId, SQL } from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';
 import { APIOf, m, ValidatorName } from '@meta-protocols-oracle/types';
 import { Inject } from '@nestjs/common';
@@ -71,13 +71,16 @@ export class IndexerRepository {
           ;
       `);
 
+      const computedId = computeTxsId(
+        tx.tx_hash,
+        tx.output.toString(10),
+        tx.satpoint.toString(10),
+      );
+
       const existing = await conn.maybeOne(SQL.typeAlias('indexer_txs')`
           select *
           from indexer.txs
-          where tx_hash = ${SQL.binary(tx.tx_hash)}
-            and header = ${SQL.binary(tx.header)}
-            and output = ${tx.output.toString()}
-            and satpoint = ${tx.satpoint.toString()}
+          where id = ${SQL.binary(computedId)}
           ;
       `);
 

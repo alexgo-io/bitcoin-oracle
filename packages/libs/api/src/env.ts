@@ -12,7 +12,7 @@ export const env = memoizee(() =>
       STACKS_API_URL: z.string(),
       RELAYER_MINIMAL_AGREEMENT_COUNT: z.coerce.number().default(2),
       META_INDEXER_SYNC_INTERVAL_MS: z.coerce.number().default(1000),
-      META_INDEXER_SYNC_SIZE: z.coerce.number().default(100),
+      META_INDEXER_SYNC_SIZE: z.coerce.number().default(1000),
     },
     runtimeEnv: process.env,
   }),

@@ -1,7 +1,11 @@
 import { OTLP_Indexer } from '@bitcoin-oracle/instrument';
-import { SQL, stringifyJSON } from '@meta-protocols-oracle/commons';
+import {
+  computeTxsId,
+  SQL,
+  stringifyJSON,
+} from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';
-import { BufferStringSchema, ModelOf, m } from '@meta-protocols-oracle/types';
+import { BufferStringSchema, m, ModelOf } from '@meta-protocols-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
 import assert from 'assert';
 import { DatabaseTransactionConnection } from 'slonik';
@@ -196,16 +200,19 @@ export class MetaIndexerRepository {
       const proof = proofs[0];
       assert(proof, `first proof is null`);
 
+      const id = computeTxsId(
+        proof.tx_hash,
+        proof.satpoint.toString(10),
+        proof.output.toString(10),
+      );
       const txRs = await conn.query(SQL.type(m.database('indexer', 'txs'))`
         SELECT *
         FROM brc20_oracle_db.indexer.txs
-        WHERE tx_hash = ${SQL.binary(proof.tx_hash)}
-        and output = ${proof.output.toString(10)}
-        and satpoint = ${proof.satpoint.toString(10)}
+        WHERE id = ${SQL.binary(id)}
       `);
       if (txRs.rows.length !== 1) {
         this.logger.error(
-          `failed to get tx, returns rows ${
+          `failed to get tx of id: ${id.toString('hex')}, returns rows ${
             txRs.rows.length
           }, tx_id: ${proof.tx_id.toString(
             'hex',
@@ -265,10 +272,10 @@ export class MetaIndexerRepository {
       });
     }
 
-    this.logger.verbose(`inserting ${validatedTxs.length} validated txs`);
     for (const tx of validatedTxs) {
       await this.insertValidatedTx(conn, tx);
     }
+    this.logger.verbose(`inserted ${validatedTxs.length} validated txs`);
 
     return validatedTxs.length;
   }
