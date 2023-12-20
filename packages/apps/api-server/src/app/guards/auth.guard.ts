@@ -18,6 +18,7 @@ const logger = new Logger('api-server', { timestamp: true });
 const AUTH_VERSION_MAP = {
   [Enums.ServiceType.enum.RELAYER]: '0.0.1',
   [Enums.ServiceType.enum.VALIDATOR]: '0.0.1',
+  [Enums.ServiceType.enum.INDEXER]: '0.0.1',
 } as const;
 
 @Injectable()
