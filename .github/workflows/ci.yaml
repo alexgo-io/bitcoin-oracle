@@ -61,7 +61,7 @@ jobs:
   container:
     strategy:
       matrix:
-        project: [api-server, bitcoin-sync, relayer, validator]
+        project: [api-server, bitcoin-sync, relayer, validator, indexer]
     uses: ./.github/workflows/workflow_call_build.yaml
     with:
       project: ${{ matrix.project }}

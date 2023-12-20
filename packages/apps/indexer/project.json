@@ -1,0 +1,83 @@
+{
+  "name": "indexer",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/apps/indexer/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/packages/apps/indexer",
+        "main": "packages/apps/indexer/src/main.ts",
+        "tsConfig": "packages/apps/indexer/tsconfig.app.json",
+        "assets": ["packages/apps/indexer/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "packages/apps/indexer/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "indexer:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "indexer:build:development"
+        },
+        "production": {
+          "buildTarget": "indexer:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/apps/indexer/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/apps/indexer/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "load": true,
+        "metadata": {
+          "images": ["$DOCKER_IMAGE_TAG_GROUP/indexer"],
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=semver,pattern={{version}}",
+            "type=semver,pattern={{major}}.{{minor}}",
+            "type=semver,pattern={{major}}",
+            "type=sha,prefix=sha-"
+          ]
+        }
+      }
+    }
+  },
+  "tags": []
+}
