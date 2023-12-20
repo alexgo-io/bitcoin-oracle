@@ -361,6 +361,9 @@ importers:
 
   packages/libs/api:
     dependencies:
+      '@bitcoin-oracle/instrument':
+        specifier: '*'
+        version: link:../instrument
       '@meta-protocols-oracle/brc20-indexer':
         specifier: '*'
         version: link:../brc20-indexer
