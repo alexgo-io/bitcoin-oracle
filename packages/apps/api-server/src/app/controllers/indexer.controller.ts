@@ -1,4 +1,9 @@
-import { Indexer, IndexerError } from '@bitcoin-oracle/api';
+import {
+  Indexer,
+  IndexerError,
+  ValidatedTxsQuery,
+  ValidatedTxsQuerySchema,
+} from '@bitcoin-oracle/api';
 import { ErrorDetails } from '@meta-protocols-oracle/commons';
 import {
   APIOf,
@@ -70,6 +75,15 @@ export class IndexerController {
         (await this.indexer.getLatestBlockNumberOfProof(type))?.toString() ??
         null,
     });
+  }
+
+  @Post('/validated-txs')
+  async validatedTxs(@Body() params: ValidatedTxsQuery) {
+    const parsedParams = ValidatedTxsQuerySchema.parse(params);
+    const txs = await this.indexer.getValidatedTxs(parsedParams);
+    return {
+      data: txs,
+    };
   }
 }
 

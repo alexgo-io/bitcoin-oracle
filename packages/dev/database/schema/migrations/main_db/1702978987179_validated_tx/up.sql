@@ -1,6 +1,10 @@
+drop table if exists indexer.validated_txs;
 create table indexer.validated_txs
 (
-  "id"           bytea unique generated always as (digest(lower(encode(tx_hash, 'hex')) ||
+  id             bytea generated always as (digest(
+    ((((lower(encode(tx_hash, 'hex'::text)) || ':'::text) || (output)::text) || ':'::text) || ("offset")::text),
+    'sha256'::text)) stored,
+  "id2"          bytea unique generated always as (digest(lower(encode(tx_hash, 'hex')) ||
                                                           ':' || (lower(encode(order_hash, 'hex'))
                                                             ), 'sha256')) STORED,
 -- unique key pair (tx_hash, output, satpoint, order_hash),
@@ -35,10 +39,16 @@ create table indexer.validated_txs
   "updated_at"   timestamptz not null default now()
 );
 
+CREATE INDEX idx_validated_txs_id ON indexer.validated_txs (id);
+
+
 alter table indexer.proofs
   add validated bool default false;
 
 CREATE INDEX proof_order_signature ON indexer.proofs (signature);
-CREATE INDEX idx_proofs_validated ON indexer.proofs(validated);
-CREATE INDEX idx_proofs_order_hash_signer ON indexer.proofs(order_hash, signer);
+CREATE INDEX idx_proofs_validated ON indexer.proofs (validated);
+CREATE INDEX idx_proofs_order_hash_signer ON indexer.proofs (order_hash, signer);
 DROP INDEX if exists indexer.proof_order_hash;
+
+CREATE INDEX idx_validated_txs_to_updated_at
+  ON indexer.validated_txs ("to", updated_at);

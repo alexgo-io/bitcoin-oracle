@@ -109,48 +109,6 @@ export class MetaIndexerRepository {
     this.lastProcessedHeight = Number(tx.height);
   }
 
-  async updateValidatedTx(
-    tx: Pick<
-      ModelOf<'indexer', 'validated_txs'>,
-      'order_hash' | 'signers' | 'signer_types' | 'signatures'
-    >,
-  ) {
-    return await this.persistent.pgPool.transaction(async conn => {
-      const rs = await conn.one(SQL.type(
-        m.database('indexer', 'validated_txs'),
-      )`
-          UPDATE brc20_oracle_db.indexer.validated_txs
-          SET order_hash = ${SQL.binary(tx.order_hash)},
-              signers = ${SQL.array(tx.signers, 'text')},
-              signer_types = ${SQL.array(tx.signer_types, 'text')},
-              signatures = ${SQL.array(tx.signatures, 'bytea')}
-          WHERE tx_id = ${SQL.binary(tx.order_hash)}
-          returning *;
-      `);
-
-      for (let i = 0; i < tx.signatures.length; i++) {
-        const signature = tx.signatures[i];
-        const updated = await conn.query(SQL.typeAlias('any')`
-          UPDATE brc20_oracle_db.indexer.proofs
-          set validated = true
-            where signature = ${SQL.binary(signature)}
-          returning *;
-         `);
-        if (updated.rows.length !== 1) {
-          this.logger.error(
-            `failed to update proof, returns[${
-              updated.rows.length
-            }]: ${stringifyJSON(updated.rows)}`,
-          );
-          throw new Error('!invalid-signatures-validated-updates');
-        }
-      }
-
-      this.logger.verbose(`updated validated_txs: ${rs.tx_id}`);
-      return rs;
-    });
-  }
-
   async process(option: { size: number }) {
     for (;;) {
       const processed = await this.persistent.pgPool.transaction(async conn => {

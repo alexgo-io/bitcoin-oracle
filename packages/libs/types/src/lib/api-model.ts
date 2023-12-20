@@ -133,6 +133,31 @@ function makeDebugResponseQuery<T extends DataType>(type: T) {
     );
 }
 
+export const validated_txs_response = z.object({
+  tx_hash: BufferStringSchema,
+  order_hash: BufferStringSchema,
+  amt: BigIntStringSchema,
+  bitcoin_tx: BufferStringSchema,
+  decimals: BigIntStringSchema,
+  from: BufferStringSchema,
+  from_bal: BigIntStringSchema,
+  offset: BigIntStringSchema,
+  output: BigIntStringSchema,
+  tick: UpperCaseStringSchema,
+  to: BufferStringSchema,
+  to_bal: BigIntStringSchema,
+  tx_id: BufferStringSchema,
+  proof_hashes: z.array(BufferStringSchema),
+  tx_index: BigIntStringSchema,
+  tree_depth: BigIntStringSchema,
+  height: BigIntStringSchema,
+  signers: z.array(z.string()),
+  signer_types: z.array(Enums.ValidatorName),
+  signatures: z.array(BufferStringSchema),
+  created_at: z.number(),
+  updated_at: z.number(),
+});
+
 export const indexerAPI = {
   blocks: {
     response: {
@@ -156,6 +181,11 @@ export const indexerAPI = {
     response: {
       json: makeDebugResponseQuery('json'),
       dto: makeDebugResponseQuery('dto'),
+    },
+  },
+  validated_txs: {
+    response: {
+      json: validated_txs_response,
     },
   },
 } as const;

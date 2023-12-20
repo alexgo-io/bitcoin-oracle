@@ -1,10 +1,15 @@
-import { computeTxsId, SQL } from '@meta-protocols-oracle/commons';
+import {
+  assertNever,
+  computeTxsId,
+  computeValidatedTxsId,
+  SQL,
+} from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';
 import { APIOf, m, ValidatorName } from '@meta-protocols-oracle/types';
 import { Inject } from '@nestjs/common';
 import { Address, OutScript, Transaction } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
-import { IndexerError } from './indexer.interface';
+import { IndexerError, ValidatedTxsQuery } from './indexer.interface';
 
 function encodeAddress(address: Buffer) {
   try {
@@ -206,19 +211,53 @@ export class IndexerRepository {
     });
   }
 
-  // async getMissingBlockNumbers(type: ValidatorName) {
-  //   return this.persistentService.pgPool.query(SQL.type(
-  //     z.object({
-  //       missing_blocks: z.array(z.bigint()),
-  //     }),
-  //   )`
-  //       SELECT s.i AS missing_blocks
-  //       FROM generate_series(700000, (select max(height) from indexer.blocks)) s(i)
-  //       WHERE NOT EXISTS (SELECT 1 FROM indexer.blocks
-  //                                  WHERE height = s.i
-  //                                  );
-  //   `);
-  // }
+  async getValidatedTxs(
+    query: ValidatedTxsQuery,
+  ): Promise<readonly APIOf<'validated_txs', 'response', 'json'>[]> {
+    const responseModel = m.api('validated_txs', 'response', 'json');
+    switch (query.type) {
+      case 'id': {
+        return await this.persistentService.pgPool.any(SQL.type(responseModel)`
+          select *
+          from indexer.validated_txs vt
+          where vt.id = ${SQL.binary(
+            computeTxsId(
+              query.tx_hash,
+              query.output.toString(10),
+              query.offset.toString(10),
+            ),
+          )}
+          ;
+        `);
+      }
+      case 'id2': {
+        const computedId = computeValidatedTxsId(
+          query.tx_hash,
+          query.order_hash,
+        );
+        return await this.persistentService.pgPool.any(SQL.type(responseModel)`
+          select *
+          from indexer.validated_txs
+          where id = ${SQL.binary(computedId)};
+        `);
+      }
+      case 'to': {
+        return this.persistentService.pgPool.any(SQL.type(responseModel)`
+          select *
+          from indexer.validated_txs vt
+          where vt.to = ${SQL.binary(query.to)}
+          ${SQL.fragment` and vt.updated_at > ${SQL.timestamp(
+            query.after_updated_at ?? new Date(Date.UTC(1970, 0, 1, 0, 0, 0)),
+          )}`}
+          order by vt.updated_at
+          limit ${query.limit}
+        `);
+      }
+      default: {
+        assertNever(query);
+      }
+    }
+  }
 }
 
 function generateProofFilter(params: APIOf<'debug_txs', 'request', 'dto'>) {

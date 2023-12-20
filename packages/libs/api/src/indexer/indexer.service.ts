@@ -6,7 +6,7 @@ import { fastRetry } from '@meta-protocols-oracle/commons';
 import { APIOf, ValidatorName } from '@meta-protocols-oracle/types';
 import { Inject } from '@nestjs/common';
 import { env, getEnvStacksNetwork } from '../env';
-import { Indexer, IndexerError } from './indexer.interface';
+import { Indexer, IndexerError, ValidatedTxsQuery } from './indexer.interface';
 import { IndexerRepository } from './indexer.repository';
 
 export class DefaultIndexer implements Indexer {
@@ -71,6 +71,10 @@ export class DefaultIndexer implements Indexer {
 
   async findDebugInfo(params: APIOf<'debug_txs', 'request', 'dto'>) {
     return await this.indexerRepository.findDebugInfo(params);
+  }
+
+  async getValidatedTxs(query: ValidatedTxsQuery) {
+    return await this.indexerRepository.getValidatedTxs(query);
   }
 }
 

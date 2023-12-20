@@ -33,6 +33,6 @@ export function sha256(data: Uint8Array): Buffer {
   return createHash('sha256').update(data).digest();
 }
 
-export function assertNever(x: never) {
+export function assertNever(x: never): never {
   throw new Error('Unexpected never: ' + x);
 }
