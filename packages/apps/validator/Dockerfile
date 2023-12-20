@@ -3,7 +3,7 @@ ARG PROJECT_NAME=validator
 
 FROM $BASE_IMAGE as deps
 ARG PROJECT_NAME
-RUN corepack enable && corepack prepare pnpm@8.9.0 --activate
+RUN corepack enable && corepack prepare pnpm@8.12.1 --activate
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
