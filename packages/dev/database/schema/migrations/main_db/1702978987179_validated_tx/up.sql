@@ -3,11 +3,11 @@ create table indexer.validated_txs
   "id"           bytea unique generated always as (digest(lower(encode(tx_hash, 'hex')) ||
                                                           ':' || (lower(encode(order_hash, 'hex'))
                                                             ), 'sha256')) STORED,
---   unique key pair (tx_hash, output, satpoint, order_hash),
+-- unique key pair (tx_hash, output, satpoint, order_hash),
   "tx_hash"      bytea       not null,
 
   "order_hash"   bytea       not null,
---   order_hash component
+-- order_hash component
   "amt"          numeric     not null,
   "bitcoin_tx"   bytea       not null,
   "decimals"     integer     not null,
@@ -19,8 +19,13 @@ create table indexer.validated_txs
   "to"           bytea       not null,
   "to_bal"       numeric     not null,
 
---   additional_info
+-- verify component
+  "proof_hashes" bytea[]     not null,
+  "tx_index"     integer     not null,
+  "tree_depth"   integer     not null,
+-- additional_info
   "tx_id"        bytea       not null,
+  "height"       integer     not null,
 
 
   "signers"      text[]      not null,

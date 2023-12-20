@@ -27,42 +27,51 @@ export class MetaIndexerRepository {
     }
 
     const rs = await conn.one(SQL.type(m.database('indexer', 'validated_txs'))`
-          INSERT INTO brc20_oracle_db.indexer.validated_txs (tx_hash,
-                                                             order_hash,
-                                                             amt,
-                                                             bitcoin_tx,
-                                                             decimals,
-                                                             "from",
-                                                             from_bal,
-                                                             "offset",
-                                                             output,
-                                                             tick,
-                                                             "to",
-                                                             to_bal,
-                                                             tx_id,
-                                                             signers,
-                                                             signer_types,
-                                                             signatures)
-          VALUES (${SQL.binary(tx.tx_hash)},
-                  ${SQL.binary(tx.order_hash)},
-                  ${tx.amt.toString(10)},
-                  ${SQL.binary(tx.bitcoin_tx)},
-                  ${tx.decimals.toString(10)},
-                  ${SQL.binary(tx.from)},
-                  ${tx.from_bal.toString(10)},
-                  ${tx.offset.toString(10)},
-                  ${tx.output.toString(10)},
-                  ${tx.tick},
-                  ${SQL.binary(tx.to)},
-                  ${tx.to_bal.toString(10)},
-                  ${SQL.binary(tx.tx_id)},
-                  ${SQL.array(tx.signers, 'text')},
-                  ${SQL.array(tx.signer_types, 'text')},
-                  ${SQL.array(tx.signatures, 'bytea')})
-          returning *;
-      `);
+        INSERT INTO brc20_oracle_db.indexer.validated_txs (tx_hash,
+                                                           order_hash,
+                                                           amt,
+                                                           bitcoin_tx,
+                                                           decimals,
+                                                           "from",
+                                                           from_bal,
+                                                           "offset",
+                                                           output,
+                                                           tick,
+                                                           "to",
+                                                           to_bal,
+                                                           tx_id,
+                                                           signers,
+                                                           signer_types,
+                                                           signatures,
+                                                           proof_hashes,
+                                                           tx_index,
+                                                           tree_depth,
+                                                           height)
+        VALUES (${SQL.binary(tx.tx_hash)},
+                ${SQL.binary(tx.order_hash)},
+                ${tx.amt.toString(10)},
+                ${SQL.binary(tx.bitcoin_tx)},
+                ${tx.decimals.toString(10)},
+                ${SQL.binary(tx.from)},
+                ${tx.from_bal.toString(10)},
+                ${tx.offset.toString(10)},
+                ${tx.output.toString(10)},
+                ${tx.tick},
+                ${SQL.binary(tx.to)},
+                ${tx.to_bal.toString(10)},
+                ${SQL.binary(tx.tx_id)},
+                ${SQL.array(tx.signers, 'text')},
+                ${SQL.array(tx.signer_types, 'text')},
+                ${SQL.array(tx.signatures, 'bytea')},
+                ${SQL.array(tx.proof_hashes, 'bytea')},
+                ${tx.tx_index.toString(10)},
+                ${tx.tree_depth.toString(10)},
+                ${tx.height.toString(10)})
 
-    this.logger.verbose(`inserted validated_txs: ${rs.tx_id}`);
+        returning *;
+    `);
+
+    this.logger.verbose(`inserted validated_txs: ${rs.tx_id.toString('hex')}`);
 
     for (let i = 0; i < tx.signatures.length; i++) {
       const signature = tx.signatures[i];
@@ -127,14 +136,14 @@ export class MetaIndexerRepository {
   }
 
   async process(option: { size: number }) {
-    await this.persistent.pgPool.transaction(async conn => {
-      for (;;) {
-        const processed = await this.processPendingProofs(conn, option);
-        if (processed === 0) {
-          break;
-        }
+    for (;;) {
+      const processed = await this.persistent.pgPool.transaction(async conn => {
+        return await this.processPendingProofs(conn, option);
+      });
+      if (processed === 0) {
+        break;
       }
-    });
+    }
   }
 
   async processPendingProofs(
@@ -184,11 +193,35 @@ export class MetaIndexerRepository {
       `);
       if (txRs.rows.length !== 1) {
         this.logger.error(
-          `failed to get tx, returns[${txRs.rows.length}]: ${stringifyJSON(
-            txRs.rows,
-          )}`,
+          `failed to get tx, returns rows ${
+            txRs.rows.length
+          }, tx_id: ${proof.tx_id.toString(
+            'hex',
+          )}, satpoint; ${proof.satpoint.toString(
+            10,
+          )}, output: ${proof.output.toString(10)}`,
         );
-        throw new Error('!invalid-signatures-tx-not-found');
+
+        // TODO: set to throw error after data is stable
+        const removed = await conn.query(SQL.type(
+          m.database('indexer', 'proofs'),
+        )`
+          DELETE FROM brc20_oracle_db.indexer.proofs
+          WHERE order_hash = ${SQL.binary(proof.order_hash)}
+          and satpoint = ${proof.satpoint.toString(10)}
+          and output = ${proof.output.toString(10)}
+        `);
+        this.logger.error(
+          `removed ${
+            removed.rowCount
+          } proofs, order_hash: ${proof.order_hash.toString(
+            'hex',
+          )}, satpoint; ${proof.satpoint.toString(
+            10,
+          )}, output: ${proof.output.toString(10)}`,
+        );
+
+        continue;
       }
 
       const tx = txRs.rows[0];
@@ -207,6 +240,11 @@ export class MetaIndexerRepository {
         tick: proof.tick,
         to: proof.to,
         to_bal: proof.to_bal,
+        proof_hashes: tx.proof_hashes,
+        tx_index: tx.tx_index,
+        tree_depth: tx.tree_depth,
+        height: tx.height,
+        // signatures
         signers: proofs.map(p => p.signer),
         signer_types: proofs.map(p => p.type),
         signatures: proofs.map(p => p.signature),
