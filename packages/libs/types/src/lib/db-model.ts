@@ -66,7 +66,7 @@ const submitted_tx = z.object({
   broadcast_result_type: z.enum(['ok', 'error', 'settled']),
   error: z.string().nullish(),
   submitted_by: z.string().nullish(),
-  submitted_at: z.date().nullish(),
+  submitted_at: DateSchema.nullish(),
   submitter_nonce: BigIntSchema.nullish(),
 });
 
