@@ -158,24 +158,7 @@ export const processOperations =
               },
               network,
               contractAddress,
-            ).then(result => {
-              getLogger('stacks-caller').log(
-                `[public call] broadcast: ${JSON.stringify(
-                  result.txid,
-                )}, nonce: ${nonce}`,
-              );
-
-              return operation?.options
-                ?.onBroadcast?.(result, { fee, nonce })
-                .catch(e => {
-                  getLogger('stacks-caller').error(
-                    `operation.onBroadcast failed: ${e.message}`,
-                    e,
-                  );
-                  return null;
-                });
-            });
-
+            );
             break;
           case 'deploy':
             await deployContract(
@@ -423,6 +406,13 @@ export async function RBFIfNeeded(
             nonce: tx.nonce,
             fee: options_.fee,
           });
+
+          await alertToTelegram('RBF', 'Tx RBFed', {
+            newTxId: result.txid,
+            originalTxId: tx.tx_id,
+            nonce: tx.nonce.toString(),
+            fee: `${fee / 1e6} -> ${newFee / 1e6}`,
+          });
         },
       },
     },
@@ -433,10 +423,6 @@ export async function RBFIfNeeded(
     network,
     contractAddress,
   );
-  await alertToTelegram('RBF', 'Tx RBFed', {
-    tx_id: tx.tx_id,
-    nonce: tx.nonce.toString(),
-  });
 }
 
 function hashCode(str: string) {
@@ -594,11 +580,24 @@ async function publicCall(
 
   const result = await broadcastTransaction(transaction, network);
 
+  if (operation.options?.onBroadcast) {
+    await operation.options.onBroadcast(result, {
+      nonce: options.nonce,
+      fee: txOptions.fee,
+    });
+  }
+
   if (result.error) {
     getLogger('stacks-caller').log(
       `[public call] failed: ${JSON.stringify(result)}`,
     );
     throw new Error(result.reason!);
+  } else {
+    getLogger('stacks-caller').log(
+      `[public call] broadcast success: ${JSON.stringify(
+        result.txid,
+      )}, nonce: ${options.nonce}`,
+    );
   }
 
   return result;
