@@ -46,6 +46,10 @@ export const env = memoizee(() =>
       ALERT_URL: z.string().optional(),
       STACKS_MAX_TX_PER_BLOCK: z.number().default(25),
       STACKS_RBF_STAGES: StageFeeNumberSchema.default('0.08, 0.12, 0.24, 0.48'),
+      STACKS_TX_GAS_FLOOR: z.coerce.number().default(0.0005),
+      STACKS_TX_GAS_CAP: z.coerce.number().default(2),
+      STACKS_RBF_MODE: z.enum(['stages', 'estimate']).default('stages'),
+      STACKS_RBF_ESTIMATE_THRESHOLD: z.coerce.number().default(200000), // 0.2 difference for change
     },
     runtimeEnv: process.env,
   }),

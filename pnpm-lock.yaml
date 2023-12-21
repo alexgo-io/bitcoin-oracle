@@ -50,8 +50,8 @@ importers:
         specifier: ^6.8.1
         version: 6.8.1
       '@stacks/transactions':
-        specifier: ^6.9.0
-        version: 6.9.0
+        specifier: ^6.11.0
+        version: 6.11.0
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
@@ -63,7 +63,7 @@ importers:
         version: 6.1.5
       clarity-codegen:
         specifier: ^0.3.4
-        version: 0.3.4(@stacks/transactions@6.9.0)
+        version: 0.3.4(@stacks/transactions@6.11.0)
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -5592,6 +5592,16 @@ packages:
       buffer: 6.0.3
     dev: false
 
+  /@stacks/common@6.10.0:
+    resolution:
+      {
+        integrity: sha512-6x5Z7AKd9/kj3+DYE9xIDIkFLHihBH614i2wqrZIjN02WxVo063hWSjIlUxlx8P4gl6olVzlOy5LzhLJD9OP0A==,
+      }
+    dependencies:
+      '@types/bn.js': 5.1.1
+      '@types/node': 18.17.14
+    dev: false
+
   /@stacks/common@6.5.5:
     resolution:
       {
@@ -5663,6 +5673,18 @@ packages:
       }
     dependencies:
       '@stacks/common': 4.3.5
+      cross-fetch: 3.1.8
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@stacks/network@6.10.0:
+    resolution:
+      {
+        integrity: sha512-mbiZ8nlsyy77ndmBdaqhHXii22IFdK4ThRcOQs9j/O00DkAr04jCM4GV5Q+VLUnZ9OBoJq7yOV7Pf6jglh+0hw==,
+      }
+    dependencies:
+      '@stacks/common': 6.10.0
       cross-fetch: 3.1.8
     transitivePeerDependencies:
       - encoding
@@ -5757,6 +5779,22 @@ packages:
       - encoding
     dev: false
 
+  /@stacks/transactions@6.11.0:
+    resolution:
+      {
+        integrity: sha512-+zIDqn9j4H/+o1ER8C9rFpig1fyrQcj2hVGNIrp+YbpPyja+cxv3fPk6kI/gePzwggzxRgUkIWhBc+mZAXuXyQ==,
+      }
+    dependencies:
+      '@noble/hashes': 1.1.5
+      '@noble/secp256k1': 1.7.1
+      '@stacks/common': 6.10.0
+      '@stacks/network': 6.10.0
+      c32check: 2.0.0
+      lodash.clonedeep: 4.5.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@stacks/transactions@6.7.0:
     resolution:
       {
@@ -5767,22 +5805,6 @@ packages:
       '@noble/secp256k1': 1.7.1
       '@stacks/common': 6.5.5
       '@stacks/network': 6.5.5
-      c32check: 2.0.0
-      lodash.clonedeep: 4.5.0
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
-  /@stacks/transactions@6.9.0:
-    resolution:
-      {
-        integrity: sha512-hSs9+0Ew++GwMZMgPObOx0iVCQRxkiCqI+DHdPEikAmg2utpyLh2/txHOjfSIkQHvcBfJJ6O5KphmxDP4gUqiA==,
-      }
-    dependencies:
-      '@noble/hashes': 1.1.5
-      '@noble/secp256k1': 1.7.1
-      '@stacks/common': 6.8.1
-      '@stacks/network': 6.8.1
       c32check: 2.0.0
       lodash.clonedeep: 4.5.0
     transitivePeerDependencies:
@@ -8855,6 +8877,25 @@ packages:
       - debug
     dev: false
 
+  /clarity-codegen@0.3.4(@stacks/transactions@6.11.0):
+    resolution:
+      {
+        integrity: sha512-wH5tcUGodvKqCrIFEgnWWTX31BifCVqgTcPZcC80Tju/vCdN1y8fKr/X/3eXLxwDphZfoQibZw0HXi5zwONy8g==,
+      }
+    hasBin: true
+    peerDependencies:
+      '@stacks/transactions': '*'
+    dependencies:
+      '@stacks/stacks-blockchain-api-types': 7.3.2
+      '@stacks/transactions': 6.11.0
+      axios: 1.6.0
+      lodash: 4.17.21
+      yargs: 17.7.2
+      yqueue: 1.0.1
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /clarity-codegen@0.3.4(@stacks/transactions@6.7.0):
     resolution:
       {
@@ -8866,25 +8907,6 @@ packages:
     dependencies:
       '@stacks/stacks-blockchain-api-types': 7.3.2
       '@stacks/transactions': 6.7.0
-      axios: 1.6.0
-      lodash: 4.17.21
-      yargs: 17.7.2
-      yqueue: 1.0.1
-    transitivePeerDependencies:
-      - debug
-    dev: false
-
-  /clarity-codegen@0.3.4(@stacks/transactions@6.9.0):
-    resolution:
-      {
-        integrity: sha512-wH5tcUGodvKqCrIFEgnWWTX31BifCVqgTcPZcC80Tju/vCdN1y8fKr/X/3eXLxwDphZfoQibZw0HXi5zwONy8g==,
-      }
-    hasBin: true
-    peerDependencies:
-      '@stacks/transactions': '*'
-    dependencies:
-      '@stacks/stacks-blockchain-api-types': 7.3.2
-      '@stacks/transactions': 6.9.0
       axios: 1.6.0
       lodash: 4.17.21
       yargs: 17.7.2

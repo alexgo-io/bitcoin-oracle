@@ -1,4 +1,10 @@
-import { getLogger, stringifyJSON } from '@meta-protocols-oracle/commons';
+import {
+  assertNever,
+  getLogger,
+  parseErrorDetail,
+  sleep,
+  stringifyJSON,
+} from '@meta-protocols-oracle/commons';
 import { StacksMainnet, StacksMocknet, StacksNetwork } from '@stacks/network';
 import {
   AccountDataResponse,
@@ -13,7 +19,7 @@ import {
   TransactionVersion,
   TxBroadcastResult,
   broadcastTransaction,
-  estimateContractFunctionCall,
+  estimateTransactionFeeWithFallback,
   getAddressFromPrivateKey,
   hexToCV,
   makeContractCall,
@@ -32,7 +38,6 @@ import {
   PublicCall,
   TransferSTX,
 } from './operation';
-import { assertNever, sleep } from './utils';
 
 function chainIDToTransactionVersion(chainID: ChainID) {
   if (chainID === ChainID.Mainnet) {
@@ -61,7 +66,6 @@ export const processOperations =
       stacksAPIURL: string;
       puppetURL?: string;
       fee?: number;
-      feeMultiplier?: number;
       contractAddress?: string;
       chainID?: ChainID;
       didRBFBroadcast?: (params: {
@@ -154,7 +158,6 @@ export const processOperations =
                 senderKey: privateKey,
                 nonce,
                 fee,
-                feeMultiplier: options.feeMultiplier,
               },
               network,
               contractAddress,
@@ -167,7 +170,6 @@ export const processOperations =
                 senderKey: privateKey,
                 nonce,
                 fee,
-                feeMultiplier: options.feeMultiplier,
               },
               network,
             ).then(result =>
@@ -189,7 +191,6 @@ export const processOperations =
                 senderKey: privateKey,
                 nonce,
                 fee,
-                feeMultiplier: options.feeMultiplier,
               },
               network,
             ).then(result =>
@@ -244,12 +245,12 @@ export const processOperations =
 
         getLogger('stacks-caller').warn(
           `[${ts()}] operation failed:,
-          operation: ${
+operation: ${
             operationJSON.length < 4096
               ? operationJSON
               : operationJSON.slice(0, 4096)
-          }... truncated,
-          error: ${e}`,
+          }... truncated...
+${parseErrorDetail(e)}`,
         );
       }
     }
@@ -363,37 +364,67 @@ export async function RBFIfNeeded(
   }
   const fee = Number(tx.fee_rate);
   const IntegerFees = z.array(z.number().int());
-  const feeLevels = IntegerFees.parse(
-    env().STACKS_RBF_STAGES.map(x => x * 1e6),
-  );
 
-  const newFee = feeLevels.find(x => x > fee);
-  if (!newFee) {
-    if (maxFeeReachedNonce.includes(tx.nonce)) {
+  let newFee: number | undefined;
+  const rbfMode = env().STACKS_RBF_MODE;
+  if (rbfMode === 'stages') {
+    const feeLevels = IntegerFees.parse(
+      env().STACKS_RBF_STAGES.map(x => x * 1e6),
+    );
+    newFee = feeLevels.find(x => x > fee);
+    if (newFee == null) {
+      if (maxFeeReachedNonce.includes(tx.nonce)) {
+        return;
+      }
+      await alertToTelegram('RBF', 'Max fee reached', {
+        tx_id: tx.tx_id,
+        nonce: tx.nonce.toString(),
+        fee: `${fee / 1e6}`,
+      });
+      getLogger('stacks-caller').warn(
+        `${tx.nonce} already at MAX RBF rate of [${
+          feeLevels[feeLevels.length - 1]! / 1e6
+        }]}`,
+      );
+      maxFeeReachedNonce.push(tx.nonce);
       return;
     }
-    await alertToTelegram('RBF', 'Max fee reached', {
-      tx_id: tx.tx_id,
-      nonce: tx.nonce.toString(),
-    });
-    getLogger('stacks-caller').warn(
-      `${tx.nonce} already at MAX RBF rate of [${
-        feeLevels[feeLevels.length - 1] / 1e6
-      }]}`,
+    getLogger('stacks-caller').log(
+      `RBFIng[stages] tx ${tx.tx_id} : ${tx.nonce} from ${fee / 1e6} to ${
+        newFee / 1e6
+      }, after ${secondsPassed / 60} mins`,
     );
-    maxFeeReachedNonce.push(tx.nonce);
-    return;
+  } else if (rbfMode === 'estimate') {
+    const feeThreshold = env().STACKS_RBF_ESTIMATE_THRESHOLD;
+    const estimatedFee = await estimateFee({
+      network,
+      contractAddress,
+      operation: {
+        type: 'publicCall',
+        contract: tx.contract_call.contract_id.split('.')[1]!,
+        function: tx.contract_call.function_name,
+        args: tx.contract_call.function_args!.map(x => hexToCV(x.hex)),
+      },
+      nonce: tx.nonce,
+      senderKey,
+    });
+    if (estimatedFee - fee < feeThreshold) {
+      return;
+    }
+    newFee = estimatedFee;
+    getLogger('stacks-caller').log(
+      `RBFIng[estimate] tx ${tx.tx_id} : ${tx.nonce} from ${fee / 1e6} to ${
+        newFee / 1e6
+      }, after ${secondsPassed / 60} mins`,
+    );
+  } else {
+    assertNever(rbfMode);
   }
-  getLogger('stacks-caller').log(
-    `RBFIng tx ${tx.tx_id} : ${tx.nonce} from ${fee / 1e6} to ${
-      newFee / 1e6
-    }, after ${secondsPassed / 60} mins`,
-  );
 
   await publicCall(
     {
       type: 'publicCall',
-      contract: tx.contract_call.contract_id.split('.')[1],
+      contract: tx.contract_call.contract_id.split('.')[1]!,
       function: tx.contract_call.function_name,
       args: tx.contract_call.function_args!.map(x => hexToCV(x.hex)),
       options: {
@@ -411,7 +442,7 @@ export async function RBFIfNeeded(
             newTxId: result.txid,
             originalTxId: tx.tx_id,
             nonce: tx.nonce.toString(),
-            fee: `${fee / 1e6} -> ${newFee / 1e6}`,
+            fee: `${fee / 1e6} -> ${newFee! / 1e6}`,
           });
         },
       },
@@ -489,7 +520,7 @@ async function deployContract(
     senderKey: options.senderKey,
     fee: options.fee,
   };
-  const fee = await estimateContractFunctionCall(
+  const fee = await estimateTransactionFeeWithFallback(
     await makeContractDeploy(txOptions),
     network,
   ).catch(() => options.fee);
@@ -521,7 +552,7 @@ async function transferSTX(
     amount: operation.amount,
     recipient: operation.address,
   };
-  const fee = await estimateContractFunctionCall(
+  const fee = await estimateTransactionFeeWithFallback(
     await makeSTXTokenTransfer(txOptions),
     network,
   ).catch(() => options.fee);
@@ -542,8 +573,45 @@ type OperationOptions = {
   senderKey: string;
   nonce: number;
   fee?: number;
-  feeMultiplier?: number;
 };
+
+function capOrFloorFee(fee: number) {
+  if (env().STACKS_TX_GAS_FLOOR > 25 || env().STACKS_TX_GAS_FLOOR > 25) {
+    throw new Error(``);
+  }
+  const cap = env().STACKS_TX_GAS_CAP * 1e6;
+  const floor = env().STACKS_TX_GAS_FLOOR * 1e6;
+
+  return Math.max(Math.min(fee, cap), floor);
+}
+
+async function estimateFee(options: {
+  network: StacksNetwork;
+  contractAddress: string;
+  operation: PublicCall;
+  nonce: number;
+  senderKey: string;
+}) {
+  const txOptions = {
+    network: options.network,
+    contractAddress: options.contractAddress,
+    contractName: options.operation.contract,
+    functionName: options.operation.function,
+    functionArgs: options.operation.args,
+    nonce: options.nonce,
+    anchorMode: AnchorMode.Any,
+    postConditionMode: PostConditionMode.Allow,
+    senderKey: options.senderKey,
+  };
+  return capOrFloorFee(
+    Number(
+      await estimateTransactionFeeWithFallback(
+        await makeContractCall(txOptions),
+        options.network,
+      ),
+    ),
+  );
+}
 
 async function publicCall(
   operation: PublicCall,
@@ -568,12 +636,12 @@ async function publicCall(
 
   if (txOptions.fee == null) {
     delete txOptions['fee'];
-    const estimatedFee = await estimateContractFunctionCall(
+    const estimatedFee = await estimateTransactionFeeWithFallback(
       await makeContractCall(txOptions),
       network,
-    ).catch(() => BigInt(0.004e6));
+    ).catch(() => 0.004e6);
 
-    txOptions.fee = Number(estimatedFee) * (options.feeMultiplier ?? 1);
+    txOptions.fee = capOrFloorFee(Number(estimatedFee));
   }
 
   const transaction = await makeContractCall(txOptions);
@@ -589,7 +657,7 @@ async function publicCall(
 
   if (result.error) {
     getLogger('stacks-caller').log(
-      `[public call] failed: ${JSON.stringify(result)}`,
+      `[public call] broadcast failed: ${JSON.stringify(result)}`,
     );
     throw new Error(result.reason!);
   } else {

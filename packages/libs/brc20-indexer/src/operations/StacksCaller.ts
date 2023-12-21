@@ -33,7 +33,6 @@ export class StacksCaller {
       stacksAPIURL: env().STACKS_API_URL,
       chainID: getEnvStacksChainID(),
       contractAddress: this.contractAddress,
-      feeMultiplier: 2,
       puppetURL: env().STACKS_PUPPET_URL,
       didRBFBroadcast: this.didRBFBroadcast,
     });
