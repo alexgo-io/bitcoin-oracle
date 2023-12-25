@@ -28,7 +28,41 @@ export class RelayerRepository {
       );
 
       const pendingTxs = await (async () => {
-        if (env().IS_WHITELIST_ENABLED) {
+        if (env().IS_WHITELIST_TXS_ENABLED) {
+          this.logger.debug(`getting pending tx by whitelist txs...`);
+
+          return await conn.query(SQL.type(txs_schema)`
+          with pending_txs as (select *
+                               from indexer.txs
+                               where not exists (select 1
+                                                 from indexer.submitted_tx
+                                                 where txs.id = submitted_tx.id)
+                                 and error is null
+                                 and length(tx_hash) <= 4096
+                                 and height >= ${
+                                   env().RELAYER_MINIMAL_BLOCK_HEIGHT
+                                 }
+                               ),
+               qualified_txs as (select pt.id, count(*)
+                                 from pending_txs pt
+                                          join indexer.proofs pf on pt.id = pf.id
+                                   and (pf."to" in
+                                        (select address_to from indexer.whitelist_to_address))
+                                 group by 1
+                                 having count(*) >=
+                                        (select minimal_proof_count
+                                         from indexer_config.relayer_configs
+                                         limit 1)),
+               qualified_txs_with_proof as (select *
+                                            from qualified_txs
+                                                     join pending_txs p on qualified_txs.id = p.id)
+
+          select *
+          from qualified_txs_with_proof
+          order by height
+          ;
+      `);
+        } else if (env().IS_WHITELIST_ENABLED) {
           const tokenList = await getWhitelistBRC20TokensCached();
           this.logger.debug(
             `whitelist token list: ${tokenList.length}, getting pending tx...`,
