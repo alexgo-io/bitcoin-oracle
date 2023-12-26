@@ -14,6 +14,7 @@ export const env = memoizee(() =>
       SHARD_RELAYER_INDEX: z.coerce.bigint().default(0n),
       SHARD_TOTAL_RELAYERS: z.coerce.bigint().default(1n),
       IS_WHITELIST_ENABLED: z.coerce.boolean().default(true),
+      IS_WHITELIST_TXS_ENABLED: z.coerce.boolean().default(true),
     },
     runtimeEnv: process.env,
   }),
