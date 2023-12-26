@@ -664,7 +664,7 @@ async function publicCall(
     getLogger('stacks-caller').log(
       `[public call] broadcast success: ${JSON.stringify(
         result.txid,
-      )}, nonce: ${options.nonce}`,
+      )}, nonce: ${options.nonce}, fee: ${txOptions.fee / 1e6} STX`,
     );
   }
 
