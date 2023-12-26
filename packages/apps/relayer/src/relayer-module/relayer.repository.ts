@@ -46,8 +46,11 @@ export class RelayerRepository {
                qualified_txs as (select pt.id, count(*)
                                  from pending_txs pt
                                           join indexer.proofs pf on pt.id = pf.id
-                                   and (pf."to" in
-                                        (select address_to from indexer.whitelist_to_address))
+                                   and ((pf."to" in
+                                         (select address_to from indexer.whitelist_to_address))
+                                     or (pf."from" in
+                                          (select address_to from indexer.whitelist_to_address)))
+
                                  group by 1
                                  having count(*) >=
                                         (select minimal_proof_count
