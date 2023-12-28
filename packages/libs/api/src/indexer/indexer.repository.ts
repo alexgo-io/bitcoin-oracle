@@ -153,7 +153,7 @@ export class IndexerRepository {
     type ResultType = z.infer<typeof result_schema>;
 
     return this.persistentService.pgPool.transaction(async conn => {
-      const txs = await conn.many(SQL.type(api_schema)`
+      const txs = await conn.any(SQL.type(api_schema)`
         with pf as (select p.id,
                            p.type
                     from indexer.proofs p),
@@ -194,7 +194,7 @@ export class IndexerRepository {
       const results: ResultType[] = [];
 
       for (const t of txs) {
-        const proofs = await conn.many(SQL.type(proof_schema)`
+        const proofs = await conn.any(SQL.type(proof_schema)`
           select *
           from indexer.proofs p
           where p.id = ${SQL.binary(t.id)}
