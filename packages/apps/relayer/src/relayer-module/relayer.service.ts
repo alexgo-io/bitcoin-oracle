@@ -121,7 +121,9 @@ export class DefaultRelayerService implements RelayerService {
           // error: the tx is not indexed yet
           if (isIndexedTx.type !== 'error') {
             this.logger.debug(
-              `tx already indexed: ${tx.tx_hash}, type: ${isIndexedTx.type}`,
+              `tx already indexed: ${tx.tx_hash.toString('hex')}, type: ${
+                isIndexedTx.type
+              }`,
             );
             otlp.counter['update-already-indexed'].add(1);
             indexedTxs.push({
