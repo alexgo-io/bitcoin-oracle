@@ -170,9 +170,11 @@ export class MetaIndexerRepository {
       `);
       if (txRs.rows.length !== 1) {
         this.logger.error(
-          `found ${
-            txRs.rows.length
-          } txs for id: ${id}, order_hash: ${proof.order_hash.toString('hex')}
+          `found ${txRs.rows.length} txs for id: ${id.toString(
+            'hex',
+          )}, tx_id: ${proof.tx_id.toString(
+            'hex',
+          )} order_hash: ${proof.order_hash.toString('hex')}
           satpoint; ${proof.satpoint.toString(
             10,
           )}, output: ${proof.output.toString(10)}, proof count: ${
