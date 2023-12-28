@@ -170,33 +170,43 @@ export class MetaIndexerRepository {
       `);
       if (txRs.rows.length !== 1) {
         this.logger.error(
-          `failed to get tx of id: ${id.toString('hex')}, returns rows ${
+          `found ${
             txRs.rows.length
-          }, tx_id: ${proof.tx_id.toString(
-            'hex',
-          )}, satpoint; ${proof.satpoint.toString(
+          } txs for id: ${id}, order_hash: ${proof.order_hash.toString('hex')}
+          satpoint; ${proof.satpoint.toString(
             10,
-          )}, output: ${proof.output.toString(10)}`,
+          )}, output: ${proof.output.toString(10)}, proof count: ${
+            proofs.length
+          }`,
         );
-
-        // TODO: set to throw error after data is stable
-        const removed = await conn.query(SQL.type(
-          m.database('indexer', 'proofs'),
-        )`
-          DELETE FROM brc20_oracle_db.indexer.proofs
-          WHERE order_hash = ${SQL.binary(proof.order_hash)}
-          and satpoint = ${proof.satpoint.toString(10)}
-          and output = ${proof.output.toString(10)}
-        `);
-        this.logger.error(
-          `removed ${
-            removed.rowCount
-          } proofs, order_hash: ${proof.order_hash.toString(
-            'hex',
-          )}, satpoint; ${proof.satpoint.toString(
-            10,
-          )}, output: ${proof.output.toString(10)}`,
-        );
+        // this.logger.error(
+        //   `failed to get tx of id: ${id.toString('hex')}, returns rows ${
+        //     txRs.rows.length
+        //   }, tx_id: ${proof.tx_id.toString(
+        //     'hex',
+        //   )}, satpoint; ${proof.satpoint.toString(
+        //     10,
+        //   )}, output: ${proof.output.toString(10)}`,
+        // );
+        //
+        // // TODO: set to throw error after data is stable
+        // const removed = await conn.query(SQL.type(
+        //   m.database('indexer', 'proofs'),
+        // )`
+        //   DELETE FROM brc20_oracle_db.indexer.proofs
+        //   WHERE order_hash = ${SQL.binary(proof.order_hash)}
+        //   and satpoint = ${proof.satpoint.toString(10)}
+        //   and output = ${proof.output.toString(10)}
+        // `);
+        // this.logger.error(
+        //   `removed ${
+        //     removed.rowCount
+        //   } proofs, order_hash: ${proof.order_hash.toString(
+        //     'hex',
+        //   )}, satpoint; ${proof.satpoint.toString(
+        //     10,
+        //   )}, output: ${proof.output.toString(10)}`,
+        // );
 
         continue;
       }
