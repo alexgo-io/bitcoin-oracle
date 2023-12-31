@@ -21,9 +21,9 @@ export {
 export type { Account };
 
 export const contractNames = {
-  oracle: 'oracle-v1-03',
+  oracle: 'oracle-v1-04',
   registry: 'oracle-registry-v1-01',
-  clarityBitcoin: 'clarity-bitcoin-v1-03',
+  clarityBitcoin: 'clarity-bitcoin-v1-04',
 };
 
 const uintCV = types.uint;
