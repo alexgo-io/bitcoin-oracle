@@ -79,26 +79,18 @@ export class IndexerController {
 
   @Post('/validated-txs')
   async validatedTxs(@Body() params: ValidatedTxsQuery) {
-    const parsedParams = ValidatedTxsQuerySchema.parse(params);
-    if (parsedParams.type === 'balance') {
-      if (
-        parsedParams.tick.length === 0 &&
-        parsedParams.from.length === 0 &&
-        parsedParams.to.length === 0
-      ) {
-        throw ErrorDetails.from(
-          StatusCode.INVALID_ARGUMENT,
-          'At least one of tick, from, to must be provided',
-        ).throwHttpException();
-      }
+    if (params.type == null) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (params as any).type = 'indexing';
     }
+    const parsedParams = ValidatedTxsQuerySchema.parse(params);
 
-    if (parsedParams.type === 'transfer') {
+    if (parsedParams.type === 'indexing') {
       if (
-        parsedParams.tick.length === 0 &&
-        parsedParams.from.length === 0 &&
-        parsedParams.to.length === 0 &&
-        parsedParams.height.length === 0
+        parsedParams.tick?.length === 0 &&
+        parsedParams.from?.length === 0 &&
+        parsedParams.to?.length === 0 &&
+        parsedParams.height == null
       ) {
         throw ErrorDetails.from(
           StatusCode.INVALID_ARGUMENT,

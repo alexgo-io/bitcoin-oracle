@@ -215,63 +215,42 @@ export class IndexerRepository {
     query: ValidatedTxsQuery,
   ): Promise<readonly APIOf<'validated_txs', 'response', 'json'>[]> {
     const responseModel = m.api('validated_txs', 'response', 'json');
+
+    const whereClause = SQL.fragment`WHERE ${SQL.join(
+      generateValidatedTxWheres(query),
+      SQL.fragment` AND `,
+    )}`;
+
     switch (query.type) {
       case 'id': {
         return await this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
           from indexer.validated_txs vt
-          where vt.id = ${SQL.binary(
-            computeTxsId(
-              query.tx_hash,
-              query.output.toString(10),
-              query.offset.toString(10),
-            ),
-          )}
+          ${whereClause}
           ;
         `);
       }
       case 'id2': {
-        const computedId = computeValidatedTxsId(
-          query.tx_hash,
-          query.order_hash,
-        );
         return await this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
           from indexer.validated_txs
-          where id = ${SQL.binary(computedId)};
+          ${whereClause}
         `);
       }
       case 'to': {
         return this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
           from indexer.validated_txs vt
-          where vt.to = ${SQL.binary(query.to)}
-          ${SQL.fragment` and vt.updated_at > ${SQL.timestamp(
-            query.after_updated_at ?? new Date(Date.UTC(1970, 0, 1, 0, 0, 0)),
-          )}`}
+          ${whereClause}
           order by vt.updated_at
           limit ${query.limit}
         `);
       }
-      case 'balance': {
+      case 'indexing': {
         return this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
           from indexer.validated_txs vt
-          where vt.tick = any(${SQL.array(query.tick, 'text')})
-            and vt.from = any(${SQL.array(query.from, 'bytea')})
-            and vt.to = any(${SQL.array(query.to, 'bytea')})
-          order by vt.updated_at
-          limit ${query.limit}
-        `);
-      }
-      case 'transfer': {
-        return this.persistentService.pgPool.any(SQL.type(responseModel)`
-          select *
-          from indexer.validated_txs vt
-          where vt.tick = any(${SQL.array(query.tick, 'text')})
-            and vt.from = any(${SQL.array(query.from, 'bytea')})
-            and vt.to = any(${SQL.array(query.to, 'bytea')})
-            and vt.height = any(${SQL.array(query.height, 'integer')})
+          ${whereClause}
           order by vt.updated_at
           limit ${query.limit}
         `);
@@ -279,6 +258,80 @@ export class IndexerRepository {
       default: {
         assertNever(query);
       }
+    }
+  }
+}
+
+function generateValidatedTxWheres(
+  query: ValidatedTxsQuery,
+): ReturnType<typeof SQL.fragment>[] {
+  switch (query.type) {
+    case 'id': {
+      return [
+        SQL.fragment`
+        vt.id = ${SQL.binary(
+          computeTxsId(
+            query.tx_hash,
+            query.output.toString(10),
+            query.offset.toString(10),
+          ),
+        )}
+      `,
+      ];
+    }
+    case 'id2': {
+      return [
+        SQL.fragment`
+        vt.id = ${SQL.binary(
+          computeValidatedTxsId(query.tx_hash, query.order_hash),
+        )}
+      `,
+      ];
+    }
+    case 'to': {
+      return [
+        SQL.fragment`
+          vt.to = ${SQL.binary(query.to)}
+        `,
+        SQL.fragment`
+          vt.updated_at > ${SQL.timestamp(
+            query.after_updated_at ?? new Date(Date.UTC(1970, 0, 1, 0, 0, 0)),
+          )}
+        `,
+      ];
+    }
+    case 'indexing': {
+      const wheres: ReturnType<typeof SQL.fragment>[] = [];
+      const { from, to, tick, height } = query;
+      if (tick && tick.length > 0) {
+        wheres.push(
+          SQL.fragment`
+            vt.tick = any(${SQL.array(tick, 'text')})
+          `,
+        );
+      }
+      if (from && from.length > 0) {
+        wheres.push(
+          SQL.fragment`
+            vt.from = any(${SQL.array(from, 'bytea')})
+          `,
+        );
+      }
+      if (to && to.length > 0) {
+        wheres.push(
+          SQL.fragment`
+            vt.to = any(${SQL.array(to, 'bytea')})
+          `,
+        );
+      }
+      if (height && height.length > 0) {
+        wheres.push(
+          SQL.fragment`
+            vt.height = any(${SQL.array(height, 'integer')})
+          `,
+        );
+      }
+      return wheres;
     }
   }
 }

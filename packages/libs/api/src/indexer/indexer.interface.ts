@@ -31,18 +31,11 @@ export const ValidatedTxsQuerySchema = z.discriminatedUnion('type', [
     limit: z.coerce.number().optional().default(10000),
   }),
   z.object({
-    type: z.literal('balance'),
-    tick: z.array(UpperCaseStringSchema),
-    from: z.array(BufferHexSchema),
-    to: z.array(BufferHexSchema),
-    limit: z.coerce.number().optional().default(10000),
-  }),
-  z.object({
-    type: z.literal('transfer'),
-    tick: z.array(UpperCaseStringSchema),
-    from: z.array(BufferHexSchema),
-    to: z.array(BufferHexSchema),
-    height: z.array(z.number().int()),
+    type: z.literal('indexing'),
+    tick: z.array(UpperCaseStringSchema).optional(),
+    from: z.array(BufferHexSchema).optional(),
+    to: z.array(BufferHexSchema).optional(),
+    height: z.array(z.number().int()).optional(),
     limit: z.coerce.number().optional().default(10000),
   }),
 ]);
