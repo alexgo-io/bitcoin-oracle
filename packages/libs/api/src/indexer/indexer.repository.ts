@@ -327,7 +327,7 @@ function generateValidatedTxWheres(
       if (height && height.length > 0) {
         wheres.push(
           SQL.fragment`
-            vt.height = any(${SQL.array(height, 'integer')})
+            vt.height = any(${SQL.array(height, 'numeric')})
           `,
         );
       }
