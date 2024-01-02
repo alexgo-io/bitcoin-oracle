@@ -12,8 +12,9 @@ import {
   createStacksPrivateKey,
   signWithKey,
 } from 'micro-stacks/transactions';
+import { kIndexerContractName } from '../constants';
 import { env } from '../env';
-import { indexer } from '../generated/contract_indexer';
+import { OracleContracts } from '../generated';
 
 export function getStacksNetwork() {
   if (env().STACKS_NETWORK_TYPE === 'testnet') {
@@ -44,7 +45,8 @@ export const kStructuredDataPrefix = Buffer.from([
   0x53, 0x49, 0x50, 0x30, 0x31, 0x38,
 ]);
 
-const encodeOrder = indexer['indexer']['hash-tx'].input[0].type.encode;
+const encodeOrder =
+  OracleContracts[kIndexerContractName]['hash-tx'].input[0].type.encode;
 export const generateOrderHash = (order: Parameters<typeof encodeOrder>[0]) =>
   structuredDataHash(encodeOrder(order));
 

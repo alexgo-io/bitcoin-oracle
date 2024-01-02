@@ -1,4 +1,5 @@
-import { indexer } from '../generated/contract_indexer';
+import { kIndexerContractName } from '../constants';
+import { OracleContracts } from '../generated';
 import { getDomainHash, signTx, structuredDataHash } from './sign';
 
 describe('sign', () => {
@@ -9,7 +10,8 @@ describe('sign', () => {
   });
 
   it('should sign tx', async () => {
-    const encoder = indexer['indexer']['hash-tx'].input[0].type.encode;
+    const encoder =
+      OracleContracts[kIndexerContractName]['hash-tx'].input[0].type.encode;
     const encodeValue = encoder({
       amt: 99999999999999991433150857216n,
       from: Buffer.from(

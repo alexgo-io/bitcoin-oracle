@@ -253,6 +253,29 @@ export class IndexerRepository {
           limit ${query.limit}
         `);
       }
+      case 'balance': {
+        return this.persistentService.pgPool.any(SQL.type(responseModel)`
+          select *
+          from indexer.validated_txs vt
+          where vt.tick = any(${SQL.array(query.tick, 'text')})
+            and vt.from = any(${SQL.array(query.from, 'bytea')})
+            and vt.to = any(${SQL.array(query.to, 'bytea')})
+          order by vt.updated_at
+          limit ${query.limit}
+        `);
+      }
+      case 'transfer': {
+        return this.persistentService.pgPool.any(SQL.type(responseModel)`
+          select *
+          from indexer.validated_txs vt
+          where vt.tick = any(${SQL.array(query.tick, 'text')})
+            and vt.from = any(${SQL.array(query.from, 'bytea')})
+            and vt.to = any(${SQL.array(query.to, 'bytea')})
+            and vt.height = any(${SQL.array(query.height, 'integer')})
+          order by vt.updated_at
+          limit ${query.limit}
+        `);
+      }
       default: {
         assertNever(query);
       }

@@ -6,11 +6,11 @@ import {
   ReturnTypeOfDescriptor,
 } from 'clarity-codegen';
 import { ReadonlyFunctionDescriptor } from 'clarity-codegen/lib/runtime/contractBase';
-import { indexerContracts } from '../generated/contracts_indexer';
+import { OracleContracts } from '../generated';
 import { CallbackOptions, PublicCall } from './operation';
 
-const contracts = indexerContracts;
-export type Contracts = typeof indexerContracts;
+const contracts = OracleContracts;
+export type Contracts = typeof contracts;
 export type ContractName = keyof Contracts;
 
 export const callPublic = <

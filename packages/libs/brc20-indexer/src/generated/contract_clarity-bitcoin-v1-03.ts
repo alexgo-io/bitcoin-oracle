@@ -9,8 +9,8 @@ import {
   uintT,
 } from '../codegenImport';
 
-export const clarityBitcoin = defineContract({
-  'clarity-bitcoin': {
+export const clarityBitcoinV103 = defineContract({
+  'clarity-bitcoin-v1-03': {
     'mock-add-burnchain-block-header-hash': {
       input: [
         { name: 'burn-height', type: uintT },
@@ -83,6 +83,11 @@ export const clarityBitcoin = defineContract({
         { name: 'bit', type: uintT },
       ],
       output: booleanT,
+      mode: 'readonly',
+    },
+    'is-segwit-tx': {
+      input: [{ name: 'tx', type: bufferT }],
+      output: responseSimpleT(booleanT),
       mode: 'readonly',
     },
     'parse-block-header': {

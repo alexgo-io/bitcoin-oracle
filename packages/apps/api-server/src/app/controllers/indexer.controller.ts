@@ -80,6 +80,33 @@ export class IndexerController {
   @Post('/validated-txs')
   async validatedTxs(@Body() params: ValidatedTxsQuery) {
     const parsedParams = ValidatedTxsQuerySchema.parse(params);
+    if (parsedParams.type === 'balance') {
+      if (
+        parsedParams.tick.length === 0 &&
+        parsedParams.from.length === 0 &&
+        parsedParams.to.length === 0
+      ) {
+        throw ErrorDetails.from(
+          StatusCode.INVALID_ARGUMENT,
+          'At least one of tick, from, to must be provided',
+        ).throwHttpException();
+      }
+    }
+
+    if (parsedParams.type === 'transfer') {
+      if (
+        parsedParams.tick.length === 0 &&
+        parsedParams.from.length === 0 &&
+        parsedParams.to.length === 0 &&
+        parsedParams.height.length === 0
+      ) {
+        throw ErrorDetails.from(
+          StatusCode.INVALID_ARGUMENT,
+          'At least one of tick, from, to, block_number must be provided',
+        ).throwHttpException();
+      }
+    }
+
     const txs = await this.indexer.getValidatedTxs(parsedParams);
     return {
       data: txs,

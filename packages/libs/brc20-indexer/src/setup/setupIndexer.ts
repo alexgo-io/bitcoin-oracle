@@ -8,6 +8,7 @@ export async function setupIndexer() {
   const process = processOperations(envTest().STACKS_DEPLOYER_ACCOUNT_SECRET, {
     stacksAPIURL: env().STACKS_API_URL,
     puppetURL: envTest().STACKS_PUPPET_URL,
+    fee: 2e6,
   });
 
   await process([
