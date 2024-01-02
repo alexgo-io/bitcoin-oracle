@@ -1,9 +1,9 @@
 import { OTLP_Relayer } from '@bitcoin-oracle/instrument';
 import {
   callPublic,
-  indexerContracts,
   kIndexerContractName,
   kIndexerRegistryName,
+  OracleContracts,
   StacksCaller,
 } from '@meta-protocols-oracle/brc20-indexer';
 import {
@@ -68,7 +68,7 @@ export class DefaultRelayerService implements RelayerService {
     const rows = await this.relayerRepository.getPendingSubmitTx();
 
     const TxManyInputEncoder =
-      indexerContracts[kIndexerContractName]['index-tx-many']['input'][0].type
+      OracleContracts[kIndexerContractName]['index-tx-many']['input'][0].type
         .encode;
     type TxManyInput = Parameters<typeof TxManyInputEncoder>[0][number];
     const txManyInputs: TxManyInput[] = [];

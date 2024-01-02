@@ -43,10 +43,10 @@
       "options": {
         "clarinetPath": "packages/contracts/bitcoin-oracle",
         "contracts": [
-          "clarity-bitcoin",
+          "clarity-bitcoin-v1-03",
           "utils",
           "oracle-registry-v1-01",
-          "oracle-v1-02"
+          "oracle-v1-03"
         ],
         "deployerSecretKey": "${STACKS_DEPLOYER_ACCOUNT_SECRET}",
         "puppetURL": "${STACKS_PUPPET_URL}",
@@ -89,9 +89,9 @@
             "name": "indexer",
             "principal": "${STACKS_DEPLOYER_ACCOUNT_ADDRESS}",
             "contracts": [
-              "clarity-bitcoin",
+              "clarity-bitcoin-v1-03",
               "oracle-registry-v1-01",
-              "oracle-v1-02"
+              "oracle-v1-03"
             ],
             "packageName": "../codegenImport"
           }
