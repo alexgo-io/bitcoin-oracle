@@ -79,9 +79,11 @@ export default class BackFill extends Command {
     await queue.onIdle();
 
     this.logger.log(`pending txs: ${pendingTxsRows.length}`);
-    await persistent.pgPool.transaction(async conn => {
-      for (const tx of pendingTxsRows) {
-        const rs = await conn.query(SQL.typeAlias('any')`
+
+    const removeSubmitTxs = async () => {
+      await persistent.pgPool.transaction(async conn => {
+        for (const tx of pendingTxsRows) {
+          const rs = await conn.query(SQL.typeAlias('any')`
         delete from indexer.submitted_tx
           where tx_hash = ${SQL.binary(tx.tx_hash)}
           and satpoint = ${tx.satpoint.toString()}
@@ -89,18 +91,21 @@ export default class BackFill extends Command {
         returning *;
         `);
 
-        if (rs.rows.length > 0) {
-          this.logger.log(
-            `deleted ${rs.rows.length} rows, for tx ${tx.tx_hash.toString(
-              'hex',
-            )}`,
-          );
-        } else {
-          this.logger.log(
-            `no rows deleted, for tx ${tx.tx_hash.toString('hex')}`,
-          );
+          if (rs.rows.length > 0) {
+            this.logger.log(
+              `deleted ${rs.rows.length} rows, for tx ${tx.tx_hash.toString(
+                'hex',
+              )}`,
+            );
+          } else {
+            this.logger.log(
+              `no rows deleted, for tx ${tx.tx_hash.toString('hex')}`,
+            );
+          }
         }
-      }
-    });
+      });
+    };
+
+    await removeSubmitTxs();
   }
 }
