@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "zod": "^3.22.3",
-    "tslib": "^2.6.2"
+    "tslib": "^2.6.2",
+    "scure-btc-signer-cjs": "^1.0.1"
   }
 }

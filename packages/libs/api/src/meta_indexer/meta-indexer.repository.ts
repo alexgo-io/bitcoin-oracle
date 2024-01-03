@@ -179,7 +179,7 @@ export class MetaIndexerRepository {
             10,
           )}, output: ${proof.output.toString(10)}, proof count: ${
             proofs.length
-          }`,
+          }, tx_hash: ${proof.tx_hash.toString('hex')}`,
         );
         // this.logger.error(
         //   `failed to get tx of id: ${id.toString('hex')}, returns rows ${
