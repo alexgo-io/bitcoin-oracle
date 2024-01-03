@@ -251,7 +251,7 @@ export class IndexerRepository {
           select *
           from indexer.validated_txs vt
           ${whereClause}
-          order by vt.updated_at
+          order by vt.height
           limit ${query.limit}
         `);
       }
