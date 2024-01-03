@@ -160,8 +160,8 @@ export class MetaIndexerRepository {
 
       const id = computeTxsId(
         proof.tx_hash,
-        proof.satpoint.toString(10),
         proof.output.toString(10),
+        proof.satpoint.toString(10),
       );
       const txRs = await conn.query(SQL.type(m.database('indexer', 'txs'))`
         SELECT *
