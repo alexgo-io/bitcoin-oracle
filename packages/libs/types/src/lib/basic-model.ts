@@ -1,3 +1,4 @@
+import { Address, OutScript } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
 
 export const BufferHexSchema = z.preprocess((val, ctx) => {
@@ -119,3 +120,75 @@ export const DateSchema = z.preprocess((val, ctx) => {
 }, z.date());
 
 export const UpperCaseStringSchema = z.string().toUpperCase();
+
+export const PKScriptBufferSchema = z.preprocess((val, ctx) => {
+  if (val instanceof Buffer) {
+    return val;
+  }
+
+  if (typeof val === 'string') {
+    if (val.length === 0) {
+      throw new Error('empty string address');
+    }
+
+    if (val.toLowerCase().startsWith('bc')) {
+      try {
+        return Buffer.from(OutScript.encode(Address().decode(val)));
+      } catch (e) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Invalid PKScriptBufferSchema: [${val}]. ${e}`,
+        });
+      }
+    }
+
+    if (val.length >= 2 && val[1] === 'x') {
+      return Buffer.from(val.slice(2), 'hex');
+    }
+
+    if (
+      val.length >= 3 &&
+      val[0] === '\\' &&
+      val[1] === '\\' &&
+      val[2] === 'x'
+    ) {
+      return Buffer.from(val.slice(3), 'hex');
+    } else {
+      return Buffer.from(val, 'hex');
+    }
+  } else {
+    ctx.addIssue({
+      code: 'custom',
+      message: `Invalid PKScriptBufferSchema: ${val}`,
+    });
+  }
+
+  return z.never();
+}, z.instanceof(Buffer)) as z.ZodType<Buffer, z.ZodTypeDef, string>;
+
+export type PKScriptAddress = {
+  pkscript: string;
+  address: string;
+};
+
+export const PKScriptBufferToAddressSchema = z.preprocess((val, ctx) => {
+  let addressBuffer: Buffer;
+  if (val instanceof Buffer) {
+    addressBuffer = val;
+  } else {
+    addressBuffer = PKScriptBufferSchema.parse(val);
+  }
+
+  try {
+    const address = Address().encode(OutScript.decode(addressBuffer));
+    const pkscript = addressBuffer.toString('hex');
+    return { address, pkscript };
+  } catch (e) {
+    ctx.addIssue({
+      code: 'custom',
+      message: `Invalid PKScriptBufferToAddressSchema: ${val}`,
+    });
+  }
+
+  return z.never();
+}, z.object({ pkscript: z.string(), address: z.string() }));

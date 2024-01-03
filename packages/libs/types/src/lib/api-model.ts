@@ -6,6 +6,7 @@ import {
   BufferHexSchema,
   BufferStringSchema,
   DateSchema,
+  PKScriptBufferToAddressSchema,
   UpperCaseStringSchema,
 } from './basic-model';
 import { Enums } from './enums-model';
@@ -139,12 +140,12 @@ export const validated_txs_response = z.object({
   amt: BigIntStringSchema,
   bitcoin_tx: BufferStringSchema,
   decimals: BigIntStringSchema,
-  from: BufferStringSchema,
+  from: PKScriptBufferToAddressSchema,
   from_bal: BigIntStringSchema,
   offset: BigIntStringSchema,
   output: BigIntStringSchema,
   tick: UpperCaseStringSchema,
-  to: BufferStringSchema,
+  to: PKScriptBufferToAddressSchema,
   to_bal: BigIntStringSchema,
   tx_id: BufferStringSchema,
   proof_hashes: z.array(BufferStringSchema),

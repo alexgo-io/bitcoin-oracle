@@ -5,6 +5,7 @@ import {
   BufferHexSchema,
   DateSchema,
   ModelOf,
+  PKScriptBufferSchema,
   UpperCaseStringSchema,
   ValidatorName,
 } from '@meta-protocols-oracle/types';
@@ -33,8 +34,8 @@ export const ValidatedTxsQuerySchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('indexing'),
     tick: z.array(UpperCaseStringSchema).optional(),
-    from: z.array(BufferHexSchema).optional(),
-    to: z.array(BufferHexSchema).optional(),
+    from: z.array(PKScriptBufferSchema).optional(),
+    to: z.array(PKScriptBufferSchema).optional(),
     height: z.array(z.number().int()).optional(),
     limit: z.coerce.number().optional().default(10000),
   }),

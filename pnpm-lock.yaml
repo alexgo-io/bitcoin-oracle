@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
   .:
     dependencies:
@@ -630,6 +634,9 @@ importers:
 
   packages/libs/types:
     dependencies:
+      scure-btc-signer-cjs:
+        specifier: ^1.0.1
+        version: 1.0.1
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -21362,7 +21369,3 @@ packages:
       }
     engines: { node: '>=10' }
     dev: false
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
