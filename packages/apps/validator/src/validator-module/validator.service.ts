@@ -6,6 +6,7 @@ import {
   loopWithInterval,
   parseErrorDetail,
 } from '@meta-protocols-oracle/commons';
+import { ValidatorName } from '@meta-protocols-oracle/types';
 import { ValidatorProcessInterface } from '@meta-protocols-oracle/validator';
 import { Inject, Logger } from '@nestjs/common';
 import { combineLatest, concat, concatMap, defer, map, of, range } from 'rxjs';
@@ -26,6 +27,21 @@ export class DefaultValidatorService implements ValidatorService {
       ob.observe(this.latestProcessedBlockHeight);
     });
   }
+
+  async getLatestSyncBlockHeightInRange(
+    type: ValidatorName,
+    from: number,
+    to: number,
+  ) {
+    const latestBlocks = await this.api
+      .indexer()
+      .latest_block_number_range()
+      .get({ type: type, from, to });
+    // this.logger.debug(`got: ${JSON.stringify(latestBlocks)}`);
+
+    return latestBlocks.latest_block_number;
+  }
+
   async getFromBlockHeight() {
     const latestBlocks = await this.api
       .indexer()
@@ -115,12 +131,47 @@ export class DefaultValidatorService implements ValidatorService {
     });
   }
 
+  async startReSync() {
+    const resyncStart = env().VALIDATOR_RE_SYNC_START;
+    const resyncEnd = env().VALIDATOR_RE_SYNC_END;
+
+    if (resyncStart != null && resyncEnd != null) {
+      this.logger.log(`Re-syncing from ${resyncStart} to ${resyncEnd}`);
+      const resyncResumeHeight = await this.getLatestSyncBlockHeightInRange(
+        env().VALIDATOR_NAME,
+        resyncStart,
+        resyncEnd,
+      );
+
+      this.syncBlockHeight(
+        resyncResumeHeight ?? resyncStart,
+        resyncEnd,
+      ).subscribe({
+        complete: () => {
+          this.logger.log(
+            `Re-sync completed, ${resyncStart} -> ${resyncEnd}, exit`,
+          );
+          process.exit(0);
+        },
+      });
+
+      return true;
+    }
+
+    return false;
+  }
+
   async start() {
     this.logger.log(
       `Starting ValidatorService - ${env().INDEXER_API_URL} - ${
         env().VALIDATOR_NAME
       }`,
     );
+
+    // in re-sync mode, we don't start interval sync or handle force sync
+    if (await this.startReSync()) {
+      return;
+    }
 
     const forceStart = env().VALIDATOR_FORCE_SYNC_START;
     const forceEnd = env().VALIDATOR_FORCE_SYNC_END;

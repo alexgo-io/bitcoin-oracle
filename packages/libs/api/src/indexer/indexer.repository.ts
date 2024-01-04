@@ -5,7 +5,12 @@ import {
   SQL,
 } from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';
-import { APIOf, m, ValidatorName } from '@meta-protocols-oracle/types';
+import {
+  APIOf,
+  BigIntSchema,
+  m,
+  ValidatorName,
+} from '@meta-protocols-oracle/types';
 import { Inject } from '@nestjs/common';
 import { Address, OutScript, Transaction } from 'scure-btc-signer-cjs';
 import { z } from 'zod';
@@ -259,6 +264,23 @@ export class IndexerRepository {
         assertNever(query);
       }
     }
+  }
+
+  async getLatestBlockInRange(type: ValidatorName, from: bigint, to: bigint) {
+    const rs = await this.persistentService.pgPool.maybeOne(SQL.type(
+      z.object({
+        last: BigIntSchema,
+      }),
+    )`
+      SELECT max(height) as last
+      from indexer.txs
+             join indexer.proofs p on p.id = txs.id
+      where p.type = ${type}
+        and txs.height >= ${SQL.bigint(from)}
+        and txs.height <= ${SQL.bigint(to)}
+    `);
+
+    return rs?.last ?? null;
   }
 }
 
