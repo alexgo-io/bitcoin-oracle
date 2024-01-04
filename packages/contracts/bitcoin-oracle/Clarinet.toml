@@ -49,3 +49,15 @@ path = 'contracts/oracle-v1-04.clar'
 clarity_version = 2
 epoch = 2.1
 depends_on = ["clarity-bitcoin-v1-04", "oracle-registry-v1-01"]
+
+[contracts.oracle-registry-v1-02]
+path = 'contracts/oracle-registry-v1-02.clar'
+clarity_version = 2
+epoch = 2.1
+depends_on = []
+
+[contracts.oracle-v1-05]
+path = 'contracts/oracle-v1-05.clar'
+clarity_version = 2
+epoch = 2.1
+depends_on = ["clarity-bitcoin-v1-04", "oracle-registry-v1-02"]

@@ -21,8 +21,9 @@ export {
 export type { Account };
 
 export const contractNames = {
-  oracle: 'oracle-v1-04',
-  registry: 'oracle-registry-v1-01',
+  oracle: 'oracle-v1-05',
+  registry: 'oracle-registry-v1-02',
+  registry0: 'oracle-registry-v1-01',
   clarityBitcoin: 'clarity-bitcoin-v1-04',
 };
 
@@ -168,6 +169,18 @@ export function prepareChainBasicTest(
     '02c4b5eacb71a27be633ed970dcbc41c00440364bc04ba38ae4683ac24e708bf33';
 
   return chain.mineBlock([
+    Tx.contractCall(
+      contractNames.registry0,
+      'set-paused',
+      [types.bool(false)],
+      deployer.address,
+    ),
+    Tx.contractCall(
+      contractNames.registry0,
+      'set-contract-owner',
+      ['.' + contractNames.registry],
+      deployer.address,
+    ),
     Tx.contractCall(
       contractNames.registry,
       'approve-operator',
