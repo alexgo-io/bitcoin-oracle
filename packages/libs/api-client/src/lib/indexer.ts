@@ -93,5 +93,25 @@ export function indexer(baseURL: string) {
         },
       };
     },
+    latest_block_number_range() {
+      return {
+        async get(params: {
+          type: ValidatorName | string;
+          from: number;
+          to: number;
+        }) {
+          return got
+            .get(
+              `${url}/latest-block-number-range/${Enums.ValidatorName.parse(
+                params.type,
+              )}?from=${params.from}&to=${params.to}`,
+              {
+                headers: headers(),
+              },
+            )
+            .json<{ latest_block_number: number | null }>();
+        },
+      };
+    },
   };
 }

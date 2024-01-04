@@ -77,6 +77,23 @@ export class IndexerController {
     });
   }
 
+  @Get('/latest-block-number-range/:type')
+  async latestBlockNumberOfProofRange(
+    @Param('type') type: ValidatorName,
+    @Query('from') from: number,
+    @Query('to') to: number,
+  ) {
+    const latestBlockNumber = await this.indexer.getLatestBlockInRange(
+      type,
+      BigInt(from),
+      BigInt(to),
+    );
+
+    return {
+      latest_block_number: latestBlockNumber?.toString() ?? null,
+    };
+  }
+
   @Post('/validated-txs')
   async validatedTxs(@Body() params: ValidatedTxsQuery) {
     if (params.type == null) {

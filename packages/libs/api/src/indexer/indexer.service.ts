@@ -76,6 +76,14 @@ export class DefaultIndexer implements Indexer {
   async getValidatedTxs(query: ValidatedTxsQuery) {
     return await this.indexerRepository.getValidatedTxs(query);
   }
+
+  async getLatestBlockInRange(
+    type: ValidatorName,
+    from: bigint,
+    to: bigint,
+  ): Promise<bigint | null> {
+    return await this.indexerRepository.getLatestBlockInRange(type, from, to);
+  }
 }
 
 const IndexerProvider = {

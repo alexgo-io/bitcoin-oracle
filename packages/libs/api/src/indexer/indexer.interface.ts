@@ -58,6 +58,12 @@ export abstract class Indexer {
   abstract getValidatedTxs(
     query: ValidatedTxsQuery,
   ): Promise<readonly APIOf<'validated_txs', 'response', 'json'>[]>;
+
+  abstract getLatestBlockInRange(
+    type: ValidatorName,
+    from: bigint,
+    to: bigint,
+  ): Promise<bigint | null>;
 }
 
 export interface MockIndexer {
