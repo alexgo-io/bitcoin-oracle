@@ -24,7 +24,7 @@ export const contractNames = {
   oracle: 'oracle-v1-05',
   registry: 'oracle-registry-v1-02',
   registry0: 'oracle-registry-v1-01',
-  clarityBitcoin: 'clarity-bitcoin-v1-04',
+  clarityBitcoin: 'clarity-bitcoin-v1-05',
 };
 
 const uintCV = types.uint;

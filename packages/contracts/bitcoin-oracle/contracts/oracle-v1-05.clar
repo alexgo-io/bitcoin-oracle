@@ -136,9 +136,9 @@
 	(if (is-eq chain-id u1)		
 		(let
 			(
-				(response (if (try! (contract-call? .clarity-bitcoin-v1-04 is-segwit-tx tx)) 
-					(contract-call? .clarity-bitcoin-v1-04 was-segwit-tx-mined? block tx proof)
-					(contract-call? .clarity-bitcoin-v1-04 was-tx-mined? block tx proof))))
+				(response (if (try! (contract-call? .clarity-bitcoin-v1-05 is-segwit-tx tx)) 
+					(contract-call? .clarity-bitcoin-v1-05 was-segwit-tx-mined? block tx proof)
+					(contract-call? .clarity-bitcoin-v1-05 was-tx-mined? block tx proof))))
 			(if (or (is-err response) (not (unwrap-panic response)))
 				ERR-BITCOIN-TX-NOT-MINED
 				(ok true)))
