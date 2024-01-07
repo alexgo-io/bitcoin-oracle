@@ -298,7 +298,9 @@ export const processOperations =
               } to ${(txFee + 0.02e6) / 1e6} and retrying...`,
             );
 
-            txFee = txFee + 0.02e6;
+            txFee =
+              txFee +
+              env().STACKS_CONFLICTING_NONCE_REPLACE_INCREMENT_STX * 1e6;
 
             operation.options = {
               ...operation.options,
