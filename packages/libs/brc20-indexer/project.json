@@ -46,7 +46,7 @@
           "clarity-bitcoin-v1-03",
           "utils",
           "oracle-registry-v1-01",
-          "oracle-v1-03"
+          "oracle-v1-04"
         ],
         "deployerSecretKey": "${STACKS_DEPLOYER_ACCOUNT_SECRET}",
         "puppetURL": "${STACKS_PUPPET_URL}",
@@ -91,7 +91,7 @@
             "contracts": [
               "clarity-bitcoin-v1-03",
               "oracle-registry-v1-01",
-              "oracle-v1-03"
+              "oracle-v1-04"
             ],
             "packageName": "../codegenImport"
           }

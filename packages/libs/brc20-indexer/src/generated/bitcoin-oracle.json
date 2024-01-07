@@ -1,0 +1,59 @@
+{
+  "project": {
+    "name": "bitcoin-oracle",
+    "description": "",
+    "authors": [],
+    "telemetry": false,
+    "cache_dir": "./.cache"
+  },
+  "repl": {
+    "costs_version": 2
+  },
+  "contracts": {
+    "clarity-bitcoin-v1-03": {
+      "path": "contracts/clarity-bitcoin-v1-03.clar",
+      "clarity_version": 2,
+      "epoch": 2.1
+    },
+    "utils": {
+      "path": "contracts/utils.clar",
+      "clarity_version": 2,
+      "epoch": 2.1
+    },
+    "oracle-v1-03": {
+      "path": "contracts/oracle-v1-03.clar",
+      "clarity_version": 2,
+      "epoch": 2.1,
+      "depends_on": ["clarity-bitcoin-v1-03", "oracle-registry-v1-01"]
+    },
+    "oracle-registry-v1-01": {
+      "path": "contracts/oracle-registry-v1-01.clar",
+      "clarity_version": 2,
+      "epoch": 2.1,
+      "depends_on": []
+    },
+    "clarity-bitcoin-v1-04": {
+      "path": "contracts/clarity-bitcoin-v1-04.clar",
+      "clarity_version": 2,
+      "epoch": 2.1
+    },
+    "oracle-v1-04": {
+      "path": "contracts/oracle-v1-04.clar",
+      "clarity_version": 2,
+      "epoch": 2.1,
+      "depends_on": ["clarity-bitcoin-v1-04", "oracle-registry-v1-01"]
+    },
+    "oracle-registry-v1-02": {
+      "path": "contracts/oracle-registry-v1-02.clar",
+      "clarity_version": 2,
+      "epoch": 2.1,
+      "depends_on": []
+    },
+    "oracle-v1-05": {
+      "path": "contracts/oracle-v1-05.clar",
+      "clarity_version": 2,
+      "epoch": 2.1,
+      "depends_on": ["clarity-bitcoin-v1-04", "oracle-registry-v1-02"]
+    }
+  }
+}

@@ -1,7 +1,7 @@
-import * as oracleRegistry from './contract_oracle-registry-v1-01';
-import * as oracle from './contract_oracle-v1-03';
+import { oracleRegistryV101 } from './contract_oracle-registry-v1-01';
+import { oracleV104 } from './contract_oracle-v1-04';
 
 export const OracleContracts = {
-  ...oracle.oracleV103,
-  ...oracleRegistry.oracleRegistryV101,
+  ...oracleV104,
+  ...oracleRegistryV101,
 };
