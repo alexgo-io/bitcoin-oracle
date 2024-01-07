@@ -733,7 +733,7 @@ export async function estimateFee(options: {
     cappedFee = capOrFloorFee(fee);
     if (cappedFee !== fee) {
       getLogger('fee-logger').warn(
-        `Estimated Fee is capped: from: ${fee / 1e6} to ${cappedFee}. ${
+        `Estimated Fee is capped: from: ${fee / 1e6} to ${cappedFee / 1e6}. ${
           options.operation.contract
         }.${options.operation.function}`,
       );
@@ -757,7 +757,7 @@ export async function estimateFee(options: {
     cappedFee = capOrFloorFee(fee);
     if (cappedFee !== fee) {
       getLogger('fee-logger').warn(
-        `Estimated Fee is capped: from: ${fee / 1e6} to ${cappedFee}. ${
+        `Estimated Fee is capped: from: ${fee / 1e6} to ${cappedFee / 1e6}. ${
           options.operation.name
         }.deploy`,
       );
@@ -779,7 +779,9 @@ export async function estimateFee(options: {
     cappedFee = capOrFloorFee(fee);
     if (cappedFee !== fee) {
       getLogger('fee-logger').warn(
-        `Estimated Fee is capped: from: ${fee / 1e6} to ${cappedFee}. transfer`,
+        `Estimated Fee is capped: from: ${fee / 1e6} to ${
+          cappedFee / 1e6
+        }. transfer`,
       );
     }
   } else {
