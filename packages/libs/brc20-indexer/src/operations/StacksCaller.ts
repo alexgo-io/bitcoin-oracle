@@ -1,15 +1,15 @@
-import { Logger } from '@nestjs/common';
 import {
-  getAddressFromPrivateKey,
-  TxBroadcastResult,
-} from '@stacks/transactions';
-import {
-  env,
   getEnvStacksChainID,
   getEnvStacksNetwork,
   getEnvStacksTransactionVersion,
-} from '../env';
-import { Operation } from './operation';
+} from '@meta-protocols-oracle/commons';
+import { FeeCalculationFunc, Operation } from '@meta-protocols-oracle/types';
+import { Logger } from '@nestjs/common';
+import {
+  TxBroadcastResult,
+  getAddressFromPrivateKey,
+} from '@stacks/transactions';
+import { env } from '../env';
 import { callReadonlyWith } from './operationFactory';
 import { processOperations } from './processOperations';
 
@@ -17,6 +17,8 @@ export class StacksCaller {
   private readonly logger = new Logger(StacksCaller.name, { timestamp: true });
   readonly address: string;
   public operations: Operation[] = [];
+  public fee?: number;
+  public calculateFee?: FeeCalculationFunc;
 
   constructor(
     private readonly privateKey: string,
@@ -33,8 +35,10 @@ export class StacksCaller {
       stacksAPIURL: env().STACKS_API_URL,
       chainID: getEnvStacksChainID(),
       contractAddress: this.contractAddress,
+      fee: this.fee,
       puppetURL: env().STACKS_PUPPET_URL,
       didRBFBroadcast: this.didRBFBroadcast,
+      calculateFee: this.calculateFee,
     });
   }
 

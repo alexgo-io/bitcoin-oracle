@@ -1,4 +1,6 @@
+import { MempoolTransaction } from '@stacks/stacks-blockchain-api-types';
 import { ClarityValue, TxBroadcastResult } from '@stacks/transactions';
+import { z } from 'zod';
 
 export type OperationCallbackInput =
   | { type: 'error'; error: Error }
@@ -13,7 +15,7 @@ export type TransferSTX = {
   amount: number;
   address: string;
   options?: {
-    fee?: number;
+    feeOverride?: number;
     onBroadcast?: (
       result: TxBroadcastResult,
       options: CallbackOptions,
@@ -27,7 +29,7 @@ export type DeployContract = {
   name: string;
   path: string;
   options?: {
-    fee?: number;
+    feeOverride?: number;
     onBroadcast?: (
       result: TxBroadcastResult,
       options: CallbackOptions,
@@ -42,7 +44,7 @@ export type PublicCall = {
   function: string;
   args: ClarityValue[];
   options?: {
-    fee?: number;
+    feeOverride?: number;
     onBroadcast?: (
       result: TxBroadcastResult,
       options: CallbackOptions,
@@ -50,3 +52,26 @@ export type PublicCall = {
     onSettled?: (op: PublicCall) => Promise<void>;
   };
 };
+
+export type FeeCalculationTx =
+  | {
+      type: 'operation';
+      operation: PublicCall;
+    }
+  | {
+      type: 'mempool';
+      tx: MempoolTransaction;
+      currentFee: number;
+    };
+
+export type FeeCalculationFunc = (
+  tx: FeeCalculationTx,
+) => Promise<number | null>;
+
+export const StacksRBFModeSchema = z
+  .enum(['stages', 'estimate', 'function', 'off'])
+  .default('off');
+
+export const ConflictingNonceStrategySchema = z
+  .enum(['increase', 'replace'])
+  .default('increase');

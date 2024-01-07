@@ -18,6 +18,8 @@
     "p-retry": "^4.6.2",
     "tslib": "^2.6.2",
     "node-fetch": "^2.7.0",
-    "got-cjs": "^12.5.4"
+    "got-cjs": "^12.5.4",
+    "@stacks/network": "^6.8.1",
+    "@stacks/transactions": "^6.11.0"
   }
 }

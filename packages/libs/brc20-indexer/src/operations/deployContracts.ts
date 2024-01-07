@@ -1,8 +1,8 @@
 import * as toml from '@iarna/toml';
+import { DeployContract } from '@meta-protocols-oracle/types';
 import * as fs from 'fs';
 import { uniq } from 'lodash';
 import * as path from 'path';
-import { DeployContract } from './operation';
 
 type DeployContractTarget = {
   contractName: string;

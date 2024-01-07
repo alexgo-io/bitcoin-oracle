@@ -478,6 +478,9 @@ importers:
       '@meta-protocols-oracle/commons':
         specifier: '*'
         version: link:../commons
+      '@meta-protocols-oracle/types':
+        specifier: '*'
+        version: link:../types
       '@nestjs/common':
         specifier: ^10.2.4
         version: 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
@@ -511,6 +514,9 @@ importers:
       node-fetch:
         specifier: ^2.7.0
         version: 2.7.0
+      p-queue:
+        specifier: ^6.6.2
+        version: 6.6.2
       tslib:
         specifier: ^2.3.0
         version: 2.6.2
@@ -526,6 +532,12 @@ importers:
       '@nestjs/common':
         specifier: ^10.2.4
         version: 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@stacks/network':
+        specifier: ^6.8.1
+        version: 6.10.0
+      '@stacks/transactions':
+        specifier: ^6.11.0
+        version: 6.11.0
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
@@ -634,6 +646,12 @@ importers:
 
   packages/libs/types:
     dependencies:
+      '@stacks/stacks-blockchain-api-types':
+        specifier: ^7.3.2
+        version: 7.3.2
+      '@stacks/transactions':
+        specifier: ^6.11.0
+        version: 6.11.0
       scure-btc-signer-cjs:
         specifier: ^1.0.1
         version: 1.0.1

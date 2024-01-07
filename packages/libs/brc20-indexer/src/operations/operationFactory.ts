@@ -1,5 +1,6 @@
+import { CallbackOptions, PublicCall } from '@meta-protocols-oracle/types';
 import { StacksNetwork } from '@stacks/network';
-import { callReadOnlyFunction, TxBroadcastResult } from '@stacks/transactions';
+import { TxBroadcastResult, callReadOnlyFunction } from '@stacks/transactions';
 import {
   OpenCallFunctionDescriptor,
   ParameterObjOfDescriptor,
@@ -7,7 +8,6 @@ import {
 } from 'clarity-codegen';
 import { ReadonlyFunctionDescriptor } from 'clarity-codegen/lib/runtime/contractBase';
 import { OracleContracts } from '../generated';
-import { CallbackOptions, PublicCall } from './operation';
 
 const contracts = OracleContracts;
 export type Contracts = typeof contracts;

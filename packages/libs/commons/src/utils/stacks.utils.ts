@@ -1,4 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { StacksMainnet, StacksMocknet } from '@stacks/network';
+import { ChainID, TransactionVersion } from '@stacks/transactions';
 import { createHash } from 'crypto';
+import fetch from 'node-fetch';
+import { env } from '../env';
 
 export function isStacksAddressEqual(
   address1: string,
@@ -35,4 +40,41 @@ export function sha256(data: Uint8Array): Buffer {
 
 export function assertNever(x: never): never {
   throw new Error('Unexpected never: ' + x);
+}
+
+export function getEnvStacksChainID() {
+  if (env().STACKS_NETWORK_TYPE === 'mainnet') {
+    return ChainID.Mainnet;
+  } else if (env().STACKS_NETWORK_TYPE === 'testnet') {
+    return ChainID.Testnet;
+  } else {
+    throw new Error(`Unknown network type: ${env().STACKS_NETWORK_TYPE}`);
+  }
+}
+
+export function getEnvStacksNetwork() {
+  const chainId = getEnvStacksChainID();
+  if (chainId === ChainID.Mainnet) {
+    return new StacksMainnet({
+      url: env().STACKS_API_URL,
+      fetchFn: fetch as any,
+    });
+  } else if (chainId === ChainID.Testnet) {
+    return new StacksMocknet({
+      url: env().STACKS_API_URL,
+      fetchFn: fetch as any,
+    });
+  } else {
+    throw new Error(`Unknown network type: ${env().STACKS_NETWORK_TYPE}`);
+  }
+}
+
+export function getEnvStacksTransactionVersion() {
+  if (env().STACKS_NETWORK_TYPE === 'mainnet') {
+    return TransactionVersion.Mainnet;
+  } else if (env().STACKS_NETWORK_TYPE === 'testnet') {
+    return TransactionVersion.Testnet;
+  } else {
+    throw new Error(`Unknown network type: ${env().STACKS_NETWORK_TYPE}`);
+  }
 }

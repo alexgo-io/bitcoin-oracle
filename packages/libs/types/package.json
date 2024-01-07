@@ -4,6 +4,8 @@
   "dependencies": {
     "zod": "^3.22.3",
     "tslib": "^2.6.2",
-    "scure-btc-signer-cjs": "^1.0.1"
+    "scure-btc-signer-cjs": "^1.0.1",
+    "@stacks/stacks-blockchain-api-types": "^7.3.2",
+    "@stacks/transactions": "^6.11.0"
   }
 }

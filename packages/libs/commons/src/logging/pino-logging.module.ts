@@ -4,8 +4,10 @@ import { env } from '../env';
 
 export const PinoLoggerModule = LoggerModule.forRoot({
   pinoHttp: {
-    level: env.LOG_LEVEL,
+    level: env().LOG_LEVEL,
     stream:
-      env.NODE_ENV === 'production' ? undefined : pretty({ hideObject: false }),
+      env().NODE_ENV === 'production'
+        ? undefined
+        : pretty({ hideObject: false }),
   },
 });

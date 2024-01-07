@@ -1,10 +1,18 @@
 import {
   assertNever,
   getLogger,
+  noAwait,
   parseErrorDetail,
   sleep,
   stringifyJSON,
 } from '@meta-protocols-oracle/commons';
+import {
+  DeployContract,
+  FeeCalculationFunc,
+  Operation,
+  PublicCall,
+  TransferSTX,
+} from '@meta-protocols-oracle/types';
 import { StacksMainnet, StacksMocknet, StacksNetwork } from '@stacks/network';
 import {
   AccountDataResponse,
@@ -26,18 +34,14 @@ import {
   makeContractDeploy,
   makeSTXTokenTransfer,
 } from '@stacks/transactions';
+import assert from 'assert';
 import * as fs from 'fs';
 import got from 'got-cjs';
 import fetch from 'node-fetch';
+import PQueue from 'p-queue';
 import { z } from 'zod';
 import { alertToTelegram } from '../alert';
 import { env } from '../env';
-import {
-  DeployContract,
-  Operation,
-  PublicCall,
-  TransferSTX,
-} from './operation';
 
 function chainIDToTransactionVersion(chainID: ChainID) {
   if (chainID === ChainID.Mainnet) {
@@ -59,6 +63,8 @@ function stackNetworkFrom(chainId: ChainID, url: string) {
   throw new Error(`Unknown chain ID, ${chainId}`);
 }
 
+const multicastQueue = new PQueue({ concurrency: 1000 });
+
 export const processOperations =
   (
     privateKey: string,
@@ -75,22 +81,23 @@ export const processOperations =
         fee?: number;
         broadcastResult: TxBroadcastResult;
       }) => Promise<void>;
+      calculateFee?: FeeCalculationFunc;
     },
   ) =>
   async (operations: Operation[]) => {
     const kStacksMaxTxPerBlockPerAccount = env().STACKS_MAX_TX_PER_BLOCK;
     let currentMaxTxPerBlockPerAccount = kStacksMaxTxPerBlockPerAccount;
-    const stacksAPIURL = options.stacksAPIURL;
+
     const chainID = options.chainID ?? ChainID.Testnet;
-    const fee = options.fee;
     const transactionVersion = chainIDToTransactionVersion(chainID);
     const puppetUrl = options.puppetURL ?? '';
     const senderAddress = getAddressFromPrivateKey(
       privateKey,
       transactionVersion,
     );
-    const didRBFBroadcast = options.didRBFBroadcast;
     const contractAddress = options.contractAddress ?? senderAddress;
+    const { stacksAPIURL, fee, calculateFee, didRBFBroadcast } = options;
+
     const network = stackNetworkFrom(chainID, stacksAPIURL);
     getLogger('stacks-caller').log(
       `network: ${JSON.stringify(network)}, ${senderAddress}`,
@@ -138,6 +145,7 @@ export const processOperations =
             stacksAPIURL,
             chainID,
             contractAddress,
+            calculateFee,
             didRBFBroadcast,
           });
         }
@@ -149,27 +157,70 @@ export const processOperations =
         }, nonce: ${nonce}, serverNonce: ${lastExecutedNonce}, perBlock: ${currentMaxTxPerBlockPerAccount}`,
       );
 
+      let txFee;
       try {
         switch (operation.type) {
-          case 'publicCall':
+          case 'publicCall': {
+            txFee = operation.options?.feeOverride ?? options.fee;
+            if (txFee == null && env().STACKS_RBF_MODE === 'function') {
+              assert(
+                calculateFee,
+                `calculateFee is not defined for function mode`,
+              );
+
+              const calculatedFee = await calculateFee({
+                type: 'operation',
+                operation,
+              });
+
+              if (calculatedFee == null) {
+                throw new Error(
+                  `calculateFee returned null for ${operation.contract}.${operation.function}`,
+                );
+              }
+
+              txFee = calculatedFee;
+            }
+            if (txFee == null) {
+              txFee = await estimateFee({
+                network,
+                contractAddress,
+                operation,
+                nonce,
+                senderKey: privateKey,
+              });
+            }
+
             await publicCall(
               operation,
               {
                 senderKey: privateKey,
                 nonce,
-                fee,
+                fee: txFee,
               },
               network,
               contractAddress,
             );
             break;
-          case 'deploy':
+          }
+          case 'deploy': {
+            txFee = operation.options?.feeOverride ?? options.fee;
+            if (txFee == null) {
+              txFee = await estimateFee({
+                network,
+                contractAddress,
+                operation,
+                nonce,
+                senderKey: privateKey,
+              });
+            }
+
             await deployContract(
               operation,
               {
                 senderKey: privateKey,
                 nonce,
-                fee,
+                fee: txFee,
               },
               network,
             ).then(result =>
@@ -184,13 +235,24 @@ export const processOperations =
                 }),
             );
             break;
-          case 'transfer':
+          }
+          case 'transfer': {
+            txFee = operation.options?.feeOverride ?? options.fee;
+            if (txFee == null) {
+              txFee = await estimateFee({
+                network,
+                contractAddress,
+                operation,
+                nonce,
+                senderKey: privateKey,
+              });
+            }
             await transferSTX(
               operation,
               {
                 senderKey: privateKey,
                 nonce,
-                fee,
+                fee: txFee,
               },
               network,
             ).then(result =>
@@ -205,6 +267,7 @@ export const processOperations =
                 }),
             );
             break;
+          }
           default:
             assertNever(operation);
         }
@@ -214,12 +277,36 @@ export const processOperations =
           continue;
         }
         if ((e as Error).message.includes('ConflictingNonceInMempool')) {
-          getLogger('stacks-caller').warn(
-            `[${ts()}] ConflictingNonceInMempool, increase the nonce from ${nonce} to ${
-              nonce + 1
-            } and retrying..., per block: ${currentMaxTxPerBlockPerAccount}`,
-          );
-          nonce++;
+          const strategy = env().STACKS_CONFLICTING_NONCE_STRATEGY;
+          if (strategy === 'increase') {
+            getLogger('stacks-caller').warn(
+              `[${ts()}] ConflictingNonceInMempool, increase the nonce from ${nonce} to ${
+                nonce + 1
+              } and retrying..., per block: ${currentMaxTxPerBlockPerAccount}`,
+            );
+            nonce++;
+          } else if (strategy === 'replace') {
+            const rbfMode = env().STACKS_RBF_MODE;
+            assert(
+              rbfMode === 'off' || rbfMode === 'estimate',
+              `RBF should be off or estimate when using replace strategy`,
+            );
+            assert(txFee, `txFee is not defined`);
+            getLogger('stacks-caller').log(
+              `[${ts()}] ConflictingNonceInMempool, increasing the fee from ${
+                txFee / 1e6
+              } to ${(txFee + 0.02e6) / 1e6} and retrying...`,
+            );
+
+            txFee = txFee + 0.02e6;
+
+            operation.options = {
+              ...operation.options,
+              feeOverride: txFee,
+            };
+          } else {
+            assertNever(strategy);
+          }
           operations.unshift(operation);
 
           await RBFIfNeeded(senderAddress, nonce - 1, privateKey, {
@@ -227,6 +314,7 @@ export const processOperations =
             chainID,
             contractAddress,
             didRBFBroadcast,
+            calculateFee,
           });
           continue;
         }
@@ -275,6 +363,7 @@ ${parseErrorDetail(e)}`,
           chainID,
           contractAddress,
           didRBFBroadcast,
+          calculateFee,
         });
       }
 
@@ -347,8 +436,14 @@ export async function RBFIfNeeded(
       fee?: number;
       broadcastResult: TxBroadcastResult;
     }) => Promise<void>;
+    calculateFee?: FeeCalculationFunc;
   },
 ) {
+  const rbfMode = env().STACKS_RBF_MODE;
+  if (rbfMode === 'off') {
+    return;
+  }
+
   const chainID = options.chainID ?? ChainID.Testnet;
   const contractAddress = options.contractAddress;
   const network = stackNetworkFrom(chainID, options.stacksAPIURL);
@@ -366,7 +461,6 @@ export async function RBFIfNeeded(
   const IntegerFees = z.array(z.number().int());
 
   let newFee: number | undefined;
-  const rbfMode = env().STACKS_RBF_MODE;
   if (rbfMode === 'stages') {
     const feeLevels = IntegerFees.parse(
       env().STACKS_RBF_STAGES.map(x => x * 1e6),
@@ -417,6 +511,30 @@ export async function RBFIfNeeded(
         newFee / 1e6
       }, after ${secondsPassed / 60} mins`,
     );
+  } else if (rbfMode === 'function') {
+    if (!options.calculateFee) {
+      throw new Error(`calculateRBFFee is not defined but rbfMode is function`);
+    }
+
+    const funcNewFee = await options.calculateFee({
+      type: 'mempool',
+      tx,
+      currentFee: fee,
+    });
+    if (funcNewFee == null) {
+      return;
+    }
+
+    if (funcNewFee <= fee) {
+      return;
+    }
+
+    getLogger('stacks-caller').log(
+      `RBFIng[function] tx ${tx.tx_id} : ${tx.nonce} from ${fee / 1e6} to ${
+        funcNewFee / 1e6
+      }, after ${secondsPassed / 60} mins`,
+    );
+    newFee = funcNewFee;
   } else {
     assertNever(rbfMode);
   }
@@ -428,7 +546,6 @@ export async function RBFIfNeeded(
       function: tx.contract_call.function_name,
       args: tx.contract_call.function_args!.map(x => hexToCV(x.hex)),
       options: {
-        fee: newFee,
         onBroadcast: async (result, options_) => {
           await options.didRBFBroadcast?.({
             broadcastResult: result,
@@ -450,6 +567,7 @@ export async function RBFIfNeeded(
     {
       nonce: tx.nonce,
       senderKey,
+      fee: newFee,
     },
     network,
     contractAddress,
@@ -545,7 +663,7 @@ async function transferSTX(
   const txOptions = {
     network,
     nonce: options.nonce,
-    fee: options.fee,
+    fee: options.fee ?? 0.001e6,
     anchorMode: AnchorMode.Any,
     postConditionMode: PostConditionMode.Allow,
     senderKey: options.senderKey,
@@ -556,6 +674,7 @@ async function transferSTX(
     await makeSTXTokenTransfer(txOptions),
     network,
   ).catch(() => options.fee);
+
   const result = await broadcastTransaction(
     await makeSTXTokenTransfer({
       ...txOptions,
@@ -572,7 +691,7 @@ async function transferSTX(
 type OperationOptions = {
   senderKey: string;
   nonce: number;
-  fee?: number;
+  fee: number;
 };
 
 function capOrFloorFee(fee: number) {
@@ -582,35 +701,92 @@ function capOrFloorFee(fee: number) {
   const cap = env().STACKS_TX_GAS_CAP * 1e6;
   const floor = env().STACKS_TX_GAS_FLOOR * 1e6;
 
-  return Math.max(Math.min(fee, cap), floor);
+  return Math.floor(Math.max(Math.min(fee, cap), floor));
 }
 
-async function estimateFee(options: {
+export async function estimateFee(options: {
   network: StacksNetwork;
   contractAddress: string;
-  operation: PublicCall;
+  operation: Operation;
   nonce: number;
   senderKey: string;
 }) {
-  const txOptions = {
-    network: options.network,
-    contractAddress: options.contractAddress,
-    contractName: options.operation.contract,
-    functionName: options.operation.function,
-    functionArgs: options.operation.args,
-    nonce: options.nonce,
-    anchorMode: AnchorMode.Any,
-    postConditionMode: PostConditionMode.Allow,
-    senderKey: options.senderKey,
-  };
-  return capOrFloorFee(
-    Number(
+  let fee;
+  let cappedFee;
+  if (options.operation.type === 'publicCall') {
+    fee = Number(
       await estimateTransactionFeeWithFallback(
-        await makeContractCall(txOptions),
+        await makeContractCall({
+          network: options.network,
+          contractAddress: options.contractAddress,
+          contractName: options.operation.contract,
+          functionName: options.operation.function,
+          functionArgs: options.operation.args,
+          nonce: options.nonce,
+          anchorMode: AnchorMode.Any,
+          postConditionMode: PostConditionMode.Allow,
+          senderKey: options.senderKey,
+        }),
         options.network,
       ),
-    ),
-  );
+    );
+    cappedFee = capOrFloorFee(fee);
+    if (cappedFee !== fee) {
+      getLogger('fee-logger').warn(
+        `Estimated Fee is capped: from: ${fee / 1e6} to ${cappedFee}. ${
+          options.operation.contract
+        }.${options.operation.function}`,
+      );
+    }
+  } else if (options.operation.type === 'deploy') {
+    fee = Number(
+      await estimateTransactionFeeWithFallback(
+        await makeContractDeploy({
+          contractName: options.operation.name,
+          codeBody: fs.readFileSync(options.operation.path, 'utf8'),
+          nonce: options.nonce,
+          network: options.network,
+          anchorMode: AnchorMode.Any,
+          postConditionMode: PostConditionMode.Allow,
+          senderKey: options.senderKey,
+        }),
+        options.network,
+      ),
+    );
+
+    cappedFee = capOrFloorFee(fee);
+    if (cappedFee !== fee) {
+      getLogger('fee-logger').warn(
+        `Estimated Fee is capped: from: ${fee / 1e6} to ${cappedFee}. ${
+          options.operation.name
+        }.deploy`,
+      );
+    }
+  } else if (options.operation.type === 'transfer') {
+    fee = Number(
+      await estimateTransactionFeeWithFallback(
+        await makeSTXTokenTransfer({
+          network: options.network,
+          nonce: options.nonce,
+          anchorMode: AnchorMode.Any,
+          senderKey: options.senderKey,
+          amount: options.operation.amount,
+          recipient: options.operation.address,
+        }),
+        options.network,
+      ),
+    );
+    cappedFee = capOrFloorFee(fee);
+    if (cappedFee !== fee) {
+      getLogger('fee-logger').warn(
+        `Estimated Fee is capped: from: ${fee / 1e6} to ${cappedFee}. transfer`,
+      );
+    }
+  } else {
+    assertNever(options.operation);
+  }
+
+  return cappedFee;
 }
 
 async function publicCall(
@@ -632,21 +808,42 @@ async function publicCall(
     senderKey: options.senderKey,
   };
 
-  txOptions.fee = operation.options?.fee ?? options.fee;
-
-  if (txOptions.fee == null) {
-    delete txOptions['fee'];
-    const estimatedFee = await estimateTransactionFeeWithFallback(
-      await makeContractCall(txOptions),
-      network,
-    ).catch(() => 0.004e6);
-
-    txOptions.fee = capOrFloorFee(Number(estimatedFee));
-  }
-
   const transaction = await makeContractCall(txOptions);
 
   const result = await broadcastTransaction(transaction, network);
+  if (env().STACKS_MULTI_CAST) {
+    for (let i = 0; i < 5; i++) {
+      const seed = Math.random();
+      noAwait(
+        multicastQueue.add(async () => {
+          try {
+            // sleep random time of 1-5 * i seconds
+            await sleep((i + 1) * 1000 * (seed * 5));
+
+            const result = await broadcastTransaction(transaction, network);
+            if (result.error) {
+              getLogger('stacks-caller').verbose(
+                `[public call] multicast[${i}] result error: ${JSON.stringify(
+                  result,
+                )}`,
+              );
+              throw new Error(result.reason!);
+            } else {
+              getLogger('stacks-caller').verbose(
+                `[public call] multicast[${i}] success: ${JSON.stringify(
+                  result.txid,
+                )}, nonce: ${options.nonce}`,
+              );
+            }
+          } catch (e) {
+            getLogger('stacks-caller').verbose(
+              `[public call] multicast[${i}] exception: ${JSON.stringify(e)}`,
+            );
+          }
+        }),
+      );
+    }
+  }
 
   if (operation.options?.onBroadcast) {
     await operation.options.onBroadcast(result, {
@@ -664,7 +861,7 @@ async function publicCall(
     getLogger('stacks-caller').log(
       `[public call] broadcast success: ${JSON.stringify(
         result.txid,
-      )}, nonce: ${options.nonce}, fee: ${txOptions.fee / 1e6} STX`,
+      )}, nonce: ${options.nonce}`,
     );
   }
 

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { StacksMainnet, StacksMocknet } from '@stacks/network';
-import { ChainID, TransactionVersion } from '@stacks/transactions';
+import {
+  ConflictingNonceStrategySchema,
+  StacksRBFModeSchema,
+} from '@meta-protocols-oracle/types';
 import { createEnv } from '@t3-oss/env-core';
 import memoizee from 'memoizee';
-import fetch from 'node-fetch';
 import { z } from 'zod';
 const StageFeeNumberSchema = z.preprocess((val, ctx) => {
   if (typeof val !== 'string') {
@@ -48,8 +49,10 @@ export const env = memoizee(() =>
       STACKS_RBF_STAGES: StageFeeNumberSchema.default('0.08, 0.12, 0.24, 0.48'),
       STACKS_TX_GAS_FLOOR: z.coerce.number().default(0.0005),
       STACKS_TX_GAS_CAP: z.coerce.number().default(2),
-      STACKS_RBF_MODE: z.enum(['stages', 'estimate']).default('stages'),
       STACKS_RBF_ESTIMATE_THRESHOLD: z.coerce.number().default(200000), // 0.2 difference for change
+      STACKS_RBF_MODE: StacksRBFModeSchema,
+      STACKS_CONFLICTING_NONCE_STRATEGY: ConflictingNonceStrategySchema,
+      STACKS_MULTI_CAST: z.coerce.boolean().default(false),
     },
     runtimeEnv: process.env,
   }),
@@ -69,40 +72,3 @@ export const envTest = memoizee(() =>
     runtimeEnv: process.env,
   }),
 );
-
-export function getEnvStacksChainID() {
-  if (env().STACKS_NETWORK_TYPE === 'mainnet') {
-    return ChainID.Mainnet;
-  } else if (env().STACKS_NETWORK_TYPE === 'testnet') {
-    return ChainID.Testnet;
-  } else {
-    throw new Error(`Unknown network type: ${env().STACKS_NETWORK_TYPE}`);
-  }
-}
-
-export function getEnvStacksNetwork() {
-  const chainId = getEnvStacksChainID();
-  if (chainId === ChainID.Mainnet) {
-    return new StacksMainnet({
-      url: env().STACKS_API_URL,
-      fetchFn: fetch as any,
-    });
-  } else if (chainId === ChainID.Testnet) {
-    return new StacksMocknet({
-      url: env().STACKS_API_URL,
-      fetchFn: fetch as any,
-    });
-  } else {
-    throw new Error(`Unknown network type: ${env().STACKS_NETWORK_TYPE}`);
-  }
-}
-
-export function getEnvStacksTransactionVersion() {
-  if (env().STACKS_NETWORK_TYPE === 'mainnet') {
-    return TransactionVersion.Mainnet;
-  } else if (env().STACKS_NETWORK_TYPE === 'testnet') {
-    return TransactionVersion.Testnet;
-  } else {
-    throw new Error(`Unknown network type: ${env().STACKS_NETWORK_TYPE}`);
-  }
-}
