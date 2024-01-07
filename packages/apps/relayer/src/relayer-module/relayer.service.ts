@@ -138,6 +138,19 @@ export class DefaultRelayerService implements RelayerService {
             tx.proofs,
             env().RELAYER_MINIMAL_AGREEMENT_COUNT,
           );
+          if (
+            majorityProofs == null &&
+            tx.proofs.length !== env().RELAYER_MAXIMUM_AGREEMENT_COUNT
+          ) {
+            this.logger.debug(
+              `can't get agreement for tx: ${tx.tx_hash.toString(
+                'hex',
+              )}, proofs: ${tx.proofs.length}, waiting for ${
+                env().RELAYER_MAXIMUM_AGREEMENT_COUNT
+              } proofs`,
+            );
+            return;
+          }
 
           if (majorityProofs == null) {
             const firstProof = tx.proofs[0];
