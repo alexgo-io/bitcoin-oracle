@@ -1,7 +1,7 @@
 import { SQL } from '@meta-protocols-oracle/commons';
 
 import { PersistentService } from '@meta-protocols-oracle/persistent';
-import { m, ModelIndexer } from '@meta-protocols-oracle/types';
+import { kTxMaxLength, m, ModelIndexer } from '@meta-protocols-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
 import { z } from 'zod';
 import { env } from '../env';
@@ -38,7 +38,7 @@ export class RelayerRepository {
                                                  from indexer.submitted_tx
                                                  where txs.id = submitted_tx.id)
                                  and error is null
-                                 and length(tx_hash) <= 4096
+                                 and length(tx_hash) <= ${kTxMaxLength}
                                  and height >= ${
                                    env().RELAYER_MINIMAL_BLOCK_HEIGHT
                                  }
@@ -77,7 +77,7 @@ export class RelayerRepository {
                                                  from indexer.submitted_tx
                                                  where txs.id = submitted_tx.id)
                                  and error is null
-                                 and length(tx_hash) <= 4096
+                                 and length(tx_hash) <= ${kTxMaxLength}
                                  and height >= ${
                                    env().RELAYER_MINIMAL_BLOCK_HEIGHT
                                  }
@@ -113,7 +113,7 @@ export class RelayerRepository {
                                                  from indexer.submitted_tx
                                                  where txs.id = submitted_tx.id)
                                  and error is null
-                                 and length(tx_hash) <= 4096
+                                 and length(tx_hash) <= ${kTxMaxLength}
                                  and height >= ${
                                    env().RELAYER_MINIMAL_BLOCK_HEIGHT
                                  }

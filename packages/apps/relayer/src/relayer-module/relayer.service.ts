@@ -12,6 +12,7 @@ import {
   noAwait,
   toBuffer,
 } from '@meta-protocols-oracle/commons';
+import { kTxMaxLength } from '@meta-protocols-oracle/types';
 import { Inject, Logger } from '@nestjs/common';
 import assert from 'assert';
 import { chunk } from 'lodash';
@@ -88,7 +89,7 @@ export class DefaultRelayerService implements RelayerService {
     }[] = [];
 
     for (const tx of rows) {
-      if (tx.tx_hash.length > 4096) {
+      if (tx.tx_hash.length > kTxMaxLength) {
         const tx_id = Transaction.fromRaw(tx.tx_id).id;
         this.logger.error(
           `tx_hash too long: ${tx.tx_hash.length}, tx_id: ${tx_id}, output: ${tx.output}, satpoint: ${tx.satpoint}`,
@@ -98,7 +99,7 @@ export class DefaultRelayerService implements RelayerService {
           satpoint: tx.satpoint,
           output: tx.output,
           tx_hash: tx.tx_hash,
-          error: 'tx_hash too long (>4096)',
+          error: `tx_hash too long (>${kTxMaxLength})`,
         });
         continue;
       }

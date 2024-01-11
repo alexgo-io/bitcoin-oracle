@@ -5,7 +5,11 @@ import {
 } from '@meta-protocols-oracle/brc20-indexer';
 import { fastRetry, noAwait, SQL } from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';
-import { BigIntSchema, BufferHexSchema } from '@meta-protocols-oracle/types';
+import {
+  BigIntSchema,
+  BufferHexSchema,
+  kTxMaxLength,
+} from '@meta-protocols-oracle/types';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Command } from '@oclif/core';
@@ -36,7 +40,7 @@ export default class BackFill extends Command {
       from indexer.proofs pf
       where (pf."to" in (select address_to from indexer.whitelist_to_address) or
              (pf."from" in (select address_to from indexer.whitelist_to_address)))
-        and length(tx_hash) <= 4096
+        and length(tx_hash) <= ${kTxMaxLength}
       group by 1,2,3
     `);
 
