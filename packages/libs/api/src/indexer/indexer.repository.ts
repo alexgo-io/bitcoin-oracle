@@ -256,7 +256,7 @@ export class IndexerRepository {
           select *
           from indexer.validated_txs vt
           ${whereClause}
-          order by vt.height
+          order by vt.height desc
           limit ${query.limit}
         `);
       }
