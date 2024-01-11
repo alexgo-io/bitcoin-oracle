@@ -1,10 +1,12 @@
 import { defineContract } from '../codegenImport';
-import { clarityBitcoinV103 } from './contract_clarity-bitcoin-v1-03';
+import { clarityBitcoinV105 } from './contract_clarity-bitcoin-v1-05';
 import { oracleRegistryV101 } from './contract_oracle-registry-v1-01';
-import { oracleV104 } from './contract_oracle-v1-04';
+import { oracleRegistryV102 } from './contract_oracle-registry-v1-02';
+import { oracleV106 } from './contract_oracle-v1-06';
 
 export const indexerContracts = defineContract({
-  ...clarityBitcoinV103,
+  ...clarityBitcoinV105,
   ...oracleRegistryV101,
-  ...oracleV104,
+  ...oracleRegistryV102,
+  ...oracleV106,
 });

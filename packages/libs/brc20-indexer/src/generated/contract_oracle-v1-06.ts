@@ -12,8 +12,8 @@ import {
   uintT,
 } from '../codegenImport';
 
-export const oracleV104 = defineContract({
-  'oracle-v1-04': {
+export const oracleV106 = defineContract({
+  'oracle-v1-06': {
     'add-validator': {
       input: [
         { name: 'validator-pubkey', type: bufferT },

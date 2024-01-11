@@ -1,5 +1,5 @@
 import { pubKeyfromPrivKey } from '@stacks/transactions';
-import { kIndexerContractName, kIndexerRegistryName } from '../constants';
+import { kIndexerContractName } from '../constants';
 import { env, envTest } from '../env';
 import { callPublic } from '../operations/operationFactory';
 import { processOperations } from '../operations/processOperations';
@@ -26,7 +26,7 @@ export async function setupIndexer() {
       approved: true,
       relayer: envTest().STACKS_RELAYER_ACCOUNT_ADDRESS,
     }),
-    callPublic(kIndexerRegistryName, 'approve-operator', {
+    callPublic('oracle-registry-v1-01', 'approve-operator', {
       approved: true,
       operator: `${
         envTest().STACKS_DEPLOYER_ACCOUNT_ADDRESS
