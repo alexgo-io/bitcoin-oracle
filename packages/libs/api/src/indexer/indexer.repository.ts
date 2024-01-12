@@ -42,43 +42,42 @@ export class IndexerRepository {
       const to_address = encodeAddress(tx.to);
 
       await conn.query(SQL.typeAlias('void')`
-          INSERT INTO indexer.proofs(type,
-                                     order_hash,
-                                     signature,
-                                     amt,
-                                     decimals,
-                                     tx_hash,
-                                     "from",
-                                     from_bal,
-                                     satpoint,
-                                     output,
-                                     tick,
-                                     "to",
-                                     to_bal,
-                                     signer,
-                                     from_address,
-                                     to_address,
-                                     tx_id)
-          VALUES (${tx.type},
-                  ${SQL.binary(tx.order_hash)},
-                  ${SQL.binary(tx.signature)},
-                  ${tx.amt.toString()},
-                  ${tx.decimals.toString()},
-                  ${SQL.binary(tx.tx_hash)},
-                  ${SQL.binary(tx.from)},
-                  ${tx.from_bal.toString()},
-                  ${tx.satpoint.toString()},
-                  ${tx.output.toString()},
-                  ${tx.tick},
-                  ${SQL.binary(tx.to)},
-                  ${tx.to_bal.toString()},
-                  ${tx.signer},
-                  ${from_address},
-                  ${to_address},
-                  ${SQL.binary(tx_id)}
-                  )
-          on conflict do nothing;
-          ;
+        INSERT INTO indexer.proofs(type,
+                                   order_hash,
+                                   signature,
+                                   amt,
+                                   decimals,
+                                   tx_hash,
+                                   "from",
+                                   from_bal,
+                                   satpoint,
+                                   output,
+                                   tick,
+                                   "to",
+                                   to_bal,
+                                   signer,
+                                   from_address,
+                                   to_address,
+                                   tx_id)
+        VALUES (${tx.type},
+                ${SQL.binary(tx.order_hash)},
+                ${SQL.binary(tx.signature)},
+                ${tx.amt.toString()},
+                ${tx.decimals.toString()},
+                ${SQL.binary(tx.tx_hash)},
+                ${SQL.binary(tx.from)},
+                ${tx.from_bal.toString()},
+                ${tx.satpoint.toString()},
+                ${tx.output.toString()},
+                ${tx.tick},
+                ${SQL.binary(tx.to)},
+                ${tx.to_bal.toString()},
+                ${tx.signer},
+                ${from_address},
+                ${to_address},
+                ${SQL.binary(tx_id)})
+        on conflict do nothing;
+        ;
       `);
 
       const computedId = computeTxsId(
@@ -88,10 +87,10 @@ export class IndexerRepository {
       );
 
       const existing = await conn.maybeOne(SQL.typeAlias('indexer_txs')`
-          select *
-          from indexer.txs
-          where id = ${SQL.binary(computedId)}
-          ;
+        select *
+        from indexer.txs
+        where id = ${SQL.binary(computedId)}
+        ;
       `);
 
       if (existing != null) {
@@ -99,25 +98,24 @@ export class IndexerRepository {
       }
 
       await conn.query(SQL.typeAlias('void')`
-          INSERT INTO indexer.txs(header,
-                                  height,
-                                  tx_hash,
-                                  tx_id,
-                                  proof_hashes,
-                                  tx_index,
-                                  tree_depth,
-                                  output,
-                                  satpoint
-                                  )
-          VALUES (${SQL.binary(tx.header)},
-                  ${tx.height.toString()},
-                  ${SQL.binary(tx.tx_hash)},
-                  ${SQL.binary(tx_id)},
-                  ${SQL.array(tx.proof_hashes, 'bytea')},
-                  ${tx.tx_index.toString()},
-                  ${tx.tree_depth.toString()},
-                  ${tx.output.toString()},
-                  ${tx.satpoint.toString()});
+        INSERT INTO indexer.txs(header,
+                                height,
+                                tx_hash,
+                                tx_id,
+                                proof_hashes,
+                                tx_index,
+                                tree_depth,
+                                output,
+                                satpoint)
+        VALUES (${SQL.binary(tx.header)},
+                ${tx.height.toString()},
+                ${SQL.binary(tx.tx_hash)},
+                ${SQL.binary(tx_id)},
+                ${SQL.array(tx.proof_hashes, 'bytea')},
+                ${tx.tx_index.toString()},
+                ${tx.tree_depth.toString()},
+                ${tx.output.toString()},
+                ${tx.satpoint.toString()});
       `);
     });
   }
@@ -126,10 +124,10 @@ export class IndexerRepository {
     return this.persistentService.pgPool.maybeOne(SQL.typeAlias(
       'indexer_block',
     )`
-        select *
-        from indexer.blocks
-        where block_hash = ${SQL.binary(hash)}
-        limit 1;
+      select *
+      from indexer.blocks
+      where block_hash = ${SQL.binary(hash)}
+      limit 1;
     `);
   }
 
@@ -137,10 +135,10 @@ export class IndexerRepository {
     return this.persistentService.pgPool.one(SQL.type(
       z.object({ lasted_block_number: z.bigint().nullable() }),
     )`
-        select max(height) as lasted_block_number
-        from indexer.txs
-        join indexer.proofs p on p.id = txs.id
-        where p.type = ${type}
+      select max(height) as lasted_block_number
+      from indexer.txs
+             join indexer.proofs p on p.id = txs.id
+      where p.type = ${type}
     `);
   }
 
@@ -163,10 +161,10 @@ export class IndexerRepository {
                            p.type
                     from indexer.proofs p),
              with_pf_count as (select t.id,
-                                     count(*)           as proofs_count
-                              from indexer.txs t
-                                     join pf on pf.id = t.id
-                              group by 1),
+                                      count(*) as proofs_count
+                               from indexer.txs t
+                                      join pf on pf.id = t.id
+                               group by 1),
              with_tx as (select t.id,
                                 t.tx_hash,
                                 t.output,
@@ -231,22 +229,21 @@ export class IndexerRepository {
         return await this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
           from indexer.validated_txs vt
-          ${whereClause}
+            ${whereClause}
           ;
         `);
       }
       case 'id2': {
         return await this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs
-          ${whereClause}
+          from indexer.validated_txs ${whereClause}
         `);
       }
       case 'to': {
         return this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
           from indexer.validated_txs vt
-          ${whereClause}
+            ${whereClause}
           order by vt.updated_at
           limit ${query.limit}
         `);
@@ -255,7 +252,7 @@ export class IndexerRepository {
         return this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
           from indexer.validated_txs vt
-          ${whereClause}
+            ${whereClause}
           order by vt.height desc
           limit ${query.limit}
         `);
@@ -324,7 +321,7 @@ function generateValidatedTxWheres(
     }
     case 'indexing': {
       const wheres: ReturnType<typeof SQL.fragment>[] = [];
-      const { from, to, tick, height } = query;
+      const { from, to, tick, height, from_or_to } = query;
       if (tick && tick.length > 0) {
         wheres.push(
           SQL.fragment`
@@ -350,6 +347,16 @@ function generateValidatedTxWheres(
         wheres.push(
           SQL.fragment`
             vt.height = any(${SQL.array(height, 'numeric')})
+          `,
+        );
+      }
+      if (from_or_to && from_or_to.length > 0) {
+        wheres.push(
+          SQL.fragment`
+            (
+                 vt.from = any(${SQL.array(from_or_to, 'bytea')})
+              or vt.to   = any(${SQL.array(from_or_to, 'bytea')})
+            )
           `,
         );
       }

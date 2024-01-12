@@ -36,6 +36,7 @@ export const ValidatedTxsQuerySchema = z.discriminatedUnion('type', [
     tick: z.array(UpperCaseStringSchema).optional(),
     from: z.array(PKScriptBufferSchema).optional(),
     to: z.array(PKScriptBufferSchema).optional(),
+    from_or_to: z.array(PKScriptBufferSchema).optional(),
     height: z.array(z.number().int()).optional(),
     limit: z.coerce.number().optional().default(10000),
   }),
