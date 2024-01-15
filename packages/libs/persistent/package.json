@@ -7,7 +7,7 @@
     "@t3-oss/env-core": "^0.7.1",
     "zod": "^3.22.3",
     "memoizee": "^0.4.15",
-    "@nestjs/common": "^10.2.4",
+    "@nestjs/common": "^10.3.0",
     "slonik": "^37.0.1",
     "slonik-interceptor-query-logging": "^1.4.7",
     "tslib": "^2.6.2"

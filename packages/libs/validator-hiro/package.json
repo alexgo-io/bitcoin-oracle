@@ -14,7 +14,7 @@
     "@meta-protocols-oracle/api-client": "*",
     "@meta-protocols-oracle/brc20-indexer": "*",
     "@meta-protocols-oracle/validator": "*",
-    "@nestjs/common": "^10.2.4",
+    "@nestjs/common": "^10.3.0",
     "p-queue": "^6.6.2",
     "@bitcoin-oracle/instrument": "*"
   },
