@@ -5,7 +5,7 @@
     "tslib": "^2.3.0",
     "@meta-protocols-oracle/types": "*",
     "@meta-protocols-oracle/persistent": "*",
-    "@nestjs/common": "^10.2.4",
+    "@nestjs/common": "^10.3.0",
     "@meta-protocols-oracle/commons": "*",
     "zod": "^3.22.3",
     "scure-btc-signer-cjs": "^1.0.1",

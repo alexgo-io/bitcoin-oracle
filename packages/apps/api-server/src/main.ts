@@ -68,10 +68,10 @@ async function bootstrap() {
       process.exit(1);
     });
 
-  const port = env.API_PORT;
+  const port = env().API_PORT;
   await app.listen(port, () => {
     logger.log(`B20 API server started at port ${port}`);
-    startHeartBeat(env.HEARTBEAT_URL);
+    startHeartBeat(env().HEARTBEAT_URL);
   });
 }
 bootstrap().catch(e => {

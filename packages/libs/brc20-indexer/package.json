@@ -9,7 +9,7 @@
     "@t3-oss/env-core": "^0.7.1",
     "memoizee": "^0.4.15",
     "zod": "^3.22.3",
-    "@nestjs/common": "^10.2.4",
+    "@nestjs/common": "^10.3.0",
     "@iarna/toml": "^2.2.5",
     "lodash": "^4.17.21",
     "@meta-protocols-oracle/commons": "*",

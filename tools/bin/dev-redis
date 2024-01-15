@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export PROJECT_NAME="dev-redis"
+
+# shellcheck source=./_dev_utils
+source "$NX_WORKSPACE_ROOT"/tools/bin/_dev_utils
+echo_welcome
+
+
+main() {
+  local cmd=${1:-""}
+  case $cmd in
+  up)
+    _docker_compose up -d
+    ;;
+  down)
+    _docker_compose down
+    ;;
+  logs)
+    _docker_compose logs -f --tail=100
+    ;;
+  clean)
+    _docker_compose down -v -t 0
+    ;;
+  reset)
+    _docker_compose down -v -t 0
+    main up
+    ;;
+  pull)
+    _docker_compose pull
+    ;;
+  *)
+    echo "Usage: $0 {up|down|logs|clean|reset|pull}"
+    exit 1
+    ;;
+  esac
+}
+
+main $@

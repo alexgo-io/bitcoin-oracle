@@ -1,9 +1,4 @@
-import {
-  Indexer,
-  IndexerError,
-  ValidatedTxsQuery,
-  ValidatedTxsQuerySchema,
-} from '@bitcoin-oracle/api';
+import { Indexer, IndexerError } from '@bitcoin-oracle/api';
 import { ErrorDetails } from '@meta-protocols-oracle/commons';
 import {
   APIOf,
@@ -25,6 +20,7 @@ import {
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 import { AuthGuard } from '../guards/auth.guard';
+import { ThrottlerBehindProxyGuard } from '../guards/throttler-behind-proxy.guard';
 
 export class IndexerTxsCreateInput extends createZodDto(
   m.api('txs', 'request', 'dto'),
@@ -34,11 +30,8 @@ const IndexerLatestBlockNumberOfProofResponseSchema = z.object({
   latest_block_number: z.coerce.number().nullable(),
 });
 
-export class IndexerLatestBlockNumberOfProofResponseDto extends createZodDto(
-  IndexerLatestBlockNumberOfProofResponseSchema,
-) {}
-
 @UseGuards(AuthGuard)
+@UseGuards(ThrottlerBehindProxyGuard)
 @Controller('/api/v1/indexer')
 export class IndexerController {
   private readonly logger = new Logger(IndexerController.name);
@@ -93,34 +86,6 @@ export class IndexerController {
       latest_block_number: latestBlockNumber?.toString() ?? null,
     };
   }
-
-  @Post('/validated-txs')
-  async validatedTxs(@Body() params: ValidatedTxsQuery) {
-    if (params.type == null) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (params as any).type = 'indexing';
-    }
-    const parsedParams = ValidatedTxsQuerySchema.parse(params);
-
-    if (parsedParams.type === 'indexing') {
-      if (
-        parsedParams.tick?.length === 0 &&
-        parsedParams.from?.length === 0 &&
-        parsedParams.to?.length === 0 &&
-        parsedParams.height == null
-      ) {
-        throw ErrorDetails.from(
-          StatusCode.INVALID_ARGUMENT,
-          'At least one of tick, from, to, block_number must be provided',
-        ).throwHttpException();
-      }
-    }
-
-    const txs = await this.indexer.getValidatedTxs(parsedParams);
-    return {
-      data: txs,
-    };
-  }
 }
 
 function rename(
@@ -133,6 +98,7 @@ function rename(
 }
 
 @Controller('/debug')
+@UseGuards(ThrottlerBehindProxyGuard)
 export class DebugIndexerController {
   private readonly logger = new Logger(DebugIndexerController.name);
   constructor(@Inject(Indexer) private readonly indexer: Indexer) {}
