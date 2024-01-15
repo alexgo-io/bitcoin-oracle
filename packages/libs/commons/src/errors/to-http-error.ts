@@ -18,6 +18,7 @@ import {
   ForbiddenException,
   HttpException,
 } from '@nestjs/common';
+import { ThrottlerException } from '@nestjs/throttler';
 import { ValidationError } from 'class-validator';
 import safeJsonStringify from 'safe-json-stringify';
 
@@ -205,6 +206,11 @@ export class ErrorDetails {
 export function toErrorDetailsHttpException(
   exception: unknown,
 ): ErrorDetailsHttpException {
+  if (exception instanceof ThrottlerException) {
+    return ErrorDetails.from(StatusCode.RESOURCE_EXHAUSTED, exception.message)
+      .error(exception)
+      .toHttpException();
+  }
   if (exception instanceof ErrorDetailsHttpException) return exception;
   if (exception instanceof BadRequestException) {
     if (Array.isArray(exception.getResponse())) {

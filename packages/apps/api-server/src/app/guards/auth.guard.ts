@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 import { env } from '../../env';
 
 const getSecretKeys: () => { [key: string]: string } = memoizee(() => {
-  return JSON.parse(env.BRC20_ORACLE_API_CREDENTIALS);
+  return JSON.parse(env().BRC20_ORACLE_API_CREDENTIALS);
 });
 
 const logger = new Logger('api-server', { timestamp: true });
@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    if (env.DISABLE_AUTH) {
+    if (env().DISABLE_AUTH) {
       return true;
     }
     const request = context.switchToHttp().getRequest();

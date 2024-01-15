@@ -19,7 +19,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const { debugInfos, apiError } = statusDetails;
     let data = apiError;
 
-    if (env.ENABLE_DEBUG_INFO) {
+    if (env().ENABLE_DEBUG_INFO) {
       data = {
         error: {
           ...apiError.error,
