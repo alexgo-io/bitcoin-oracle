@@ -31,7 +31,6 @@ const IndexerLatestBlockNumberOfProofResponseSchema = z.object({
 });
 
 @UseGuards(AuthGuard)
-@UseGuards(ThrottlerBehindProxyGuard)
 @Controller('/api/v1/indexer')
 export class IndexerController {
   private readonly logger = new Logger(IndexerController.name);
