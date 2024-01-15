@@ -6,6 +6,10 @@ import { Response, json, urlencoded } from 'express';
 import { Logger } from 'nestjs-pino';
 import { patchNestJsSwagger } from 'nestjs-zod';
 import { AppModule } from './app/app.module';
+import {
+  MetaIndexerQueryIndexingDTO,
+  MetaIndexerQueryToDTO,
+} from './app/controllers/meta-indexer.type';
 import { AllExceptionsFilter } from './app/interceptors/all-exceptions.filter';
 import { env } from './env';
 
@@ -44,7 +48,9 @@ async function bootstrap() {
     .setVersion('0.0.1')
     .build();
   patchNestJsSwagger();
-  const document = SwaggerModule.createDocument(app, swaggerBuilder);
+  const document = SwaggerModule.createDocument(app, swaggerBuilder, {
+    extraModels: [MetaIndexerQueryToDTO, MetaIndexerQueryIndexingDTO],
+  });
   amendActionPath(document);
   SwaggerModule.setup('swagger-ui', app, document, {
     swaggerOptions: {
