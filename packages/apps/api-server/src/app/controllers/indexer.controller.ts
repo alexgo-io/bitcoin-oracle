@@ -17,6 +17,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ApiExcludeController } from '@nestjs/swagger';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 import { AuthGuard } from '../guards/auth.guard';
@@ -31,6 +32,7 @@ const IndexerLatestBlockNumberOfProofResponseSchema = z.object({
 });
 
 @UseGuards(AuthGuard)
+@ApiExcludeController()
 @Controller('/api/v1/indexer')
 export class IndexerController {
   private readonly logger = new Logger(IndexerController.name);
@@ -98,6 +100,7 @@ function rename(
 
 @Controller('/debug')
 @UseGuards(ThrottlerBehindProxyGuard)
+@ApiExcludeController()
 export class DebugIndexerController {
   private readonly logger = new Logger(DebugIndexerController.name);
   constructor(@Inject(Indexer) private readonly indexer: Indexer) {}
