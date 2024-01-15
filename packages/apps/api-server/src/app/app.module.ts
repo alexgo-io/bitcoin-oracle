@@ -13,6 +13,16 @@ import {
 } from './controllers/indexer.controller';
 import { MetaIndexerController } from './controllers/meta-indexer.controller';
 
+function getStorage() {
+  const host = env().REDISHOST;
+  const port = env().REDISPORT;
+  if (host == null || port == null) {
+    return undefined;
+  }
+
+  return new ThrottlerStorageRedisService(`redis://${host}:${port}`);
+}
+
 @Module({
   imports: [
     IndexerModule,
@@ -21,10 +31,7 @@ import { MetaIndexerController } from './controllers/meta-indexer.controller';
       throttlers: [
         { limit: env().THROTTLE_LIMIT, ttl: seconds(env().THROTTLE_TTL_SEC) },
       ],
-      storage:
-        env().THROTTLE_REDIS_URL == null
-          ? undefined
-          : new ThrottlerStorageRedisService(env().THROTTLE_REDIS_URL),
+      storage: getStorage(),
     }),
   ],
   controllers: [
