@@ -26,8 +26,10 @@ alter table indexer.proofs
 UPDATE indexer.proofs pf
 SET height = indexer.txs.height
 FROM indexer.txs
-WHERE pf.id = txs.id and pf.height is null;
+WHERE pf.id = txs.id;
 
 alter table indexer.proofs
   alter column height set not null;
 
+update indexer.proofs
+set validated = false;
