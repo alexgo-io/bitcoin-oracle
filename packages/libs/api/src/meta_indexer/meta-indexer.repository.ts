@@ -51,6 +51,7 @@ export class MetaIndexerRepository {
                                                            to_bal,
                                                            tx_id,
                                                            signers,
+                                                           signer_pubkeys,
                                                            signer_types,
                                                            signatures,
                                                            proof_hashes,
@@ -71,6 +72,7 @@ export class MetaIndexerRepository {
                 ${tx.to_bal.toString(10)},
                 ${SQL.binary(tx.tx_id)},
                 ${SQL.array(tx.signers, 'text')},
+                ${SQL.array(tx.signer_pubkeys, 'bytea')},
                 ${SQL.array(tx.signer_types, 'text')},
                 ${SQL.array(tx.signatures, 'bytea')},
                 ${SQL.array(tx.proof_hashes, 'bytea')},
@@ -235,6 +237,7 @@ export class MetaIndexerRepository {
         height: tx.height,
         // signatures
         signers: proofs.map(p => p.signer),
+        signer_pubkeys: proofs.map(p => p.signer_pubkey),
         signer_types: proofs.map(p => p.type),
         signatures: proofs.map(p => p.signature),
         // additional

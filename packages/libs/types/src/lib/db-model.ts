@@ -121,6 +121,7 @@ const validated_txs = z.object({
   signers: z.array(z.string()),
   signer_types: z.array(Enums.ValidatorName),
   signatures: z.array(BufferHexSchema),
+  signer_pubkeys: z.array(BufferHexSchema),
   created_at: DateSchema.optional(),
   updated_at: DateSchema.optional(),
 });

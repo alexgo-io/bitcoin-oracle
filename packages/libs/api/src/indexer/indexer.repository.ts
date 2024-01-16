@@ -140,8 +140,7 @@ export class IndexerRepository {
       z.object({ lasted_block_number: z.bigint().nullable() }),
     )`
       select max(height) as lasted_block_number
-      from indexer.txs
-             join indexer.proofs p on p.id = txs.id
+      from indexer.proofs p
       where p.type = ${type}
     `);
   }
@@ -232,7 +231,7 @@ export class IndexerRepository {
       case 'id': {
         return await this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs vt
+          from indexer.validated_txs_bak vt
             ${whereClause}
           ;
         `);
@@ -240,13 +239,13 @@ export class IndexerRepository {
       case 'id2': {
         return await this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs ${whereClause}
+          from indexer.validated_txs_bak ${whereClause}
         `);
       }
       case 'tx_id': {
         return await this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs vt
+          from indexer.validated_txs_bak vt
             ${whereClause}
           order by vt.height
         `);
@@ -254,7 +253,7 @@ export class IndexerRepository {
       case 'to': {
         return this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs vt
+          from indexer.validated_txs_bak vt
             ${whereClause}
           order by vt.updated_at
           limit ${query.limit}
@@ -263,7 +262,7 @@ export class IndexerRepository {
       case 'indexing': {
         return this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs vt
+          from indexer.validated_txs_bak vt
             ${whereClause}
           order by vt.height desc
           limit ${query.limit}
