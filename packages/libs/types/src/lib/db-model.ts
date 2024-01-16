@@ -54,8 +54,8 @@ const proofs = z.object({
   tx_id: BufferHexSchema,
 
   signer: z.string(),
-  signer_pubkey: BufferHexSchema.optional(),
-  height: BigIntSchema.optional(),
+  signer_pubkey: BufferHexSchema,
+  height: BigIntSchema,
 });
 
 const tx_with_proofs = txs.merge(proofs);
