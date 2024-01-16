@@ -239,6 +239,14 @@ export class IndexerRepository {
           from indexer.validated_txs ${whereClause}
         `);
       }
+      case 'tx_id': {
+        return await this.persistentService.pgPool.any(SQL.type(responseModel)`
+          select *
+          from indexer.validated_txs vt
+            ${whereClause}
+          order by vt.height
+        `);
+      }
       case 'to': {
         return this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
@@ -305,6 +313,19 @@ function generateValidatedTxWheres(
           computeValidatedTxsId(query.tx_hash, query.order_hash),
         )}
       `,
+      ];
+    }
+    case 'tx_id': {
+      return [
+        SQL.fragment`
+          vt.tx_id = ${SQL.binary(query.tx_id)}
+        `,
+        SQL.fragment`
+          vt.output = ${query.output.toString(10)}
+        `,
+        SQL.fragment`
+          vt.offset = ${query.offset.toString(10)}
+        `,
       ];
     }
     case 'to': {

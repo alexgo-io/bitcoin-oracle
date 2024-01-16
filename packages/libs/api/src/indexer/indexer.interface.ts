@@ -21,6 +21,12 @@ export const ValidatedTxsQuerySchema = z.discriminatedUnion('type', [
     offset: BigIntSchema,
   }),
   z.object({
+    type: z.literal('tx_id'),
+    tx_id: BufferHexSchema,
+    output: BigIntSchema,
+    offset: BigIntSchema,
+  }),
+  z.object({
     type: z.literal('id2'),
     tx_hash: BufferHexSchema,
     order_hash: BufferHexSchema,
