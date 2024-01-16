@@ -57,6 +57,7 @@ describe('Indexer Controller (e2e)', () => {
       order_hash: randomBytes(32).toString('hex'),
       signature: randomBytes(64).toString('hex'),
       signer: randomBytes(20).toString('hex'),
+      signer_pubkey: randomBytes(33).toString('hex'),
     };
     return request(app.getHttpServer())
       .post('/api/v1/indexer/txs')
