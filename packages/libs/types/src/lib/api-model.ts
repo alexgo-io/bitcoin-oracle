@@ -154,6 +154,7 @@ export const validated_txs_response = z.object({
   tree_depth: BigIntStringSchema,
   height: BigIntStringSchema,
   signers: z.array(z.string()),
+  signer_pubkeys: z.array(BufferStringSchema),
   signer_types: z.array(Enums.ValidatorName),
   signatures: z.array(BufferStringSchema),
   created_at: z.number(),

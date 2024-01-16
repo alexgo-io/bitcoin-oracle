@@ -231,7 +231,7 @@ export class IndexerRepository {
       case 'id': {
         return await this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs_bak vt
+          from indexer.validated_txs vt
             ${whereClause}
           ;
         `);
@@ -239,13 +239,13 @@ export class IndexerRepository {
       case 'id2': {
         return await this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs_bak ${whereClause}
+          from indexer.validated_txs ${whereClause}
         `);
       }
       case 'tx_id': {
         return await this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs_bak vt
+          from indexer.validated_txs vt
             ${whereClause}
           order by vt.height
         `);
@@ -253,7 +253,7 @@ export class IndexerRepository {
       case 'to': {
         return this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs_bak vt
+          from indexer.validated_txs vt
             ${whereClause}
           order by vt.updated_at
           limit ${query.limit}
@@ -262,7 +262,7 @@ export class IndexerRepository {
       case 'indexing': {
         return this.persistentService.pgPool.any(SQL.type(responseModel)`
           select *
-          from indexer.validated_txs_bak vt
+          from indexer.validated_txs vt
             ${whereClause}
           order by vt.height desc
           limit ${query.limit}
