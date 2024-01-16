@@ -15,7 +15,8 @@
     "@meta-protocols-oracle/brc20-indexer": "*",
     "@meta-protocols-oracle/types": "*",
     "p-queue": "^6.6.2",
-    "@bitcoin-oracle/instrument": "*"
+    "@bitcoin-oracle/instrument": "*",
+    "@stacks/transactions": "^6.11.0"
   },
   "type": "commonjs",
   "main": "./src/index.js",
