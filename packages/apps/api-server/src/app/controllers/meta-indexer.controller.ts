@@ -127,6 +127,26 @@ export class MetaIndexerController {
           limit: 10,
         },
       },
+      tx_id: {
+        summary: 'query by tx_id, output and offset',
+        value: {
+          type: 'tx_id',
+          tx_id:
+            '498f108b18f5a5b2dec1f31133c7da8260b44711c1bd387728eb51ac146e1d7f',
+          output: 0,
+          offset: 0,
+        },
+      },
+      id: {
+        summary: 'query by tx_hash(raw), output and offset',
+        value: {
+          type: 'id',
+          tx_hash:
+            '02000000000102ba8119c7394b0bfab1ced286e7a9086be8b918f9aafbce384f6e1860a667134e0000000000000000001962982a74711b1ba34d8cf0ef0ef53ae9e0b044b1b7a72827375508b1fead2e0100000000000000000222020000000000002251207e875ae46c9f2d28d8d302cfa8c045bfc94df9277dbdf2d7a1fcdba129731899b423e40000000000160014aa6558c31522e6684369f4581481b259a39681ee01406701bbe54fa9c361a083ae10818396c6f5654fae1e7f82061a443f8e530e848325d61eb1c7332955378e23f4fe4ecd583a03b78545db4b5d2dfa2871c83626920247304402201bdd14414873c527c3329bb874c07099796859b272be4f2c90aa1407f39c165302201eb7a35de8fb2322cdcba1bb6a9cd474e76a6b29c876eede4c43b1101bf7a11b012102bb5daef39cb336f6b7ae8c293374c9dce0aafaf212bdf0bfd8cdd631944d599000000000',
+          output: 0,
+          offset: 0,
+        },
+      },
     },
   })
   async query(@Body() params: MetaIndexerQueryIndexingDTO) {
