@@ -4,6 +4,7 @@ import { StatusCode } from '@meta-protocols-oracle/types';
 import {
   Body,
   Controller,
+  HttpCode,
   Inject,
   Logger,
   Post,
@@ -49,7 +50,6 @@ export class MetaIndexerController {
     };
   }
 
-  @Post('/')
   @ApiBody({
     required: true,
     description: `The query performs a match against an array where each item represents a distinct condition. If multiple query parameters are specified, such as \`from\` and \`height\`, the returned transactions (\`txs\`) must satisfy all the given conditions concurrently. Therefore, only transactions that have been sent from the specified \`from\` address and occurred at the given \`height\` will be included in the result set. The system supports query conditions for addresses in two formats: Bech32 and PKScript.`,
@@ -149,6 +149,8 @@ export class MetaIndexerController {
       },
     },
   })
+  @Post('/')
+  @HttpCode(200)
   async query(@Body() params: MetaIndexerQueryIndexingDTO) {
     return await this.getValidatedTxs(params);
   }
@@ -156,6 +158,7 @@ export class MetaIndexerController {
   @SkipThrottle()
   @UseGuards(AuthGuard)
   @Post('/advanced')
+  @HttpCode(200)
   @ApiExcludeEndpoint()
   async validatedTxsUnlimited(@Body() params: MetaIndexerQueryIndexingDTO) {
     return await this.getValidatedTxs(params);
