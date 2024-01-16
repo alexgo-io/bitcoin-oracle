@@ -11,6 +11,7 @@ import {
 } from '@meta-protocols-oracle/commons';
 import { Enums } from '@meta-protocols-oracle/types';
 import { getBitcoinTx$ } from '@meta-protocols-oracle/validator';
+import { pubKeyfromPrivKey, publicKeyToString } from '@stacks/transactions';
 import assert from 'assert';
 import {
   EMPTY,
@@ -161,6 +162,9 @@ async function submitIndexerTx(
     env().STACKS_VALIDATOR_ACCOUNT_SECRET,
     order_hash,
   );
+  const pubkey = publicKeyToString(
+    pubKeyfromPrivKey(env().STACKS_VALIDATOR_ACCOUNT_SECRET),
+  );
 
   return indexer(env().INDEXER_API_URL)
     .txs()
@@ -184,6 +188,7 @@ async function submitIndexerTx(
       order_hash: order_hash.toString('hex'),
       signature: signature.toString('hex'),
       signer: env().STACKS_VALIDATOR_ACCOUNT_ADDRESS,
+      signer_pubkey: pubkey,
     });
 }
 

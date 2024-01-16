@@ -62,6 +62,7 @@ function makeTxs<T extends DataType>(type: T) {
     order_hash: makeBuffer(type),
     signature: makeBuffer(type),
     signer: z.string(),
+    signer_pubkey: makeBuffer(type),
   });
 }
 

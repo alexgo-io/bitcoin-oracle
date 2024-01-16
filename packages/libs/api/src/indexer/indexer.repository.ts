@@ -58,24 +58,28 @@ export class IndexerRepository {
                                    signer,
                                    from_address,
                                    to_address,
-                                   tx_id)
+                                   tx_id,
+                                   height,
+                                   signer_pubkey)
         VALUES (${tx.type},
                 ${SQL.binary(tx.order_hash)},
                 ${SQL.binary(tx.signature)},
-                ${tx.amt.toString()},
-                ${tx.decimals.toString()},
+                ${SQL.bigint(tx.amt)},
+                ${SQL.bigint(tx.decimals)},
                 ${SQL.binary(tx.tx_hash)},
                 ${SQL.binary(tx.from)},
-                ${tx.from_bal.toString()},
-                ${tx.satpoint.toString()},
-                ${tx.output.toString()},
+                ${SQL.bigint(tx.from_bal)},
+                ${SQL.bigint(tx.satpoint)},
+                ${SQL.bigint(tx.output)},
                 ${tx.tick},
                 ${SQL.binary(tx.to)},
-                ${tx.to_bal.toString()},
+                ${SQL.bigint(tx.to_bal)},
                 ${tx.signer},
                 ${from_address},
                 ${to_address},
-                ${SQL.binary(tx_id)})
+                ${SQL.binary(tx_id)},
+                ${SQL.bigint(tx.height)},
+                ${SQL.binary(tx.signer_pubkey)})
         on conflict do nothing;
         ;
       `);

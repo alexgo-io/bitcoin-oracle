@@ -12,6 +12,7 @@ import {
 import { Enums } from '@meta-protocols-oracle/types';
 import { getBitcoinTx$ } from '@meta-protocols-oracle/validator';
 import { Logger } from '@nestjs/common';
+import { pubKeyfromPrivKey, publicKeyToString } from '@stacks/transactions';
 import {
   combineLatest,
   concatMap,
@@ -120,7 +121,9 @@ async function submitIndexerTx(
   );
 
   logger.verbose(`submitting ${tx.tx_id}`);
-
+  const pubkey = publicKeyToString(
+    pubKeyfromPrivKey(env().STACKS_VALIDATOR_ACCOUNT_SECRET),
+  );
   return indexer(env().INDEXER_API_URL)
     .txs()
     .post({
@@ -143,6 +146,7 @@ async function submitIndexerTx(
       order_hash: order_hash.toString('hex'),
       signature: signature.toString('hex'),
       signer: env().STACKS_VALIDATOR_ACCOUNT_ADDRESS,
+      signer_pubkey: pubkey,
     });
 }
 

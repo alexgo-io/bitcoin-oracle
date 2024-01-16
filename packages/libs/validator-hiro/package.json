@@ -16,7 +16,8 @@
     "@meta-protocols-oracle/validator": "*",
     "@nestjs/common": "^10.3.0",
     "p-queue": "^6.6.2",
-    "@bitcoin-oracle/instrument": "*"
+    "@bitcoin-oracle/instrument": "*",
+    "@stacks/transactions": "^6.11.0"
   },
   "type": "commonjs",
   "main": "./src/index.js",
