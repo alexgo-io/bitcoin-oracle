@@ -34,7 +34,7 @@ jobs:
         uses: ./.github/workflows/setup
       - name: buildx cache
         id: buildx-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             /tmp/.buildx-cache-${{ inputs.project }}
