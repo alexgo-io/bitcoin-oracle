@@ -1,12 +1,13 @@
 import { IndexerModule } from '@bitcoin-oracle/api';
 import { StacksCaller } from '@meta-protocols-oracle/brc20-indexer';
-import { noAwait, SQL } from '@meta-protocols-oracle/commons';
+import { noAwait, SQL, stringifyJSON } from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';
 import { BufferStringSchema, m } from '@meta-protocols-oracle/types';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Command, Flags } from '@oclif/core';
 import PQueue from 'p-queue';
+import pRetry from 'p-retry';
 import { env } from '../../env';
 
 export default class Check extends Command {
@@ -35,10 +36,35 @@ export default class Check extends Command {
     const txs = await persistent.pgPool.any(SQL.type(
       m.database('indexer', 'submitted_tx'),
     )`
-      select * from indexer.submitted_tx
-      where submitter_nonce > 950
-      and submitted_by = 'SP1RY4SKY4SNC9R426F19BA6JGXS9EZX5JN1BG66M'
-      order by submitter_nonce desc
+      with pending_txs as (select *
+                           from indexer.txs
+                           where length(tx_hash) <= 4096*2
+
+      ),
+           qualified_txs as (select pt.id, count(*)
+                             from pending_txs pt
+                                    join indexer.proofs pf on pt.id = pf.id
+                               and ((pf."to" in
+                                     (select address_to from indexer.whitelist_to_address))
+                                 or (pf."from" in
+                                     (select address_to from indexer.whitelist_to_address)))
+
+                             group by 1
+                             having count(*) >=
+                                    (select minimal_proof_count
+                                     from indexer_config.relayer_configs
+                                     limit 1)),
+           qualified_txs_with_proof as (select qualified_txs.id
+                                        from qualified_txs
+                                               join pending_txs p on qualified_txs.id = p.id),
+           check_stacks_tx as (
+             select *
+             from indexer.submitted_tx st
+             where st.id in (select id from qualified_txs_with_proof)
+           )
+
+      select *
+      from check_stacks_tx
     `);
 
     console.log(`processing: ${txs.length} txs`);
@@ -49,15 +75,22 @@ export default class Check extends Command {
     for (const tx of txs) {
       noAwait(
         queue.add(async () => {
-          const indexed = await readonly(
-            'oracle-registry-v1-02',
-            'get-bitcoin-tx-indexed-or-fail',
-            {
-              'bitcoin-tx': tx.tx_hash,
-              offset: tx.satpoint,
-              output: tx.output,
-            },
+          const indexed = await pRetry(() =>
+            readonly(
+              'oracle-registry-v1-02',
+              'get-bitcoin-tx-indexed-or-fail',
+              {
+                'bitcoin-tx': tx.tx_hash,
+                offset: tx.satpoint,
+                output: tx.output,
+              },
+            ),
           );
+
+          if (tx.stacks_tx_id == null) {
+            console.log(`null id: ${stringifyJSON(tx)}`);
+            return;
+          }
 
           console.log(
             `tx ${BufferStringSchema.parse(tx.stacks_tx_id)} is indexed: ${

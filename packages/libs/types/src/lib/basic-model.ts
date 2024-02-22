@@ -23,6 +23,7 @@ export const BufferHexSchema = z.preprocess((val, ctx) => {
   ctx.addIssue({
     message: `val is not a buffer: ${val}`,
     code: 'custom',
+    path: ctx.path,
   });
   return z.NEVER;
 }, z.instanceof(Buffer)) as z.ZodType<Buffer, z.ZodTypeDef, Buffer>;

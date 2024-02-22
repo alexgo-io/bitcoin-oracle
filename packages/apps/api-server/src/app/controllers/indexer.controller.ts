@@ -1,5 +1,5 @@
 import { Indexer, IndexerError } from '@bitcoin-oracle/api';
-import { ErrorDetails } from '@meta-protocols-oracle/commons';
+import { ErrorDetails, parseErrorDetail } from '@meta-protocols-oracle/commons';
 import {
   APIOf,
   StatusCode,
@@ -49,7 +49,15 @@ export class IndexerController {
           error.message,
         ).throwHttpException();
       } else {
-        throw error;
+        this.logger.error(
+          `Error while post txs: ${parseErrorDetail(
+            error,
+          )}, input: ${JSON.stringify(tx)}`,
+        );
+        throw ErrorDetails.from(
+          StatusCode.INTERNAL,
+          `${error}`,
+        ).throwHttpException();
       }
     }
     return m.api('txs', 'response', 'json').parse({ message: 'ok' });
