@@ -1,5 +1,9 @@
 import { Indexer, IndexerError } from '@bitcoin-oracle/api';
-import { ErrorDetails, parseErrorDetail } from '@meta-protocols-oracle/commons';
+import {
+  ErrorDetails,
+  parseErrorDetail,
+  stringifyJSON,
+} from '@meta-protocols-oracle/commons';
 import {
   APIOf,
   StatusCode,
@@ -52,7 +56,7 @@ export class IndexerController {
         this.logger.error(
           `Error while post txs: ${parseErrorDetail(
             error,
-          )}, input: ${JSON.stringify(tx)}`,
+          )}, input: ${stringifyJSON(tx)}`,
         );
         throw ErrorDetails.from(
           StatusCode.INTERNAL,
