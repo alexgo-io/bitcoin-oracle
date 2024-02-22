@@ -9,7 +9,7 @@ import {
   getLogger,
   stringifyJSON,
 } from '@meta-protocols-oracle/commons';
-import { Enums } from '@meta-protocols-oracle/types';
+import { BufferHexSchema, Enums } from '@meta-protocols-oracle/types';
 import { getBitcoinTx$ } from '@meta-protocols-oracle/validator';
 import { pubKeyfromPrivKey, publicKeyToString } from '@stacks/transactions';
 import assert from 'assert';
@@ -26,6 +26,7 @@ import {
   retry,
   tap,
 } from 'rxjs';
+import { Transaction } from 'scure-btc-signer-cjs';
 import {
   getActivityOnBlock$,
   getBalanceOnBlockInBatchQueue$,
@@ -35,6 +36,7 @@ import { env } from '../env';
 import { getElectrumQueue } from '../queue';
 
 const logger = getLogger('validator-bis');
+
 export function getBisTxOnBlock$(block: number) {
   return getActivityOnBlock$(block).pipe(
     retry(10),
@@ -166,6 +168,18 @@ async function submitIndexerTx(
     pubKeyfromPrivKey(env().STACKS_VALIDATOR_ACCOUNT_SECRET),
   );
 
+  try {
+    Buffer.from(
+      Transaction.fromRaw(BufferHexSchema.parse(tx.tx), {
+        allowUnknownOutputs: true,
+      }).id,
+      'hex',
+    );
+  } catch (e) {
+    logger.error(`failed to parse tx skip: ${tx.tx_id}, ${e}`);
+    return null;
+  }
+
   return indexer(env().INDEXER_API_URL)
     .txs()
     .post({
@@ -193,6 +207,7 @@ async function submitIndexerTx(
 }
 
 const heightCounter: Record<string, number> = {};
+
 export function processBlock$(block: number) {
   return getIndexerTxOnBlock$(block).pipe(
     concatMap(tx => {
