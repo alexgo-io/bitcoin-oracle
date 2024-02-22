@@ -76,7 +76,8 @@ export async function getBatchBalanceOnBlock(
           'x-api-key': env().BIS_ACCESS_KEY,
         },
         retry: {
-          limit: 5,
+          methods: ['POST'],
+          limit: 10,
         },
       })
       .json();
