@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: ${{ env.PR_FETCH_DEPTH }}
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.0.0
+        uses: docker/setup-buildx-action@v3.1.0
       - name: 'Setup environment'
         id: 'setup'
         uses: ./.github/workflows/setup
