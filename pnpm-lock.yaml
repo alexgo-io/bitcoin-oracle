@@ -754,6 +754,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      scure-btc-signer-cjs:
+        specifier: ^1.0.1
+        version: 1.0.1
       tslib:
         specifier: ^2.3.0
         version: 2.6.2
