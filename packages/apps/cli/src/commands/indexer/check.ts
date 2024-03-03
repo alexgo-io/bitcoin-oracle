@@ -95,7 +95,7 @@ export default class Check extends Command {
           console.log(
             `tx ${BufferStringSchema.parse(tx.stacks_tx_id)} is indexed: ${
               indexed.type
-            }`,
+            }, pending: ${queue.pending}, size: ${queue.size}`,
           );
           if (indexed.type === 'error') {
             stacksIds.add(tx.stacks_tx_id!.toString('hex'));
