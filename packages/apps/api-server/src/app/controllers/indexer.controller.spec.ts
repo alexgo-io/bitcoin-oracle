@@ -1,4 +1,4 @@
-import { Indexer, MockIndexer } from '@bitcoin-oracle/api';
+import { Indexer, MockIndexer } from '@meta-protocols-oracle/api';
 import { SQL } from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';
 import { APIOf, Enums } from '@meta-protocols-oracle/types';

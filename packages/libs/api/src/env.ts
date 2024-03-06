@@ -16,6 +16,7 @@ export const env = memoizee(() =>
       VAULT_ADDR: z.string().default('http://localhost:8200'),
       VAULT_TOKEN: z.string().optional(),
       INDEXER_API_URL: z.string().default('http://localhost:8716'),
+      INDEXER_ACCESS_KEY: z.string().min(1),
     },
     runtimeEnv: process.env,
   }),

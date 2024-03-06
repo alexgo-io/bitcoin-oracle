@@ -1,4 +1,4 @@
-import { Indexer, IndexerError } from '@bitcoin-oracle/api';
+import { Indexer, IndexerError } from '@meta-protocols-oracle/api';
 import {
   ErrorDetails,
   parseErrorDetail,

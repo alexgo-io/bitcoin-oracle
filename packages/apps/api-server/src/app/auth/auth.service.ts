@@ -1,4 +1,4 @@
-import { kMetadataNames, VaultService } from '@bitcoin-oracle/api';
+import { kMetadataNames, VaultService } from '@meta-protocols-oracle/api';
 import { trimObj } from '@meta-protocols-oracle/commons';
 import { Inject, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';

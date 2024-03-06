@@ -682,7 +682,7 @@ importers:
       '@bitcoin-oracle/instrument':
         specifier: '*'
         version: link:../instrument
-      '@meta-protocols-oracle/api-client':
+      '@meta-protocols-oracle/api':
         specifier: '*'
         version: link:../api-client
       '@meta-protocols-oracle/bitcoin':
@@ -721,7 +721,7 @@ importers:
       '@bitcoin-oracle/instrument':
         specifier: '*'
         version: link:../instrument
-      '@meta-protocols-oracle/api-client':
+      '@meta-protocols-oracle/api':
         specifier: '*'
         version: link:../api-client
       '@meta-protocols-oracle/brc20-indexer':
@@ -772,7 +772,7 @@ importers:
       '@bitcoin-oracle/instrument':
         specifier: '*'
         version: link:../instrument
-      '@meta-protocols-oracle/api-client':
+      '@meta-protocols-oracle/api':
         specifier: '*'
         version: link:../api-client
       '@meta-protocols-oracle/brc20-indexer':
@@ -823,7 +823,7 @@ importers:
       '@bitcoin-oracle/instrument':
         specifier: '*'
         version: link:../instrument
-      '@meta-protocols-oracle/api-client':
+      '@meta-protocols-oracle/api':
         specifier: '*'
         version: link:../api-client
       '@meta-protocols-oracle/brc20-indexer':

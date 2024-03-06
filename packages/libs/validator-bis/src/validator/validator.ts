@@ -1,5 +1,5 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import { indexer } from '@meta-protocols-oracle/api-client';
+import { ApiClient } from '@meta-protocols-oracle/api';
 import {
   generateOrderHash,
   signOrderHash,
@@ -179,8 +179,10 @@ async function submitIndexerTx(
     logger.error(`failed to parse tx skip: ${tx.tx_id}, ${e}`);
     return null;
   }
+  const api = new ApiClient(env().INDEXER_API_URL);
 
-  return indexer(env().INDEXER_API_URL)
+  return api
+    .indexer()
     .txs()
     .post({
       type: Enums.ValidatorName.enum.bis,

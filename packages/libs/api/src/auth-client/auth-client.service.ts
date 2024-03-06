@@ -1,5 +1,5 @@
-import { ApiClient } from '@meta-protocols-oracle/api-client';
 import { Inject, UnauthorizedException } from '@nestjs/common';
+import { ApiClient } from '../api-client';
 import { env } from '../env';
 import { VaultService } from '../vault';
 import { AuthClientService } from './auth-client.interface';

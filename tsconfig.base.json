@@ -17,11 +17,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@bitcoin-oracle/api": ["packages/libs/api/src/index.ts"],
       "@bitcoin-oracle/instrument": ["packages/libs/instrument/src/index.ts"],
-      "@meta-protocols-oracle/api-client": [
-        "packages/libs/api-client/src/index.ts"
-      ],
+      "@meta-protocols-oracle/api": ["packages/libs/api/src/index.ts"],
       "@meta-protocols-oracle/bitcoin": ["packages/libs/bitcoin/src/index.ts"],
       "@meta-protocols-oracle/brc20-indexer": [
         "packages/libs/brc20-indexer/src/index.ts"

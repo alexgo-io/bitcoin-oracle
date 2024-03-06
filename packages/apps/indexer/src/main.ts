@@ -1,4 +1,4 @@
-import { MetaIndexerService } from '@bitcoin-oracle/api';
+import { MetaIndexerService } from '@meta-protocols-oracle/api';
 import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
 import process from 'process';

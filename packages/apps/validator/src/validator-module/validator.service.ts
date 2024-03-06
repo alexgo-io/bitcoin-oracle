@@ -1,5 +1,5 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import { ApiClient } from '@meta-protocols-oracle/api-client';
+import { ApiClient } from '@meta-protocols-oracle/api';
 import { getCurrentBitcoinHeader } from '@meta-protocols-oracle/bitcoin';
 import {
   IntervalSignal,

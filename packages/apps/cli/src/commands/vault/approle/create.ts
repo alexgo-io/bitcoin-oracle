@@ -1,4 +1,4 @@
-import { VaultModule, VaultService } from '@bitcoin-oracle/api';
+import { VaultModule, VaultService } from '@meta-protocols-oracle/api';
 import { NestFactory } from '@nestjs/core';
 import { Command, Flags } from '@oclif/core';
 

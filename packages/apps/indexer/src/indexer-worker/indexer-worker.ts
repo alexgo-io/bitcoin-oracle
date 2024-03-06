@@ -1,4 +1,4 @@
-import { MetaIndexerModule } from '@bitcoin-oracle/api';
+import { MetaIndexerModule } from '@meta-protocols-oracle/api';
 import { PinoLoggerModule } from '@meta-protocols-oracle/commons';
 import { Module } from '@nestjs/common';
 

@@ -6,7 +6,7 @@ import {
   processBlock$,
 } from '@meta-protocols-oracle/validator-hiro';
 
-jest.mock('@meta-protocols-oracle/api-client', () => {
+jest.mock('@meta-protocols-oracle/api', () => {
   return {
     indexer: () => {
       return {

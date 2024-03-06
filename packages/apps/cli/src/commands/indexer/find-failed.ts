@@ -1,4 +1,4 @@
-import { Indexer, IndexerModule } from '@bitcoin-oracle/api';
+import { Indexer, IndexerModule } from '@meta-protocols-oracle/api';
 import {
   StacksCaller,
   kIndexerRegistryName,

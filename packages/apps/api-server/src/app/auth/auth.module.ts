@@ -1,4 +1,4 @@
-import { VaultModule } from '@bitcoin-oracle/api';
+import { VaultModule } from '@meta-protocols-oracle/api';
 import { PersistentModule } from '@meta-protocols-oracle/persistent';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';

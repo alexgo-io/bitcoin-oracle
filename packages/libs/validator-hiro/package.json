@@ -11,13 +11,13 @@
     "zod": "^3.22.3",
     "@t3-oss/env-core": "^0.7.1",
     "@meta-protocols-oracle/commons": "*",
-    "@meta-protocols-oracle/api-client": "*",
     "@meta-protocols-oracle/brc20-indexer": "*",
     "@meta-protocols-oracle/validator": "*",
     "@nestjs/common": "^10.3.0",
     "p-queue": "^6.6.2",
     "@bitcoin-oracle/instrument": "*",
-    "@stacks/transactions": "^6.11.0"
+    "@stacks/transactions": "^6.11.0",
+    "@meta-protocols-oracle/api": "*"
   },
   "type": "commonjs",
   "main": "./src/index.js",

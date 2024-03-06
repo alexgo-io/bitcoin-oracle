@@ -1,5 +1,5 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import { indexer } from '@meta-protocols-oracle/api-client';
+import { ApiClient } from '@meta-protocols-oracle/api';
 import {
   generateOrderHash,
   signOrderHash,
@@ -124,7 +124,11 @@ async function submitIndexerTx(
   const pubkey = publicKeyToString(
     pubKeyfromPrivKey(env().STACKS_VALIDATOR_ACCOUNT_SECRET),
   );
-  return indexer(env().INDEXER_API_URL)
+
+  const api = new ApiClient(env().INDEXER_API_URL);
+
+  return api
+    .indexer()
     .txs()
     .post({
       type: Enums.ValidatorName.enum.hiro,
