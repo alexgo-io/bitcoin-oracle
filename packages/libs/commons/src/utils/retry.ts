@@ -42,7 +42,7 @@ export const fastRetry = <T>(
       });
     },
     {
-      retries: 10,
+      retries: 1,
       factor: 1,
       minTimeout: 500,
       maxTimeout: 1000,

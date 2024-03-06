@@ -1,3 +1,4 @@
+import { VaultModule } from '@bitcoin-oracle/api';
 import { PersistentModule } from '@meta-protocols-oracle/persistent';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
@@ -13,6 +14,7 @@ import AuthServiceProvider from './auth.service';
       secret: 'secretKey',
       signOptions: { expiresIn: '10s' },
     }),
+    VaultModule,
   ],
   providers: [AuthServiceProvider, AuthRepository],
   exports: [AuthServiceProvider],

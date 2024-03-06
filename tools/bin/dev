@@ -12,16 +12,16 @@ main() {
   local CMD="${1:-start}"
   case "${CMD}" in
   start)
-
+    dev-vault up &
     dev-database up
     dev-redis up
     # hasura seed apply --all-databases
 
     green "dev environment started, press ctrl-c to exit"
-    trap 'dev stop' SIGINT
+    trap 'dev stop' SIGINT EXIT
 
     while true; do
-      sleep 1
+      sleep 5
     done
 
     ;;
