@@ -1,8 +1,13 @@
 import { z } from 'zod';
 
-export const kMetadataNames = z.enum(['service-type', 'validator-name']);
+export const kMetadataNames = z.enum([
+  'service-type',
+  'validator-name',
+  'owner',
+]);
 
 export abstract class VaultService {
+  public token?: string;
   abstract get appRole(): {
     read: (role_name: string) => Promise<ReadResponse>;
     readRoleID: (role_name: string) => Promise<ReadRoleIDResponse>;
@@ -10,7 +15,22 @@ export abstract class VaultService {
       role_name: string,
       secret_id: string,
     ) => Promise<ReadSecretIDResponse>;
-    login: (role_id: string, secret_id: string) => Promise<unknown>;
+    login: (
+      role_id: string,
+      secret_id: string,
+    ) => Promise<{
+      auth: {
+        renewable: boolean;
+        lease_duration: number;
+        metadata: string[];
+        token_policies: string[];
+        accessor: string;
+        client_token: string;
+      };
+      lease_duration: number;
+      renewable: boolean;
+      lease_id: string;
+    }>;
     generateSecretID: (
       role_name: string,
       options: {

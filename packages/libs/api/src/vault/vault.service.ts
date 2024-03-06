@@ -1,7 +1,9 @@
 import { fastRetry, parseErrorDetail } from '@meta-protocols-oracle/commons';
 import { Logger } from '@nestjs/common';
+import assert from 'assert';
 import got from 'got-cjs';
 import { join } from 'path';
+import { env } from '../env';
 import {
   ReadResponse,
   ReadRoleIDResponse,
@@ -13,7 +15,11 @@ import {
 export class DefaultVaultService implements VaultService {
   private readonly logger = new Logger(VaultService.name);
 
-  constructor(private readonly host: string, private readonly token: string) {}
+  constructor(public token = env().VAULT_TOKEN) {}
+
+  private get host() {
+    return env().VAULT_ADDR;
+  }
 
   private get base() {
     return join(this.host, 'v1');
@@ -27,6 +33,7 @@ export class DefaultVaultService implements VaultService {
   }) {
     const { method, path, notation } = params;
     try {
+      assert(this.token, `Vault token not found`);
       const options = {
         headers: {
           'X-Vault-Token': this.token,
@@ -113,7 +120,14 @@ export class DefaultVaultService implements VaultService {
           ttl?: string;
         },
       ) => {
-        return this.got({
+        return this.got<{
+          data: {
+            secret_id_accessor: string;
+            secret_id: string;
+            secret_id_ttl: number;
+            secret_id_num_uses: number;
+          };
+        }>({
           method: 'post',
           path: `auth/approle/role/${role_name}/secret-id`,
           notation: `appRole.generateSecretID(${role_name})`,
@@ -185,10 +199,7 @@ const VaultServiceProvider = {
 export default VaultServiceProvider;
 
 async function main() {
-  const svc = new DefaultVaultService(
-    'http://localhost:8200',
-    'E9oRo-9hr8V-ZSaIS',
-  );
+  const svc = new DefaultVaultService();
   // const a = await svc.appRole.read('bitcoin-oracle-api-role'); //?
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

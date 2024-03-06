@@ -21,8 +21,8 @@ export class AuthController {
   async signIn(@Body() signInDto: Record<string, any>) {
     try {
       return await this.authService.signIn(
-        signInDto.role_id,
-        signInDto.secret_id,
+        signInDto.role_name,
+        signInDto.secret_id_accessor,
       );
     } catch (e) {
       if (e instanceof UnauthorizedException) {

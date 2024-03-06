@@ -1,6 +1,6 @@
 export abstract class AuthService {
   abstract signIn(
-    role_id: string,
-    secret_id: string,
+    role_name: string,
+    secret_id_accessor: string,
   ): Promise<{ access_token: string }>;
 }
