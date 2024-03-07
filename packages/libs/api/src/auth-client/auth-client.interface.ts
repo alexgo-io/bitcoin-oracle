@@ -1,1 +1,3 @@
-export abstract class AuthClientService {}
+export abstract class AuthClientService {
+  abstract autoAuthAndRequestAccessToken(): Promise<string>;
+}

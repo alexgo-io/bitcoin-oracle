@@ -18,81 +18,12 @@ setup() {
   vault auth enable approle
   vault secrets enable -path="kv-bitcoin-oracle" -description="kv for bitcoin oracle" kv
 
-  #  OIDC provider
-  ## Configure Vault authentication
-#  vault auth enable userpass
-#  vault policy write oidc-auth packages/dev/vault/policies/oidc-auth.hcl
-#  vault write auth/userpass/users/sample-user \
-#    password="sample-password" \
-#    token_policies="oidc-auth" \
-#    token_ttl="1h"
-#
-  ## Create Vault identity entity and group
-#  vault write identity/entity \
-#    name="sample-user" \
-#    metadata="validator_name=sample-validator-name" \
-#    disabled=false
-#  ENTITY_ID=$(vault read -field=id identity/entity/name/sample-user)
-#  vault write identity/group \
-#    name="validators" \
-#    member_entity_ids="$ENTITY_ID"
-#  GROUP_ID=$(vault read -field=id identity/group/name/validators)
-#  USERPASS_ACCESSOR=$(vault auth list -detailed -format json | jq -r '.["userpass/"].accessor')
-#
-#  vault write identity/entity-alias \
-#    name="sample-user" \
-#    canonical_id="$ENTITY_ID" \
-#    mount_accessor="$USERPASS_ACCESSOR"
-#  ## Create a Vault OIDC client
-#
-#  vault write identity/oidc/assignment/validator-assignment \
-#    entity_ids="${ENTITY_ID}" \
-#    group_ids="${GROUP_ID}"
-#
-#  vault write identity/oidc/key/validator-key \
-#    allowed_client_ids="*" \
-#    verification_ttl="2h" \
-#    rotation_period="1h" \
-#    algorithm="RS256"
-#
-#  vault write identity/oidc/client/boundary \
-#    redirect_uris="http://127.0.0.1:9200/v1/auth-methods/oidc:authenticate:callback" \
-#    assignments="my-assignment" \
-#    key="my-key" \
-#    id_token_ttl="30m" \
-#    access_token_ttl="1h"
-#  CLIENT_ID=$(vault read -field=client_id identity/oidc/client/boundary)
-#  #  Create a Vault OIDC provider
-#  # shellcheck disable=SC2089
-#  USER_SCOPE_TEMPLATE='{
-#    "username": {{identity.entity.name}},
-#    "contact": {
-#        "email": {{identity.entity.metadata.email}},
-#        "phone_number": {{identity.entity.metadata.phone_number}}
-#    }
-#}'
-#
-#  vault write identity/oidc/scope/user \
-#    description="The user scope provides claims using Vault identity entity metadata" \
-#    template="$(echo ${USER_SCOPE_TEMPLATE} | base64)"
-#  GROUPS_SCOPE_TEMPLATE='{
-#    "groups": {{identity.entity.groups.names}}
-#}'
-#
-#  vault write identity/oidc/scope/groups \
-#    description="The groups scope provides the groups claim using Vault group membership" \
-#    template="$(echo ${GROUPS_SCOPE_TEMPLATE} | base64)"
-#
-#  vault write identity/oidc/provider/my-provider \
-#      allowed_client_ids="${CLIENT_ID}" \
-#      scopes_supported="groups,user"
-
   ## policy
-  vault policy write bitcoin-oracle-api-policy packages/dev/vault/policies/bitcoin-oracle-api-policy.hcl
+  vault policy write bitcoin-oracle-api-server-policy packages/dev/vault/policies/bitcoin-oracle-api-server-policy.hcl
 
-  vault write auth/approle/role/bitcoin-oracle-indexer-bis-alex-role \
+  vault write auth/approle/role/bitcoin-oracle-indexer-role \
     secret_id_ttl=0 \
-    token_policies="indexer-policy" \
+    token_policies="bitcoin-oracle-indexer-policy" \
     token_num_uses=0 \
     token_ttl=20m \
     token_max_ttl=30m \
@@ -100,15 +31,15 @@ setup() {
 
   vault write auth/approle/role/bitcoin-oracle-relayer-role \
     secret_id_ttl=0 \
-    token_policies="relayer-policy" \
+    token_policies="bitcoin-oracle-relayer-policy" \
     token_num_uses=0 \
     token_ttl=20m \
     token_max_ttl=30m \
     secret_id_num_uses=0
 
-  vault write auth/approle/role/bitcoin-oracle-api-role \
+  vault write auth/approle/role/bitcoin-oracle-api-server-role \
     secret_id_ttl=0 \
-    token_policies="bitcoin-oracle-api-policy" \
+    token_policies="bitcoin-oracle-api-server-policy" \
     token_num_uses=0 \
     token_ttl=20m \
     token_max_ttl=30m \

@@ -1,5 +1,9 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import { expoRetry, getLogger } from '@meta-protocols-oracle/commons';
+import {
+  expoRetry,
+  fastRetry,
+  getLogger,
+} from '@meta-protocols-oracle/commons';
 import {
   APIOf,
   Enums,
@@ -7,30 +11,46 @@ import {
   ValidatorName,
   m,
 } from '@meta-protocols-oracle/types';
+import { Inject } from '@nestjs/common';
 import got, { RequestError } from 'got-cjs';
-import memoizee from 'memoizee';
+import { AuthClientService } from '../auth-client';
 import { env } from '../env';
 import { ApiClientService } from './api-client.interface';
 
-const headers = memoizee(() => ({
-  'x-service-type': Enums.ServiceType.enum.VALIDATOR,
-  'x-version': '0.0.1',
-  authorization: `Bearer ${env().INDEXER_ACCESS_KEY}`,
-}));
+// const headers = memoizee(() => ({
+//   'x-service-type': Enums.ServiceType.enum.VALIDATOR,
+//   authorization: `Bearer ${env().INDEXER_ACCESS_KEY}`,
+// }));
+
 export class DefaultApiClientService implements ApiClientService {
   private readonly baseURL = env().INDEXER_API_URL;
-  constructor() {}
+  constructor(
+    @Inject(AuthClientService) private readonly authClient: AuthClientService,
+  ) {}
+
+  private async getAuthHeaders() {
+    const token = await fastRetry(
+      () => this.authClient.autoAuthAndRequestAccessToken(),
+      'get-auth-headers',
+    );
+    return {
+      authorization: `Bearer ${token}`,
+      'x-version': '0.0.1',
+    };
+  }
 
   indexer() {
     const url = `${this.baseURL}/api/v1/indexer`;
     return {
-      txs() {
+      txs: () => {
         return {
-          async post(params: APIOf<'txs', 'request', 'json'>) {
+          post: async (params: APIOf<'txs', 'request', 'json'>) => {
             try {
               const rs = await got
                 .post(`${url}/txs`, {
-                  headers: headers(),
+                  headers: {
+                    ...(await this.getAuthHeaders()),
+                  },
                   json: params,
                   retry: {
                     limit: 5,
@@ -66,14 +86,16 @@ export class DefaultApiClientService implements ApiClientService {
           },
         };
       },
-      block() {
+      block: () => {
         return {
-          async get(params: { block_hash: string }) {
+          get: async (params: { block_hash: string }) => {
             return expoRetry(
-              () =>
+              async () =>
                 got
                   .get(`${url}/block-hash/${params.block_hash}`, {
-                    headers: headers(),
+                    headers: {
+                      ...(await this.getAuthHeaders()),
+                    },
                     parseJson: body =>
                       m.database('indexer', 'blocks').parse(JSON.parse(body)),
                   })
@@ -83,36 +105,40 @@ export class DefaultApiClientService implements ApiClientService {
           },
         };
       },
-      latest_block_number() {
+      latest_block_number: () => {
         return {
-          async get(params: { type: ValidatorName | string }) {
+          get: async (params: { type: ValidatorName | string }) => {
             return got
               .get(
                 `${url}/latest-block-number/${Enums.ValidatorName.parse(
                   params.type,
                 )}`,
                 {
-                  headers: headers(),
+                  headers: {
+                    ...(await this.getAuthHeaders()),
+                  },
                 },
               )
               .json<{ latest_block_number: number | null }>();
           },
         };
       },
-      latest_block_number_range() {
+      latest_block_number_range: () => {
         return {
-          async get(params: {
+          get: async (params: {
             type: ValidatorName | string;
             from: number;
             to: number;
-          }) {
+          }) => {
             return got
               .get(
                 `${url}/latest-block-number-range/${Enums.ValidatorName.parse(
                   params.type,
                 )}?from=${params.from}&to=${params.to}`,
                 {
-                  headers: headers(),
+                  headers: {
+                    ...(await this.getAuthHeaders()),
+                  },
                 },
               )
               .json<{ latest_block_number: number | null }>();

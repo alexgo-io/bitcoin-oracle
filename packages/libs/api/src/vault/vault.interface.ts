@@ -5,6 +5,11 @@ export const kMetadataNames = z.enum([
   'validator-name',
   'owner',
 ]);
+export const kVaultRoleName = z.enum([
+  'bitcoin-oracle-indexer-role',
+  'bitcoin-oracle-relayer-role',
+  'bitcoin-oracle-api-server-role',
+]);
 
 export abstract class VaultService {
   public token?: string;
