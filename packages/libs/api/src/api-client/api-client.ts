@@ -9,7 +9,6 @@ import {
 } from '@meta-protocols-oracle/types';
 import got, { RequestError } from 'got-cjs';
 import memoizee from 'memoizee';
-import { join } from 'path';
 import { env } from '../env';
 
 const headers = memoizee(() => ({
@@ -117,25 +116,6 @@ export class ApiClient {
               .json<{ latest_block_number: number | null }>();
           },
         };
-      },
-    };
-  }
-
-  auth() {
-    const url = join(this.baseURL, '/api/v1/auth');
-    return {
-      signIn: (params: {
-        role_name: string;
-        secret_id_accessor: string;
-      }): Promise<{
-        access_token: string;
-      }> => {
-        return got
-          .post(join(url, 'login'), {
-            json: params,
-            responseType: 'json',
-          })
-          .json<{ access_token: string }>();
       },
     };
   }
