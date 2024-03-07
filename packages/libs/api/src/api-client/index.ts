@@ -1,1 +1,2 @@
-export * from './api-client';
+export * from './api-client.interface';
+export * from './api-client.module';

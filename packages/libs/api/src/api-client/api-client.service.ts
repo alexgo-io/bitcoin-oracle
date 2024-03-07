@@ -10,15 +10,17 @@ import {
 import got, { RequestError } from 'got-cjs';
 import memoizee from 'memoizee';
 import { env } from '../env';
+import { ApiClientService } from './api-client.interface';
 
 const headers = memoizee(() => ({
   'x-service-type': Enums.ServiceType.enum.VALIDATOR,
   'x-version': '0.0.1',
   authorization: `Bearer ${env().INDEXER_ACCESS_KEY}`,
 }));
+export class DefaultApiClientService implements ApiClientService {
+  private readonly baseURL = env().INDEXER_API_URL;
+  constructor() {}
 
-export class ApiClient {
-  constructor(public readonly baseURL: string) {}
   indexer() {
     const url = `${this.baseURL}/api/v1/indexer`;
     return {
@@ -120,3 +122,10 @@ export class ApiClient {
     };
   }
 }
+
+const ApiClientServiceProvider = {
+  provide: ApiClientService,
+  useClass: DefaultApiClientService,
+};
+
+export default ApiClientServiceProvider;

@@ -1,24 +1,13 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import { ApiClient } from '@meta-protocols-oracle/api';
-import {
-  generateOrderHash,
-  signOrderHash,
-} from '@meta-protocols-oracle/brc20-indexer';
-import {
-  Unobservable,
-  getLogger,
-  stringifyJSON,
-} from '@meta-protocols-oracle/commons';
-import { BufferHexSchema, Enums } from '@meta-protocols-oracle/types';
+import { ApiClientService } from '@meta-protocols-oracle/api';
+import { getLogger, stringifyJSON } from '@meta-protocols-oracle/commons';
 import { getBitcoinTx$ } from '@meta-protocols-oracle/validator';
-import { pubKeyfromPrivKey, publicKeyToString } from '@stacks/transactions';
 import assert from 'assert';
 import {
   EMPTY,
   catchError,
   combineLatest,
   concatMap,
-  from,
   map,
   mergeAll,
   mergeMap,
@@ -26,13 +15,11 @@ import {
   retry,
   tap,
 } from 'rxjs';
-import { Transaction } from 'scure-btc-signer-cjs';
 import {
   getActivityOnBlock$,
   getBalanceOnBlockInBatchQueue$,
   getTokenInfo$,
 } from '../api/bis-api.rx';
-import { env } from '../env';
 import { getElectrumQueue } from '../queue';
 
 const logger = getLogger('validator-bis');
@@ -105,7 +92,7 @@ function getSatpoint(tx: string) {
   };
 }
 
-export function getIndexerTxOnBlock$(block: number) {
+export function getIndexerTxOnBlock$(block: number, api: ApiClientService) {
   return getBisTxOnBlock$(block).pipe(
     tap(() => {
       OTLP_Validator().counter['get-data-on-block'].add(1);
@@ -117,7 +104,10 @@ export function getIndexerTxOnBlock$(block: number) {
           getElectrumQueue().size
         }`,
       );
-      return combineLatest([getBitcoinTx$(tx_id), getTokenInfo$(tx.tick)]).pipe(
+      return combineLatest([
+        getBitcoinTx$(tx_id, api),
+        getTokenInfo$(tx.tick),
+      ]).pipe(
         map(([result, tokenInfo]) => {
           logger.log(`got bitcoin tx ${tx_id}`);
           return {
@@ -136,87 +126,6 @@ export function getIndexerTxOnBlock$(block: number) {
           return EMPTY;
         }),
       );
-    }),
-  );
-}
-
-async function submitIndexerTx(
-  tx: Unobservable<ReturnType<typeof getIndexerTxOnBlock$>>,
-) {
-  assert(
-    tx.old_pkscript != null,
-    `old_pkscript is null for ${tx.tx_id}, inscription_id: ${tx.inscription_id}`,
-  );
-
-  const order_hash = generateOrderHash({
-    amt: BigInt(tx.amount),
-    decimals: BigInt(tx.decimals),
-    from: Buffer.from(tx.old_pkscript, 'hex'),
-    to: Buffer.from(tx.new_pkscript, 'hex'),
-    'from-bal': BigInt(tx.from_bal),
-    'to-bal': BigInt(tx.to_bal),
-    'bitcoin-tx': Buffer.from(tx.tx, 'hex'),
-    tick: tx.tick,
-    output: BigInt(tx.vout),
-    offset: BigInt(tx.satpoint),
-  });
-  const signature = await signOrderHash(
-    env().STACKS_VALIDATOR_ACCOUNT_SECRET,
-    order_hash,
-  );
-  const pubkey = publicKeyToString(
-    pubKeyfromPrivKey(env().STACKS_VALIDATOR_ACCOUNT_SECRET),
-  );
-
-  try {
-    Buffer.from(
-      Transaction.fromRaw(BufferHexSchema.parse(tx.tx), {
-        allowUnknownOutputs: true,
-      }).id,
-      'hex',
-    );
-  } catch (e) {
-    logger.error(`failed to parse tx skip: ${tx.tx_id}, ${e}`);
-    return null;
-  }
-  const api = new ApiClient(env().INDEXER_API_URL);
-
-  return api
-    .indexer()
-    .txs()
-    .post({
-      type: Enums.ValidatorName.enum.bis,
-      header: tx.header,
-      height: tx.height,
-      tx_hash: tx.tx,
-      satpoint: tx.satpoint,
-      proof_hashes: tx.proof.hashes,
-      tx_index: tx.proof['tx-index'].toString(10),
-      tree_depth: tx.proof['tree-depth'].toString(10),
-      from: tx.old_pkscript ?? '', // TODO: refine model
-      to: tx.new_pkscript ?? '', // TODO: refine model
-      output: tx.vout,
-      tick: tx.tick,
-      amt: tx.amount,
-      decimals: tx.decimals.toString(10),
-      from_bal: tx.from_bal,
-      to_bal: tx.to_bal,
-      order_hash: order_hash.toString('hex'),
-      signature: signature.toString('hex'),
-      signer: env().STACKS_VALIDATOR_ACCOUNT_ADDRESS,
-      signer_pubkey: pubkey,
-    });
-}
-
-const heightCounter: Record<string, number> = {};
-
-export function processBlock$(block: number) {
-  return getIndexerTxOnBlock$(block).pipe(
-    concatMap(tx => {
-      heightCounter[tx.height] = (heightCounter[tx.height] ?? 0) + 1;
-      const count = heightCounter[tx.height];
-      logger.verbose(`submitting tx: ${tx.tx_id} - ${tx.height} - ${count}`);
-      return from(submitIndexerTx(tx));
     }),
   );
 }

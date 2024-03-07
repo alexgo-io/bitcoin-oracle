@@ -1,3 +1,4 @@
+import { ApiClientModule } from '@meta-protocols-oracle/api';
 import { PinoLoggerModule } from '@meta-protocols-oracle/commons';
 import { Enums, ValidatorName } from '@meta-protocols-oracle/types';
 import { ValidatorBisModule } from '@meta-protocols-oracle/validator-bis';
@@ -26,7 +27,7 @@ export class ValidatorModule {
 
     return {
       module: ValidatorModule,
-      imports: [validatorModule, PinoLoggerModule],
+      imports: [validatorModule, PinoLoggerModule, ApiClientModule],
       providers: [ValidatorServiceProvider],
       exports: [ValidatorServiceProvider],
     };
