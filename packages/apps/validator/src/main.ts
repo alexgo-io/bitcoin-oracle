@@ -1,3 +1,5 @@
+import './pre-process-envs';
+
 import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
 import { env } from './env';

@@ -69,9 +69,14 @@ export class IndexerController {
 
   @Get('/block-hash/:block_hash')
   async blockNumberOfHeader(@Param('block_hash') block_hash: string) {
-    return m
-      .api('blocks', 'response', 'json')
-      .parse(await this.indexer.getBlockByBlockHash(block_hash));
+    const block = await this.indexer.getBlockByBlockHash(block_hash);
+    if (block == null) {
+      throw ErrorDetails.from(
+        StatusCode.NOT_FOUND,
+        'Block not found or not indexed.',
+      ).throwHttpException();
+    }
+    return m.api('blocks', 'response', 'json').parse(block);
   }
 
   @Get('/latest-block-number/:type')
@@ -118,7 +123,6 @@ export class DebugIndexerController {
   constructor(@Inject(Indexer) private readonly indexer: Indexer) {}
 
   @Get('/query')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async debugQuery(@Query() params: APIOf<'debug_txs', 'request', 'json'>) {
     this.logger.debug(`debugQuery: ${JSON.stringify(params)}`);
 

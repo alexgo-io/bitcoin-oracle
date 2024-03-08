@@ -1,4 +1,4 @@
-import { fastRetry, parseErrorDetail } from '@meta-protocols-oracle/commons';
+import { parseErrorDetail } from '@meta-protocols-oracle/commons';
 import { Logger } from '@nestjs/common';
 import assert from 'assert';
 import got from 'got-cjs';
@@ -25,7 +25,7 @@ export class DefaultVaultService implements VaultService {
     return join(this.host, 'v1');
   }
 
-  private got<T>(params: {
+  private async got<T>(params: {
     method: 'get' | 'post';
     path: string;
     notation: string;
@@ -45,11 +45,9 @@ export class DefaultVaultService implements VaultService {
           options.body = JSON.stringify(params.body);
         }
       }
-      return fastRetry(() =>
-        got[method](join(this.base, path), options).json<T>(),
-      );
+      return await got[method](join(this.base, path), options).json<T>();
     } catch (e) {
-      this.logger.error(`[${notation}] ${parseErrorDetail(e)}`);
+      this.logger.error(`vault:[${notation}] ${parseErrorDetail(e)}`);
       throw e;
     }
   }
@@ -186,6 +184,18 @@ export class DefaultVaultService implements VaultService {
           notation: `appRole.createOrUpdateAppRole(${role_name})`,
           body: options,
         });
+      },
+    };
+  }
+
+  get kv() {
+    return {};
+  }
+
+  get jwt() {
+    return {
+      jwt_secret: async () => {
+        return 'abc';
       },
     };
   }

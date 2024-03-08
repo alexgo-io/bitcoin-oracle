@@ -44,12 +44,6 @@ export class DefaultAuthClientService implements AuthClientService {
     }
     this.vaultService.token = loginResponse.auth.client_token;
 
-    // Check if the role name exists
-    const role = await this.vaultService.appRole.read(role_name);
-    if (role == null) {
-      throw new UnauthorizedException(`role ${role_name} not found`);
-    }
-
     // Verify the role ID for the given role name
     const roleIdResponse = await this.vaultService.appRole.readRoleID(
       role_name,

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  BooleanSchema,
   ConflictingNonceStrategySchema,
   StacksRBFModeSchema,
 } from '@meta-protocols-oracle/types';
@@ -55,7 +56,7 @@ export const env = memoizee(() =>
       STACKS_CONFLICTING_NONCE_REPLACE_INCREMENT_STX: z.coerce
         .number()
         .default(0.05),
-      STACKS_MULTI_CAST: z.coerce.boolean().default(false),
+      STACKS_MULTI_CAST: BooleanSchema.default(false),
     },
     runtimeEnv: process.env,
   }),
