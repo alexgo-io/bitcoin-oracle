@@ -1,4 +1,4 @@
-import got from 'got-cjs';
+import { got } from '@meta-protocols-oracle/commons';
 import { z } from 'zod';
 import { OKXActionTypeSchema, kOKXBaseURL } from './base';
 import { env } from './env';

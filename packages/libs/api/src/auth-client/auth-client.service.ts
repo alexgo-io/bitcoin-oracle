@@ -1,5 +1,5 @@
+import { got } from '@meta-protocols-oracle/commons';
 import { Inject, UnauthorizedException } from '@nestjs/common';
-import got from 'got-cjs';
 import { decode } from 'jsonwebtoken';
 import { join } from 'path';
 import { env } from '../env';

@@ -3,6 +3,7 @@ import {
   expoRetry,
   fastRetry,
   getLogger,
+  got,
 } from '@meta-protocols-oracle/commons';
 import {
   APIOf,
@@ -12,7 +13,7 @@ import {
   m,
 } from '@meta-protocols-oracle/types';
 import { Inject } from '@nestjs/common';
-import got, { RequestError } from 'got-cjs';
+import { RequestError } from 'got-cjs';
 import { AuthClientService } from '../auth-client';
 import { env } from '../env';
 import { ApiClientService } from './api-client.interface';

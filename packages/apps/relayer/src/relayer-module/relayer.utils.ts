@@ -1,6 +1,5 @@
-import { filterNotEmpty } from '@meta-protocols-oracle/commons';
+import { filterNotEmpty, got } from '@meta-protocols-oracle/commons';
 import assert from 'assert';
-import got from 'got-cjs';
 import memoizee from 'memoizee';
 import { countBy, pipe, sort, toPairs } from 'ramda';
 

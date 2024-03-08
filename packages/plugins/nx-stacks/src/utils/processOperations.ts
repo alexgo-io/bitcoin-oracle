@@ -1,3 +1,4 @@
+import { got } from '@meta-protocols-oracle/commons';
 import { StacksMainnet, StacksMocknet, StacksNetwork } from '@stacks/network';
 import {
   AccountDataResponse,
@@ -20,7 +21,6 @@ import {
 } from '@stacks/transactions';
 import assert from 'assert';
 import * as fs from 'fs';
-import got from 'got-cjs';
 import fetch from 'node-fetch';
 import pino from 'pino';
 import { keepSendingTx } from './keepSendingTx';

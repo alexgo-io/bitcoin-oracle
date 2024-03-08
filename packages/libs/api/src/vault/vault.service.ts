@@ -1,7 +1,6 @@
-import { parseErrorDetail } from '@meta-protocols-oracle/commons';
+import { got, parseErrorDetail } from '@meta-protocols-oracle/commons';
 import { Logger } from '@nestjs/common';
 import assert from 'assert';
-import got from 'got-cjs';
 import { join } from 'path';
 import { env } from '../env';
 import {

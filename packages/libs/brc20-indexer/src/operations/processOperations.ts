@@ -1,6 +1,7 @@
 import {
   assertNever,
   getLogger,
+  got,
   noAwait,
   parseErrorDetail,
   sleep,
@@ -36,7 +37,6 @@ import {
 } from '@stacks/transactions';
 import assert from 'assert';
 import * as fs from 'fs';
-import got from 'got-cjs';
 import fetch from 'node-fetch';
 import PQueue from 'p-queue';
 import { z } from 'zod';

@@ -1,10 +1,10 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
 import {
   getLogger,
+  got,
   makeSafeAsyncFunction,
   parseErrorDetail,
 } from '@meta-protocols-oracle/commons';
-import got from 'got-cjs';
 import { env } from '../env';
 
 export const kUnisatPageLimit = 10000;

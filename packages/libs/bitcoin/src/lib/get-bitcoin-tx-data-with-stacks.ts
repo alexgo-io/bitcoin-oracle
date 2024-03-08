@@ -1,5 +1,4 @@
-import { expoRetry, noAwait } from '@meta-protocols-oracle/commons';
-import got from 'got-cjs';
+import { expoRetry, got, noAwait } from '@meta-protocols-oracle/commons';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
 import PQueue from 'p-queue';
 import { env } from '../env';
