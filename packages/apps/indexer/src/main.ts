@@ -1,3 +1,5 @@
+import './pre-process-envs';
+
 import { MetaIndexerService } from '@meta-protocols-oracle/api';
 import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';

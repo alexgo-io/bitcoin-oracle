@@ -197,24 +197,3 @@ const VaultServiceProvider = {
 };
 
 export default VaultServiceProvider;
-
-async function main() {
-  const svc = new DefaultVaultService();
-  // const a = await svc.appRole.read('bitcoin-oracle-api-role'); //?
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  // const roleId = (await svc.appRole.readRoleID('bitcoin-oracle-api-role')).data
-  //   .role_id; //?
-  // const c = await svc.appRole.login(
-  //   roleId,
-  //   '65577f7a-746c-3cbd-5eb6-a5afecf2b341',
-  // ); //?
-
-  const idac = await svc.appRole.readSecretIDAccessor(
-    'bitcoin-oracle-indexer-bis-alex-role',
-    'bb13bb84-a34c-c89d-8066-17cdef9e98ca',
-  );
-  idac; //?
-}
-
-main().catch(console.error);

@@ -1,5 +1,7 @@
+import './pre-process-envs';
+
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { Logger } from 'nestjs-pino';
 import { RelayerService } from './relayer-module/relayer.interface';
 import { RelayerModule } from './relayer-module/relayer.module';
 

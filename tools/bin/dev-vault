@@ -14,6 +14,7 @@ setup() {
   green "Setting up vault"
 
   pushd "$NX_WORKSPACE_ROOT"
+  mkdir -p tmp
 
   vault auth enable approle
   vault secrets enable -path="kv-bitcoin-oracle" -description="kv for bitcoin oracle" kv
@@ -45,8 +46,13 @@ setup() {
     token_max_ttl=30m \
     secret_id_num_uses=0
 
-  vault write -f -format=json auth/approle/role/bitcoin-oracle-api-role/secret-id | jq -r ".data.secret_id" >tmp/bitcoin-oracle-api-role.secret
+  vault read -format=json auth/approle/role/bitcoin-oracle-indexer-role/role-id | jq -r ".data.role_id" >tmp/bitcoin-oracle-indexer-role.role
   vault write -f -format=json auth/approle/role/bitcoin-oracle-indexer-role/secret-id | jq -r ".data.secret_id" >tmp/bitcoin-oracle-indexer-role.secret
+
+  vault read -format=json auth/approle/role/bitcoin-oracle-api-server-role/role-id | jq -r ".data.role_id" >tmp/bitcoin-oracle-api-server-role.role
+  vault write -f -format=json auth/approle/role/bitcoin-oracle-api-server-role/secret-id | jq -r ".data.secret_id" >tmp/bitcoin-oracle-api-server-role.secret
+
+  vault read -format=json auth/approle/role/bitcoin-oracle-relayer-role/role-id | jq -r ".data.role_id" >tmp/bitcoin-oracle-relayer-role.role
   vault write -f -format=json auth/approle/role/bitcoin-oracle-relayer-role/secret-id | jq -r ".data.secret_id" >tmp/bitcoin-oracle-relayer-role.secret
   green "Setup Done"
 
