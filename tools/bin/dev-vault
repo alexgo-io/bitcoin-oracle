@@ -17,7 +17,6 @@ setup() {
   mkdir -p tmp
 
   vault auth enable approle
-  vault secrets enable -path="kv-bitcoin-oracle" -description="kv for bitcoin oracle" kv
 
   ## policy
   vault policy write bitcoin-oracle-api-server-policy packages/dev/vault/policies/bitcoin-oracle-api-server-policy.hcl
@@ -73,6 +72,9 @@ setup() {
 
   vault read -format=json auth/approle/role/bitcoin-oracle-api-server-role/role-id | jq -r ".data.role_id" >tmp/bitcoin-oracle-api-server-role.role
   vault write -f -format=json auth/approle/role/bitcoin-oracle-api-server-role/secret-id | jq -r ".data.secret_id" >tmp/bitcoin-oracle-api-server-role.secret
+
+ vault secrets enable -path="kv-bitcoin-oracle" -description="kv for bitcoin oracle" kv
+
   green "Setup Done"
 
   popd

@@ -6,7 +6,6 @@
     "@t3-oss/env-core": "^0.7.1",
     "memoizee": "^0.4.15",
     "zod": "^3.22.3",
-    "got-cjs": "^12.5.4",
     "@meta-protocols-oracle/commons": "*",
     "@meta-protocols-oracle/bitcoin": "*",
     "micro-stacks": "^1.2.1",
