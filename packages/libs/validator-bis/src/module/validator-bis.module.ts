@@ -1,8 +1,9 @@
+import { ApiClientModule } from '@meta-protocols-oracle/api';
 import { Module } from '@nestjs/common';
 import ValidatorBisServiceProvider from './validator-bis.service';
 
 @Module({
-  imports: [],
+  imports: [ApiClientModule],
   providers: [ValidatorBisServiceProvider],
   exports: [ValidatorBisServiceProvider],
 })

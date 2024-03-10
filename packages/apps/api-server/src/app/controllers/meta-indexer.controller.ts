@@ -1,4 +1,4 @@
-import { Indexer, ValidatedTxsQuerySchema } from '@bitcoin-oracle/api';
+import { Indexer, ValidatedTxsQuerySchema } from '@meta-protocols-oracle/api';
 import { ErrorDetails } from '@meta-protocols-oracle/commons';
 import { StatusCode } from '@meta-protocols-oracle/types';
 import {

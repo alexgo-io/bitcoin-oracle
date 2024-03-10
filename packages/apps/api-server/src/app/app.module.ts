@@ -1,4 +1,4 @@
-import { IndexerModule } from '@bitcoin-oracle/api';
+import { IndexerModule } from '@meta-protocols-oracle/api';
 import { PinoLoggerModule } from '@meta-protocols-oracle/commons';
 import { Module } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
@@ -6,6 +6,7 @@ import { ThrottlerModule, seconds } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { env } from '../env';
+import { AuthModule } from './auth';
 import { IndexController } from './controllers/index.controller';
 import {
   DebugIndexerController,
@@ -27,6 +28,7 @@ function getStorage() {
   imports: [
     IndexerModule,
     PinoLoggerModule,
+    AuthModule,
     ThrottlerModule.forRoot({
       throttlers: [
         { limit: env().THROTTLE_LIMIT, ttl: seconds(env().THROTTLE_TTL_SEC) },

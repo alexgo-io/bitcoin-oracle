@@ -1,4 +1,4 @@
-import { IndexerModule } from '@bitcoin-oracle/api';
+import { IndexerModule } from '@meta-protocols-oracle/api';
 import { StacksCaller } from '@meta-protocols-oracle/brc20-indexer';
 import { noAwait, SQL, stringifyJSON } from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';

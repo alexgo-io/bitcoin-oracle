@@ -1,7 +1,9 @@
-import { Indexer, MockIndexer } from '@bitcoin-oracle/api';
+// disable token auth for CI
+process.env['DISABLE_AUTH'] = 'true';
+import { Indexer, MockIndexer } from '@meta-protocols-oracle/api';
 import { SQL } from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';
-import { APIOf, Enums } from '@meta-protocols-oracle/types';
+import { APIOf } from '@meta-protocols-oracle/types';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { randomBytes } from 'node:crypto';
@@ -62,7 +64,6 @@ describe('Indexer Controller (e2e)', () => {
     return request(app.getHttpServer())
       .post('/api/v1/indexer/txs')
       .set('authorization', `Bearer 00000000-0000-0000-0000-000000000001`)
-      .set('x-service-type', Enums.ServiceType.enum.VALIDATOR)
       .set('x-version', '0.0.1')
       .send(data)
       .expect(201)

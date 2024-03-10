@@ -1,8 +1,9 @@
+import { ApiClientModule } from '@meta-protocols-oracle/api';
 import { Module } from '@nestjs/common';
 import ValidatorUnisatServiceProvider from './validator-unisat.service';
 
 @Module({
-  imports: [],
+  imports: [ApiClientModule],
   providers: [ValidatorUnisatServiceProvider],
   exports: [ValidatorUnisatServiceProvider],
 })

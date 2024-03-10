@@ -5,3 +5,4 @@ yarn 1.22.19
 yq 4.25.1
 deno 1.37.0
 postgres 15.5
+vault 1.15.6

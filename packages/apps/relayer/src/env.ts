@@ -1,3 +1,4 @@
+import { BooleanSchema } from '@meta-protocols-oracle/types';
 import { createEnv } from '@t3-oss/env-core';
 import memoizee from 'memoizee';
 import { z } from 'zod';
@@ -14,8 +15,8 @@ export const env = memoizee(() =>
       RELAYER_MAXIMUM_AGREEMENT_COUNT: z.coerce.number().default(3),
       SHARD_RELAYER_INDEX: z.coerce.bigint().default(0n),
       SHARD_TOTAL_RELAYERS: z.coerce.bigint().default(1n),
-      IS_WHITELIST_ENABLED: z.coerce.boolean().default(true),
-      IS_WHITELIST_TXS_ENABLED: z.coerce.boolean().default(true),
+      IS_WHITELIST_ENABLED: BooleanSchema.default(true),
+      IS_WHITELIST_TXS_ENABLED: BooleanSchema.default(true),
     },
     runtimeEnv: process.env,
   }),

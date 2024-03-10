@@ -1,5 +1,5 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import got from 'got-cjs';
+import { got } from '@meta-protocols-oracle/commons';
 import { env } from '../env';
 
 export async function getActivityOnBlock(

@@ -30,3 +30,22 @@ export async function sleep(timeout: number) {
 }
 
 export type Unobservable<T> = T extends Observable<infer R> ? R : T;
+
+export function trimObj<T extends Record<string, unknown>>(obj: T): T {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      if (
+        value !== null &&
+        typeof value === 'object' &&
+        !Array.isArray(value) &&
+        !(value instanceof Date)
+      ) {
+        result[key] = trimObj(value as Record<string, unknown>);
+      } else {
+        result[key] = value;
+      }
+    }
+  }
+  return result as T;
+}

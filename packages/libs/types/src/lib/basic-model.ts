@@ -193,3 +193,20 @@ export const PKScriptBufferToAddressSchema = z.preprocess((val, ctx) => {
 
   return z.never();
 }, z.object({ pkscript: z.string(), address: z.string() }));
+
+export const BooleanSchema = z.preprocess((val, ctx) => {
+  if (typeof val === 'boolean') {
+    return val;
+  }
+  if (typeof val === 'string') {
+    return val === 'true';
+  }
+  if (typeof val === 'number') {
+    return val === 1;
+  }
+  ctx.addIssue({
+    message: `val is not a boolean: ${val}`,
+    code: 'custom',
+  });
+  return z.NEVER;
+}, z.boolean());

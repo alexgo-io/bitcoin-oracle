@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+cd $DIR/../..
+
+green() {
+  echo -e "\033[1;32m$1\033[0m"
+}
+
+main() {
+  local CMD="${1:-start}"
+  case "${CMD}" in
+  start)
+    dev-vault up &
+    dev-database up
+    dev-redis up
+    # hasura seed apply --all-databases
+
+    green "dev environment started, press ctrl-c to exit"
+    trap 'dev stop' SIGINT EXIT
+
+    while true; do
+      sleep 5
+    done
+
+    ;;
+  stop)
+    dev-database down
+    dev-redis down
+    ;;
+  *)
+    echo "unknown command: ${CMD}"
+    ;;
+  esac
+}
+
+main $@

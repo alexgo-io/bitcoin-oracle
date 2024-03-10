@@ -1,3 +1,5 @@
+import './pre-process-envs';
+
 import { startHeartBeat } from '@meta-protocols-oracle/commons';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
@@ -5,6 +7,7 @@ import assert from 'assert';
 import { Response, json, urlencoded } from 'express';
 import { Logger } from 'nestjs-pino';
 import { patchNestJsSwagger } from 'nestjs-zod';
+import process from 'process';
 import { AppModule } from './app/app.module';
 import {
   MetaIndexerQueryIndexingDTO,

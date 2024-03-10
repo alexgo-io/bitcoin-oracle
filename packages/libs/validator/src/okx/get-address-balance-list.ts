@@ -49,7 +49,7 @@ curl --location --globoff 'https://www.okx.com/api/v1/endpoints/btc/address-bala
     ]
 }
  */
-import got from 'got-cjs';
+import { got } from '@meta-protocols-oracle/commons';
 import { z } from 'zod';
 import { kOKXBaseURL } from './base';
 import { env } from './env';

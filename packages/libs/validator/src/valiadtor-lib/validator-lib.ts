@@ -1,22 +1,19 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import { ApiClient } from '@meta-protocols-oracle/api-client';
+import { ApiClientService } from '@meta-protocols-oracle/api';
 import {
   reverseBuffer,
   withElectrumClient,
 } from '@meta-protocols-oracle/bitcoin';
 import { bytesToHex, hexToBytes } from 'micro-stacks/common';
 import { Observable, from, tap } from 'rxjs';
-import { env } from '../env';
 import { getElectrumQueue } from '../queue';
 
-export async function getBitcoinTx(txId: string) {
+export async function getBitcoinTx(txId: string, api: ApiClientService) {
   return withElectrumClient(async client => {
     const tx = await client.blockchain_transaction_get(txId, true);
     if (typeof tx.confirmations === 'undefined' || tx.confirmations < 1) {
       throw new Error('Tx is not confirmed');
     }
-
-    const api = new ApiClient(env().INDEXER_API_URL);
 
     const bitcoinBlockHeight = await api
       .indexer()
@@ -52,13 +49,16 @@ export async function getBitcoinTx(txId: string) {
   });
 }
 
-export function getBitcoinTx$(txId: string): Observable<{
+export function getBitcoinTx$(
+  txId: string,
+  api: ApiClientService,
+): Observable<{
   tx: string;
   header: string;
   proof: { 'tx-index': number; 'tree-depth': number; hashes: string[] };
   height: string;
 }> {
-  return from(getElectrumQueue().add(() => getBitcoinTx(txId))).pipe(
+  return from(getElectrumQueue().add(() => getBitcoinTx(txId, api))).pipe(
     tap(() => {
       OTLP_Validator().counter['get-bitcoin-tx'].add(1);
     }),

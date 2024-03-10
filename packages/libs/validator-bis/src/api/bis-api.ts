@@ -1,6 +1,9 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import { getLogger, parseErrorDetail } from '@meta-protocols-oracle/commons';
-import got from 'got-cjs';
+import {
+  getLogger,
+  got,
+  parseErrorDetail,
+} from '@meta-protocols-oracle/commons';
 import { env } from '../env';
 import {
   BISActivityOnBlockResponseSchema,

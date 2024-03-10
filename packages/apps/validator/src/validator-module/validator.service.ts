@@ -1,5 +1,5 @@
 import { OTLP_Validator } from '@bitcoin-oracle/instrument';
-import { ApiClient } from '@meta-protocols-oracle/api-client';
+import { ApiClientService } from '@meta-protocols-oracle/api';
 import { getCurrentBitcoinHeader } from '@meta-protocols-oracle/bitcoin';
 import {
   IntervalSignal,
@@ -15,13 +15,14 @@ import { ValidatorService } from './validator.interface';
 
 export class DefaultValidatorService implements ValidatorService {
   private readonly logger = new Logger(DefaultValidatorService.name);
-  private readonly api = new ApiClient(env().INDEXER_API_URL);
   private hasFinishedAtLeastOneSync = false;
   private latestProcessedBlockHeight = -1;
 
   constructor(
     @Inject(ValidatorProcessInterface)
     private readonly processor: ValidatorProcessInterface,
+    @Inject(ApiClientService)
+    private readonly api: ApiClientService,
   ) {
     OTLP_Validator().gauge.height.addCallback(ob => {
       ob.observe(this.latestProcessedBlockHeight);

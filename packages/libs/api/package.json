@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-oracle/api",
+  "name": "@meta-protocols-oracle/api",
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
@@ -16,7 +16,9 @@
     "@stacks/transactions": "^6.7.0",
     "slonik": "^37.2.0",
     "p-queue": "^6.6.2",
-    "@bitcoin-oracle/instrument": "*"
+    "@bitcoin-oracle/instrument": "*",
+    "got-cjs": "^12.5.4",
+    "jsonwebtoken": "^9.0.2"
   },
   "type": "commonjs",
   "main": "./src/index.js",

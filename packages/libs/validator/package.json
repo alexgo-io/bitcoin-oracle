@@ -6,14 +6,13 @@
     "@t3-oss/env-core": "^0.7.1",
     "memoizee": "^0.4.15",
     "zod": "^3.22.3",
-    "got-cjs": "^12.5.4",
     "@meta-protocols-oracle/commons": "*",
-    "@meta-protocols-oracle/api-client": "*",
     "@meta-protocols-oracle/bitcoin": "*",
     "micro-stacks": "^1.2.1",
     "rxjs": "^7.8.1",
     "p-queue": "^6.6.2",
-    "@bitcoin-oracle/instrument": "*"
+    "@bitcoin-oracle/instrument": "*",
+    "@meta-protocols-oracle/api": "*"
   },
   "type": "commonjs",
   "main": "./src/index.js",

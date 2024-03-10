@@ -14,7 +14,6 @@
     "lodash": "^4.17.21",
     "@meta-protocols-oracle/commons": "*",
     "@stacks/stacks-blockchain-api-types": "^7.3.0",
-    "got-cjs": "^12.5.4",
     "micro-stacks": "^1.2.1",
     "node-fetch": "^2.7.0",
     "@meta-protocols-oracle/types": "*",

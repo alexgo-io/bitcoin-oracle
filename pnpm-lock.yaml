@@ -16,6 +16,9 @@ importers:
       '@nestjs/core':
         specifier: ^10.3.0
         version: 10.3.0(@nestjs/common@10.3.0)(@nestjs/microservices@10.3.0)(@nestjs/platform-express@10.3.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/jwt':
+        specifier: ^10.2.0
+        version: 10.2.0(@nestjs/common@10.3.0)
       '@nestjs/microservices':
         specifier: ^10.3.0
         version: 10.3.0(@nestjs/common@10.3.0)(@nestjs/core@10.3.0)(ioredis@5.3.2)(reflect-metadata@0.1.13)(rxjs@7.8.1)
@@ -88,6 +91,9 @@ importers:
       ioredis:
         specifier: ^5.3.2
         version: 5.3.2
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -227,6 +233,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.7
         version: 29.5.7
+      '@types/jsonwebtoken':
+        specifier: ^9.0.6
+        version: 9.0.6
       '@types/lodash':
         specifier: ^4.14.200
         version: 4.14.200
@@ -397,6 +406,12 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
+      got-cjs:
+        specifier: ^12.5.4
+        version: 12.5.4
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -409,33 +424,6 @@ importers:
       slonik:
         specifier: ^37.2.0
         version: 37.2.0(zod@3.22.3)
-      tslib:
-        specifier: ^2.3.0
-        version: 2.6.2
-      zod:
-        specifier: ^3.22.3
-        version: 3.22.3
-
-  packages/libs/api-client:
-    dependencies:
-      '@bitcoin-oracle/instrument':
-        specifier: '*'
-        version: link:../instrument
-      '@meta-protocols-oracle/commons':
-        specifier: '*'
-        version: link:../commons
-      '@meta-protocols-oracle/types':
-        specifier: '*'
-        version: link:../types
-      '@t3-oss/env-core':
-        specifier: ^0.7.1
-        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
-      memoizee:
-        specifier: ^0.4.15
-        version: 0.4.15
       tslib:
         specifier: ^2.3.0
         version: 2.6.2
@@ -457,9 +445,6 @@ importers:
       electrum-client-sl:
         specifier: ^0.1.4
         version: 0.1.4
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       micro-stacks:
         specifier: ^1.2.1
         version: 1.2.1
@@ -508,9 +493,6 @@ importers:
       clarity-codegen:
         specifier: ^0.3.4
         version: 0.3.4(@stacks/transactions@6.7.0)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -679,9 +661,9 @@ importers:
       '@bitcoin-oracle/instrument':
         specifier: '*'
         version: link:../instrument
-      '@meta-protocols-oracle/api-client':
+      '@meta-protocols-oracle/api':
         specifier: '*'
-        version: link:../api-client
+        version: link:../api
       '@meta-protocols-oracle/bitcoin':
         specifier: '*'
         version: link:../bitcoin
@@ -691,9 +673,6 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -718,9 +697,9 @@ importers:
       '@bitcoin-oracle/instrument':
         specifier: '*'
         version: link:../instrument
-      '@meta-protocols-oracle/api-client':
+      '@meta-protocols-oracle/api':
         specifier: '*'
-        version: link:../api-client
+        version: link:../api
       '@meta-protocols-oracle/brc20-indexer':
         specifier: '*'
         version: link:../brc20-indexer
@@ -742,9 +721,6 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -769,9 +745,9 @@ importers:
       '@bitcoin-oracle/instrument':
         specifier: '*'
         version: link:../instrument
-      '@meta-protocols-oracle/api-client':
+      '@meta-protocols-oracle/api':
         specifier: '*'
-        version: link:../api-client
+        version: link:../api
       '@meta-protocols-oracle/brc20-indexer':
         specifier: '*'
         version: link:../brc20-indexer
@@ -793,9 +769,6 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -820,9 +793,9 @@ importers:
       '@bitcoin-oracle/instrument':
         specifier: '*'
         version: link:../instrument
-      '@meta-protocols-oracle/api-client':
+      '@meta-protocols-oracle/api':
         specifier: '*'
-        version: link:../api-client
+        version: link:../api
       '@meta-protocols-oracle/brc20-indexer':
         specifier: '*'
         version: link:../brc20-indexer
@@ -844,9 +817,6 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -3568,6 +3538,19 @@ packages:
       uid: 2.0.2
     transitivePeerDependencies:
       - encoding
+
+  /@nestjs/jwt@10.2.0(@nestjs/common@10.3.0):
+    resolution:
+      {
+        integrity: sha512-x8cG90SURkEiLOehNaN2aRlotxT0KZESUliOPKKnjWiyJOcWurkF3w345WOX0P4MgFzUjGoZ1Sy0aZnxeihT0g==,
+      }
+    peerDependencies:
+      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
+    dependencies:
+      '@nestjs/common': 10.3.0(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@types/jsonwebtoken': 9.0.5
+      jsonwebtoken: 9.0.2
+    dev: false
 
   /@nestjs/mapped-types@2.0.4(@nestjs/common@10.3.0)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.1.13):
     resolution:
@@ -6492,6 +6475,24 @@ packages:
       '@types/node': 20.8.10
     dev: true
 
+  /@types/jsonwebtoken@9.0.5:
+    resolution:
+      {
+        integrity: sha512-VRLSGzik+Unrup6BsouBeHsf4d1hOEgYWTm/7Nmw1sXoN1+tRly/Gy/po3yeahnP4jfnQWWAhQAqcNfH7ngOkA==,
+      }
+    dependencies:
+      '@types/node': 20.8.10
+    dev: false
+
+  /@types/jsonwebtoken@9.0.6:
+    resolution:
+      {
+        integrity: sha512-/5hndP5dCjloafCXns6SZyESp3Ldq7YjH3zwzwczYnjxIT0Fqzk5ROSYVGfFyczIue7IUEj8hkvLbPoLQ18vQw==,
+      }
+    dependencies:
+      '@types/node': 20.8.10
+    dev: true
+
   /@types/keyv@3.1.4:
     resolution:
       {
@@ -8439,6 +8440,13 @@ packages:
     dependencies:
       node-int64: 0.4.0
     dev: true
+
+  /buffer-equal-constant-time@1.0.1:
+    resolution:
+      {
+        integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==,
+      }
+    dev: false
 
   /buffer-from@1.1.2:
     resolution:
@@ -14023,6 +14031,25 @@ packages:
       ecdsa-sig-formatter: 1.0.11
     dev: false
 
+  /jsonwebtoken@9.0.2:
+    resolution:
+      {
+        integrity: sha512-PRp66vJ865SSqOlgqS8hujT5U4AOgMfhrwYIuIhfKaoSCZcirrmASQr8CX7cUg+RMih+hgznrjp99o+W4pJLHQ==,
+      }
+    engines: { node: '>=12', npm: '>=6' }
+    dependencies:
+      jws: 3.2.2
+      lodash.includes: 4.3.0
+      lodash.isboolean: 3.0.3
+      lodash.isinteger: 4.0.4
+      lodash.isnumber: 3.0.3
+      lodash.isplainobject: 4.0.6
+      lodash.isstring: 4.0.1
+      lodash.once: 4.1.1
+      ms: 2.1.3
+      semver: 7.5.4
+    dev: false
+
   /just-diff-apply@5.5.0:
     resolution:
       {
@@ -14036,6 +14063,27 @@ packages:
         integrity: sha512-6ufhP9SHjb7jibNFrNxyFZ6od3g+An6Ai9mhGRvcYe8UJlH0prseN64M+6ZBBUoKYHZsitDP42gAJ8+eVWr3lw==,
       }
     dev: true
+
+  /jwa@1.4.1:
+    resolution:
+      {
+        integrity: sha512-qiLX/xhEEFKUAJ6FiBMbes3w9ATzyk5W7Hvzpa/SLYdxNtng+gcurvrI7TbACjIXlsJyr05/S1oUhZrc63evQA==,
+      }
+    dependencies:
+      buffer-equal-constant-time: 1.0.1
+      ecdsa-sig-formatter: 1.0.11
+      safe-buffer: 5.2.1
+    dev: false
+
+  /jws@3.2.2:
+    resolution:
+      {
+        integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==,
+      }
+    dependencies:
+      jwa: 1.4.1
+      safe-buffer: 5.2.1
+    dev: false
 
   /keyv@4.5.4:
     resolution:
@@ -14371,11 +14419,53 @@ packages:
         integrity: sha512-qjxPLHd3r5DnsdGacqOMU6pb/avJzdh9tFX2ymgoZE27BmjXrNy/y4LoaiTeAb+O3gL8AfpJGtqfX/ae2leYYQ==,
       }
 
+  /lodash.includes@4.3.0:
+    resolution:
+      {
+        integrity: sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w==,
+      }
+    dev: false
+
   /lodash.isarguments@3.1.0:
     resolution:
       {
         integrity: sha512-chi4NHZlZqZD18a0imDHnZPrDeBbTtVN7GXMwuGdRH9qotxAjYs3aVLKc7zNOG9eddR5Ksd8rvFEBc9SsggPpg==,
       }
+
+  /lodash.isboolean@3.0.3:
+    resolution:
+      {
+        integrity: sha512-Bz5mupy2SVbPHURB98VAcw+aHh4vRV5IPNhILUCsOzRmsTmSQ17jIuqopAentWoehktxGd9e/hbIXq980/1QJg==,
+      }
+    dev: false
+
+  /lodash.isinteger@4.0.4:
+    resolution:
+      {
+        integrity: sha512-DBwtEWN2caHQ9/imiNeEA5ys1JoRtRfY3d7V9wkqtbycnAmTvRRmbHKDV4a0EYc678/dia0jrte4tjYwVBaZUA==,
+      }
+    dev: false
+
+  /lodash.isnumber@3.0.3:
+    resolution:
+      {
+        integrity: sha512-QYqzpfwO3/CWf3XP+Z+tkQsfaLL/EnUlXWVkIk5FUPc4sBdTehEqZONuyRt2P67PXAk+NXmTBcc97zw9t1FQrw==,
+      }
+    dev: false
+
+  /lodash.isplainobject@4.0.6:
+    resolution:
+      {
+        integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==,
+      }
+    dev: false
+
+  /lodash.isstring@4.0.1:
+    resolution:
+      {
+        integrity: sha512-0wJxfxH1wgO3GrbuP+dTTk7op+6L41QCXbGINEmD+ny/G/eCqGzxyCsh7159S+mgDDcoarnBw6PC1PS5+wUGgw==,
+      }
+    dev: false
 
   /lodash.memoize@4.1.2:
     resolution:
@@ -14389,6 +14479,13 @@ packages:
       {
         integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==,
       }
+
+  /lodash.once@4.1.1:
+    resolution:
+      {
+        integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==,
+      }
+    dev: false
 
   /lodash.template@4.5.0:
     resolution:
@@ -14496,7 +14593,6 @@ packages:
     engines: { node: '>=10' }
     dependencies:
       yallist: 4.0.0
-    dev: true
 
   /lru-cache@7.18.3:
     resolution:
@@ -18758,7 +18854,6 @@ packages:
     hasBin: true
     dependencies:
       lru-cache: 6.0.0
-    dev: true
 
   /send@0.18.0:
     resolution:
@@ -21387,7 +21482,6 @@ packages:
       {
         integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==,
       }
-    dev: true
 
   /yaml@1.10.2:
     resolution:

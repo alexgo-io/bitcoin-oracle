@@ -7,7 +7,6 @@
     "zod": "^3.22.3",
     "electrum-client-sl": "^0.1.4",
     "@meta-protocols-oracle/commons": "*",
-    "got-cjs": "^12.5.4",
     "micro-stacks": "^1.2.1",
     "p-queue": "^6.6.2",
     "scure-btc-signer-cjs": "^1.0.1",

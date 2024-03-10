@@ -4,66 +4,69 @@ import {
   ExecutionContext,
   Injectable,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
-import memoizee from 'memoizee';
-import { Observable } from 'rxjs';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 import { env } from '../../env';
-
-const getSecretKeys: () => { [key: string]: string } = memoizee(() => {
-  return JSON.parse(env().BRC20_ORACLE_API_CREDENTIALS);
-});
-
-const logger = new Logger('api-server', { timestamp: true });
+import { ServiceJWTPayloadType } from '../auth';
 
 const AUTH_VERSION_MAP = {
-  [Enums.ServiceType.enum.RELAYER]: '0.0.1',
-  [Enums.ServiceType.enum.VALIDATOR]: '0.0.1',
-  [Enums.ServiceType.enum.INDEXER]: '0.0.1',
+  [Enums.ServiceType.enum.relayer]: '0.0.1',
+  [Enums.ServiceType.enum.validator]: '0.0.1',
+  [Enums.ServiceType.enum.indexer]: '0.0.1',
 } as const;
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  private readonly logger = new Logger(AuthGuard.name);
+  constructor(private jwtService: JwtService) {}
+
+  async canActivate(context: ExecutionContext) {
     if (env().DISABLE_AUTH) {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const { authorization } = request.headers;
-    const serviceType = Enums.ServiceType.safeParse(
-      request.headers['x-service-type'],
-    );
-    if (!serviceType.success) {
-      logger.warn(`Request received without service type.`);
-      return false;
-    }
-    const version = request.headers['x-version'];
-
-    if (!authorization) {
-      return false;
-    }
-    const token = authorization.split(' ')[1];
+    const token = this.extractTokenFromHeader(request);
     if (!token) {
-      return false;
+      throw new UnauthorizedException();
     }
-
-    const secretKey = getSecretKeys()[token];
-    if (!secretKey) {
-      return false;
-    }
-
-    if (AUTH_VERSION_MAP[serviceType.data] !== version) {
-      logger.warn(
-        `Request received from outdated version : ${version}, ${serviceType}.`,
+    try {
+      const payload: ServiceJWTPayloadType = await this.jwtService.verifyAsync(
+        token,
+        {
+          secret: env().JWT_SECRET,
+        },
       );
-      return false;
+
+      const serviceType = Enums.ServiceType.safeParse(payload['service-type']);
+      if (!serviceType.success) {
+        throw new UnauthorizedException(
+          `Invalid service type: ${payload['service-type']}`,
+        );
+      }
+
+      const version = request.headers['x-version'];
+      if (AUTH_VERSION_MAP[serviceType.data] !== version) {
+        this.logger.warn(
+          `Request received from outdated version : ${version}, ${serviceType}.`,
+        );
+        return false;
+      }
+
+      request['user'] = payload;
+    } catch (e) {
+      this.logger.error(`Error while verifying jwt: ${e}`);
+      if (e instanceof UnauthorizedException) {
+        throw e;
+      }
+      throw new UnauthorizedException();
     }
-
-    request.user = {
-      name: secretKey,
-    };
-
     return true;
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

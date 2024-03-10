@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export PROJECT_NAME="dev-vault"
+
+# shellcheck source=./_dev_utils
+source "$NX_WORKSPACE_ROOT"/tools/bin/_dev_utils
+echo_welcome
+
+green() {
+  echo -e "\033[1;32m$1\033[0m"
+}
+
+setup() {
+  green "Setting up vault"
+
+  pushd "$NX_WORKSPACE_ROOT"
+  mkdir -p tmp
+
+  vault auth enable approle
+
+  ## policy
+  vault policy write bitcoin-oracle-api-server-policy packages/dev/vault/policies/bitcoin-oracle-api-server-policy.hcl
+  vault policy write bitcoin-oracle-indexer-policy packages/dev/vault/policies/bitcoin-oracle-indexer-policy.hcl
+  vault policy write bitcoin-oracle-validator-policy packages/dev/vault/policies/bitcoin-oracle-validator-policy.hcl
+
+  vault write auth/approle/role/bitcoin-oracle-validator-role \
+    secret_id_ttl=0 \
+    token_policies="bitcoin-oracle-validator-policy" \
+    token_num_uses=0 \
+    token_ttl=20m \
+    token_max_ttl=30m \
+    secret_id_num_uses=0
+
+  vault write auth/approle/role/bitcoin-oracle-relayer-role \
+    secret_id_ttl=0 \
+    token_policies="bitcoin-oracle-relayer-policy" \
+    token_num_uses=0 \
+    token_ttl=20m \
+    token_max_ttl=30m \
+    secret_id_num_uses=0
+
+  vault write auth/approle/role/bitcoin-oracle-indexer-role \
+    secret_id_ttl=0 \
+    token_policies="bitcoin-oracle-indexer-policy" \
+    token_num_uses=0 \
+    token_ttl=20m \
+    token_max_ttl=30m \
+    secret_id_num_uses=0
+
+  vault write auth/approle/role/bitcoin-oracle-api-server-role \
+    secret_id_ttl=0 \
+    token_policies="bitcoin-oracle-api-server-policy" \
+    token_num_uses=0 \
+    token_ttl=20m \
+    token_max_ttl=30m \
+    secret_id_num_uses=0
+
+  vault read -format=json auth/approle/role/bitcoin-oracle-validator-role/role-id | jq -r ".data.role_id" >tmp/bitcoin-oracle-validator-role.role
+  vault write -f -format=json auth/approle/role/bitcoin-oracle-validator-role/secret-id \
+    metadata="service-type=validator,validator-name=bis,owner=nameless-monkey" \
+    | jq -r ".data.secret_id" >tmp/bitcoin-oracle-validator-role.secret
+
+  vault read -format=json auth/approle/role/bitcoin-oracle-indexer-role/role-id | jq -r ".data.role_id" >tmp/bitcoin-oracle-indexer-role.role
+  vault write -f -format=json auth/approle/role/bitcoin-oracle-indexer-role/secret-id \
+    metadata="service-type=indexer,owner=elsa-ally" \
+  | jq -r ".data.secret_id" >tmp/bitcoin-oracle-indexer-role.secret
+
+  vault read -format=json auth/approle/role/bitcoin-oracle-relayer-role/role-id | jq -r ".data.role_id" >tmp/bitcoin-oracle-relayer-role.role
+  vault write -f -format=json auth/approle/role/bitcoin-oracle-relayer-role/secret-id \
+    metadata="service-type=relayer,owner=bessy-viki" \
+  | jq -r ".data.secret_id" >tmp/bitcoin-oracle-relayer-role.secret
+
+  vault read -format=json auth/approle/role/bitcoin-oracle-api-server-role/role-id | jq -r ".data.role_id" >tmp/bitcoin-oracle-api-server-role.role
+  vault write -f -format=json auth/approle/role/bitcoin-oracle-api-server-role/secret-id | jq -r ".data.secret_id" >tmp/bitcoin-oracle-api-server-role.secret
+
+ vault secrets enable -path="kv-bitcoin-oracle" -description="kv for bitcoin oracle" kv
+
+  green "Setup Done"
+
+  popd
+}
+
+main() {
+  local cmd=${1:-""}
+  case $cmd in
+  up)
+    vault server -dev -dev-root-token-id=$VAULT_TOKEN &
+    PID=$!
+    sleep 2
+    trap "kill $PID" EXIT SIGINT
+
+    setup
+
+    while true; do
+      sleep 5
+    done
+    ;;
+  *)
+    echo "Usage: $0 {up}"
+    exit 1
+    ;;
+  esac
+}
+
+main $@

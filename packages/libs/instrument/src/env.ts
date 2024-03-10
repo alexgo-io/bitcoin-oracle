@@ -1,4 +1,4 @@
-import { Enums } from '@meta-protocols-oracle/types';
+import { BooleanSchema, Enums } from '@meta-protocols-oracle/types';
 import { createEnv } from '@t3-oss/env-core';
 import memoizee from 'memoizee';
 import { z } from 'zod';
@@ -8,7 +8,7 @@ export const env = memoizee(() => {
 
   return createEnv({
     server: {
-      DEBUG_INSTRUMENT: z.coerce.boolean().default(false),
+      DEBUG_INSTRUMENT: BooleanSchema.default(false),
       SERVICE_NAME: z.coerce.string(),
       VALIDATOR_NAME: Enums.ValidatorName.default('unknown'),
       OTLP_EXPORT_INTERVAL_MILLIS: z.coerce
