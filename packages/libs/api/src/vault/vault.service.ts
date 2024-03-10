@@ -200,6 +200,20 @@ export class DefaultVaultService implements VaultService {
       throw new Error('role_id and secret_id are required');
     }
     const loginResponse = await this.appRole.login(role_id, secret_id);
+    const lease_duration = loginResponse.auth.lease_duration;
+    // Calculate the time to invalidate the token
+    const leaseDurationInSeconds = lease_duration - 30; // Invalidate 30s before lease duration is up
+    const maxTokenRefreshInterval = 600; // Invalidate every 10 minutes
+    const tokenInvalidationTime = Math.min(
+      leaseDurationInSeconds,
+      maxTokenRefreshInterval,
+    );
+
+    // Set a timeout to clear the token when it's time to invalidate it
+    setTimeout(() => {
+      this.token = undefined;
+    }, tokenInvalidationTime * 1000); // Convert to milliseconds
+
     this.token = loginResponse.auth.client_token;
   }
 }

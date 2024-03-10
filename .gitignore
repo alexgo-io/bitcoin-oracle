@@ -44,3 +44,4 @@ packages/dev/database/bin/cli-hasura-*
 
 .nx/cache
 db_backups/
+__bru/
