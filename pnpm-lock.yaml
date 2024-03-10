@@ -409,6 +409,9 @@ importers:
       got-cjs:
         specifier: ^12.5.4
         version: 12.5.4
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -421,33 +424,6 @@ importers:
       slonik:
         specifier: ^37.2.0
         version: 37.2.0(zod@3.22.3)
-      tslib:
-        specifier: ^2.3.0
-        version: 2.6.2
-      zod:
-        specifier: ^3.22.3
-        version: 3.22.3
-
-  packages/libs/api-client:
-    dependencies:
-      '@bitcoin-oracle/instrument':
-        specifier: '*'
-        version: link:../instrument
-      '@meta-protocols-oracle/commons':
-        specifier: '*'
-        version: link:../commons
-      '@meta-protocols-oracle/types':
-        specifier: '*'
-        version: link:../types
-      '@t3-oss/env-core':
-        specifier: ^0.7.1
-        version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
-      memoizee:
-        specifier: ^0.4.15
-        version: 0.4.15
       tslib:
         specifier: ^2.3.0
         version: 2.6.2
@@ -469,9 +445,6 @@ importers:
       electrum-client-sl:
         specifier: ^0.1.4
         version: 0.1.4
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       micro-stacks:
         specifier: ^1.2.1
         version: 1.2.1
@@ -520,9 +493,6 @@ importers:
       clarity-codegen:
         specifier: ^0.3.4
         version: 0.3.4(@stacks/transactions@6.7.0)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -703,9 +673,6 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -754,9 +721,6 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -805,9 +769,6 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15
@@ -856,9 +817,6 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.3)
-      got-cjs:
-        specifier: ^12.5.4
-        version: 12.5.4
       memoizee:
         specifier: ^0.4.15
         version: 0.4.15

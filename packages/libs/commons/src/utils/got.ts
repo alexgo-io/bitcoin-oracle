@@ -3,12 +3,12 @@ import xgot, { BeforeErrorHook, HandlerFunction, RequestError } from 'got-cjs';
 const stackTraceHandler: HandlerFunction = (options, next) => {
   const context: { stack?: string } = {};
   Error.captureStackTrace(context, stackTraceHandler);
-  options.context = { ...options.context, stack: context.stack };
+  options.context = { ...options.context, stack: context['stack'] };
   return next(options);
 };
 
 const addSourceStackTraceToError: BeforeErrorHook = (error: RequestError) => {
-  error.stack = `${error.stack}\n---Source Stack---\n${error.options.context.stack}`;
+  error.stack = `${error.stack}\n---Source Stack---\n${error.options.context['stack']}`;
   return error;
 };
 
