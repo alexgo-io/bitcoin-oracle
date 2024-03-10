@@ -1,4 +1,4 @@
-import { got, parseErrorDetail } from '@meta-protocols-oracle/commons';
+import { got, parseErrorDetail, trimObj } from '@meta-protocols-oracle/commons';
 import { Logger } from '@nestjs/common';
 import { join } from 'path';
 import { env } from '../env';
@@ -13,7 +13,10 @@ import {
 export class DefaultVaultService implements VaultService {
   private readonly logger = new Logger(VaultService.name);
 
-  constructor(public token = env().VAULT_TOKEN) {}
+  constructor(
+    public token = env().VAULT_TOKEN,
+    public namespace = env().VAULT_NAMESPACE,
+  ) {}
 
   private get host() {
     return env().VAULT_ADDR;
@@ -34,6 +37,7 @@ export class DefaultVaultService implements VaultService {
       const options = {
         headers: {
           'X-Vault-Token': this.token,
+          'X-Vault-Namespace': this.namespace,
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any;
@@ -42,7 +46,10 @@ export class DefaultVaultService implements VaultService {
           options.body = JSON.stringify(params.body);
         }
       }
-      return await got[method](join(this.base, path), options).json<T>();
+      return await got[method](
+        join(this.base, path),
+        trimObj(options),
+      ).json<T>();
     } catch (e) {
       this.logger.error(`vault:[${notation}] ${parseErrorDetail(e)}`);
       throw e;

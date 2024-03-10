@@ -15,6 +15,7 @@ export const env = memoizee(() =>
       META_INDEXER_SYNC_SIZE: z.coerce.number().default(1000),
       VAULT_ADDR: z.string().default('http://localhost:8200'),
       VAULT_TOKEN: z.string().optional(),
+      VAULT_NAMESPACE: z.string().optional(),
       INDEXER_API_URL: z.string().default('http://localhost:8716'),
       VAULT_ROLE_NAME: z.string().default('placeholder-role'),
       VAULT_ROLE_ID: z.string().default('placeholder-role-id'),
