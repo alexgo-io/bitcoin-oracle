@@ -1,6 +1,5 @@
 import { got, parseErrorDetail } from '@meta-protocols-oracle/commons';
 import { Logger } from '@nestjs/common';
-import assert from 'assert';
 import { join } from 'path';
 import { env } from '../env';
 import {
@@ -32,7 +31,6 @@ export class DefaultVaultService implements VaultService {
   }) {
     const { method, path, notation } = params;
     try {
-      assert(this.token, `Vault token not found`);
       const options = {
         headers: {
           'X-Vault-Token': this.token,
