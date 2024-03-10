@@ -18,11 +18,6 @@ import { AuthClientService } from '../auth-client';
 import { env } from '../env';
 import { ApiClientService } from './api-client.interface';
 
-// const headers = memoizee(() => ({
-//   'x-service-type': Enums.ServiceType.enum.VALIDATOR,
-//   authorization: `Bearer ${env().INDEXER_ACCESS_KEY}`,
-// }));
-
 export class DefaultApiClientService implements ApiClientService {
   private readonly baseURL = env().INDEXER_API_URL;
   constructor(

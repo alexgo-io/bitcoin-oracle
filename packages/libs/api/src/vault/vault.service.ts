@@ -186,18 +186,6 @@ export class DefaultVaultService implements VaultService {
       },
     };
   }
-
-  get kv() {
-    return {};
-  }
-
-  get jwt() {
-    return {
-      jwt_secret: async () => {
-        return 'abc';
-      },
-    };
-  }
 }
 
 const VaultServiceProvider = {

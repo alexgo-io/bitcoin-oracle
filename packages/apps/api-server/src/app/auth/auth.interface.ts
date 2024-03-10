@@ -5,8 +5,8 @@ export abstract class AuthService {
   ): Promise<{ access_token: string }>;
 }
 
-export type JWTPayloadType = {
-  iss: 'bitcoin_oracle';
+export type ServiceJWTPayloadType = {
+  iss: string;
   sub: string;
   'service-type'?: string;
   'validator-name'?: string;

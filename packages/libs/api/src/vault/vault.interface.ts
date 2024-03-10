@@ -13,9 +13,6 @@ export const kVaultRoleName = z.enum([
 
 export abstract class VaultService {
   public token?: string;
-  abstract get jwt(): {
-    jwt_secret: () => Promise<string>;
-  };
   abstract get appRole(): {
     read: (role_name: string) => Promise<ReadResponse>;
     readRoleID: (role_name: string) => Promise<ReadRoleIDResponse>;

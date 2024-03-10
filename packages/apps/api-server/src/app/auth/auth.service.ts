@@ -2,7 +2,7 @@ import { kMetadataNames, VaultService } from '@meta-protocols-oracle/api';
 import { trimObj } from '@meta-protocols-oracle/commons';
 import { Inject, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthService, JWTPayloadType } from './auth.interface';
+import { AuthService, ServiceJWTPayloadType } from './auth.interface';
 
 export class DefaultAuthService implements AuthService {
   constructor(
@@ -31,7 +31,7 @@ export class DefaultAuthService implements AuthService {
 
     const metadata = secret.data.metadata;
 
-    const payload: JWTPayloadType = trimObj({
+    const payload: ServiceJWTPayloadType = trimObj({
       iss: 'bitcoin_oracle',
       sub: role_name,
       [kMetadataNames.enum['service-type']]:

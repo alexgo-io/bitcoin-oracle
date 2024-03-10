@@ -8,7 +8,6 @@ export const env = memoizee(() =>
   createEnv({
     server: {
       ENABLE_DEBUG_INFO: BooleanSchema.default(false),
-      BRC20_ORACLE_API_CREDENTIALS: z.string().default('{}'),
       API_PORT: z.coerce.number().default(8716),
       HEARTBEAT_URL: z.string().optional(),
       DISABLE_AUTH: BooleanSchema.default(false),

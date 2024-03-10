@@ -6,7 +6,6 @@ export const env = memoizee(() =>
   createEnv({
     server: {
       BIS_ACCESS_KEY: z.string().default(''),
-      INDEXER_ACCESS_KEY: z.string().min(1),
       INDEXER_API_URL: z.string().default('http://localhost:8716'),
       STACKS_VALIDATOR_ACCOUNT_ADDRESS: z.string().min(1),
       STACKS_VALIDATOR_ACCOUNT_SECRET: z.string().min(1),

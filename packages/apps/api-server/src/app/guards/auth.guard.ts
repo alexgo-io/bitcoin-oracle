@@ -9,7 +9,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { env } from '../../env';
-import { JWTPayloadType } from '../auth';
+import { ServiceJWTPayloadType } from '../auth';
 
 const AUTH_VERSION_MAP = {
   [Enums.ServiceType.enum.relayer]: '0.0.1',
@@ -32,9 +32,12 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload: JWTPayloadType = await this.jwtService.verifyAsync(token, {
-        secret: env().JWT_SECRET,
-      });
+      const payload: ServiceJWTPayloadType = await this.jwtService.verifyAsync(
+        token,
+        {
+          secret: env().JWT_SECRET,
+        },
+      );
 
       const serviceType = Enums.ServiceType.safeParse(payload['service-type']);
       if (!serviceType.success) {
