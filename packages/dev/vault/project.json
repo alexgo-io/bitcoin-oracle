@@ -1,25 +1,9 @@
 {
   "name": "dev-vault",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/dev/redis",
+  "sourceRoot": "packages/dev/vault",
   "projectType": "application",
   "implicitDependencies": ["dev-network"],
-  "targets": {
-    "up": {
-      "command": "dev-redis up"
-    },
-    "sync": {
-      "command": "dev-redis sync"
-    },
-    "logs": {
-      "command": "dev-redis logs"
-    },
-    "recreate": {
-      "command": "dev-redis reset"
-    },
-    "down": {
-      "command": "dev-redis clean"
-    }
-  },
+  "targets": {},
   "tags": []
 }
