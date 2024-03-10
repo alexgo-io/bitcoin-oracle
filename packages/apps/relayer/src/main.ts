@@ -7,8 +7,7 @@ import { RelayerModule } from './relayer-module/relayer.module';
 
 async function main() {
   const app = await NestFactory.create(RelayerModule, {});
-  const logger = app.get(Logger);
-  app.useLogger(logger);
+  const logger = new Logger('RelayerService');
 
   logger.log(`Starting RelayerService`);
   const service = app.get(RelayerService);
