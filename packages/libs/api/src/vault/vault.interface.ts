@@ -71,6 +71,7 @@ export abstract class VaultService {
       },
     ) => Promise<unknown>;
   };
+  abstract loginAppRoleIfNecessary(): Promise<void>;
 }
 
 export interface ReadResponse {

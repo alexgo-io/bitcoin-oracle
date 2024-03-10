@@ -191,6 +191,17 @@ export class DefaultVaultService implements VaultService {
       },
     };
   }
+
+  async loginAppRoleIfNecessary() {
+    if (this.token != null) return;
+    const role_id = env().VAULT_ROLE_ID;
+    const secret_id = env().VAULT_SECRET_ID;
+    if (role_id == null || secret_id == null) {
+      throw new Error('role_id and secret_id are required');
+    }
+    const loginResponse = await this.appRole.login(role_id, secret_id);
+    this.token = loginResponse.auth.client_token;
+  }
 }
 
 const VaultServiceProvider = {

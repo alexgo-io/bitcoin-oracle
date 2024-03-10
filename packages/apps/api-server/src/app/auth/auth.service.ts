@@ -14,6 +14,7 @@ export class DefaultAuthService implements AuthService {
     role_name: string,
     secret_id_accessor: string,
   ): Promise<{ access_token: string }> {
+    await this.vaultService.loginAppRoleIfNecessary();
     const role = await this.vaultService.appRole.read(role_name);
     if (role == null) {
       throw new UnauthorizedException(`role ${role_name} not found`);
