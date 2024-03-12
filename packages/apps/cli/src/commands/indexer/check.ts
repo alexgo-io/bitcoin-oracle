@@ -41,14 +41,12 @@ export default class Check extends Command {
         return persistent.pgPool.any(SQL.type(
           m.database('indexer', 'submitted_tx'),
         )`
-        with
-    pending_txs as (select *
+        with pending_txs as (select *
                      from indexer.txs
                      where length(tx_hash) <= 4096*2
-                     and height > (select max(height) - 25 from indexer.txs)
-
-),
-     qualified_txs as (select pt.id, count(*)
+                     and height < (select max(height) - 15 from indexer.txs)
+                     and height > (select max(height) - 100 from indexer.txs)
+            ), qualified_txs as (select pt.id, count(*)
                        from pending_txs pt
                                 join indexer.proofs pf on pt.id = pf.id
                            and ((pf."to" in
@@ -60,16 +58,14 @@ export default class Check extends Command {
                               (select minimal_proof_count
                                from indexer_config.relayer_configs
                                limit 1)
-                       ),
-     qualified_txs_with_proof as (select qualified_txs.id
+            ), qualified_txs_with_proof as (select qualified_txs.id
                                   from qualified_txs
-                                           join pending_txs p on qualified_txs.id = p.id),
-     check_stacks_tx as (
-         select *
-         from indexer.submitted_tx st
-         where st.id in (select id from qualified_txs_with_proof)
-     )
-
+                                           join pending_txs p on qualified_txs.id = p.id
+            ), check_stacks_tx as (
+                                   select *
+                                   from indexer.submitted_tx st
+                                   where st.id in (select id from qualified_txs_with_proof)
+            )
 select *
 from check_stacks_tx
         `);
@@ -158,7 +154,9 @@ from check_stacks_tx
         returning *;
       `);
 
-      console.log(`deleted ${deleted.length} txs`);
+      if (deleted.length > 0) {
+        console.log(`deleted ${deleted.length} txs`);
+      }
     } else {
       console.log(`skipping delete`);
     }
