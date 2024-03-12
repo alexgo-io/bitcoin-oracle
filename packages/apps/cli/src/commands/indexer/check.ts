@@ -1,6 +1,11 @@
 import { IndexerModule } from '@meta-protocols-oracle/api';
 import { StacksCaller } from '@meta-protocols-oracle/brc20-indexer';
-import { noAwait, SQL, stringifyJSON } from '@meta-protocols-oracle/commons';
+import {
+  noAwait,
+  sleep,
+  SQL,
+  stringifyJSON,
+} from '@meta-protocols-oracle/commons';
 import { PersistentService } from '@meta-protocols-oracle/persistent';
 import { BufferStringSchema, m } from '@meta-protocols-oracle/types';
 import { Logger } from '@nestjs/common';
@@ -20,52 +25,87 @@ export default class Check extends Command {
   static flags = {
     help: Flags.help({ char: 'h' }),
     confirm: Flags.boolean({ char: 'c', default: false }),
+    'long-live': Flags.boolean({
+      char: 'l',
+      default: false,
+      description: 'long live checker',
+    }),
   };
 
-  async run(): Promise<void> {
-    const {
-      flags: { confirm },
-    } = await this.parse(Check);
-    if (confirm) {
-      console.log(`confirming delete`);
-    }
+  async check(confirm: boolean, longLive: boolean): Promise<void> {
     const app = await NestFactory.create(IndexerModule);
-
     const persistent = app.get(PersistentService);
+    const txs = await (() => {
+      // for long live, we check for only last 25 blocks
+      if (longLive) {
+        return persistent.pgPool.any(SQL.type(
+          m.database('indexer', 'submitted_tx'),
+        )`
+        with
+    pending_txs as (select *
+                     from indexer.txs
+                     where length(tx_hash) <= 4096*2
+                     and height > (select max(height) - 25 from indexer.txs)
 
-    const txs = await persistent.pgPool.any(SQL.type(
-      m.database('indexer', 'submitted_tx'),
-    )`
-      with pending_txs as (select *
-                           from indexer.txs
-                           where length(tx_hash) <= 4096*2
+),
+     qualified_txs as (select pt.id, count(*)
+                       from pending_txs pt
+                                join indexer.proofs pf on pt.id = pf.id
+                           and ((pf."to" in
+                                 (select address_to from indexer.whitelist_to_address))
+                               or (pf."from" in
+                                   (select address_to from indexer.whitelist_to_address)))
+                       group by 1
+                       having count(*) >=
+                              (select minimal_proof_count
+                               from indexer_config.relayer_configs
+                               limit 1)
+                       ),
+     qualified_txs_with_proof as (select qualified_txs.id
+                                  from qualified_txs
+                                           join pending_txs p on qualified_txs.id = p.id),
+     check_stacks_tx as (
+         select *
+         from indexer.submitted_tx st
+         where st.id in (select id from qualified_txs_with_proof)
+     )
 
-      ),
-           qualified_txs as (select pt.id, count(*)
-                             from pending_txs pt
-                                    join indexer.proofs pf on pt.id = pf.id
-                               and ((pf."to" in
-                                     (select address_to from indexer.whitelist_to_address))
-                                 or (pf."from" in
-                                     (select address_to from indexer.whitelist_to_address)))
+select *
+from check_stacks_tx
+        `);
+      } else {
+        // for not long live we check everything
+        return persistent.pgPool.any(SQL.type(
+          m.database('indexer', 'submitted_tx'),
+        )`
+          with pending_txs as (select *
+                               from indexer.txs
+                               where length(tx_hash) <= 4096 * 2),
+               qualified_txs as (select pt.id, count(*)
+                                 from pending_txs pt
+                                        join indexer.proofs pf on pt.id = pf.id
+                                   and ((pf."to" in
+                                         (select address_to from indexer.whitelist_to_address))
+                                     or (pf."from" in
+                                         (select address_to from indexer.whitelist_to_address)))
 
-                             group by 1
-                             having count(*) >=
-                                    (select minimal_proof_count
-                                     from indexer_config.relayer_configs
-                                     limit 1)),
-           qualified_txs_with_proof as (select qualified_txs.id
-                                        from qualified_txs
-                                               join pending_txs p on qualified_txs.id = p.id),
-           check_stacks_tx as (
-             select *
-             from indexer.submitted_tx st
-             where st.id in (select id from qualified_txs_with_proof)
-           )
+                                 group by 1
+                                 having count(*) >=
+                                        (select minimal_proof_count
+                                         from indexer_config.relayer_configs
+                                         limit 1)),
+               qualified_txs_with_proof as (select qualified_txs.id
+                                            from qualified_txs
+                                                   join pending_txs p on qualified_txs.id = p.id),
+               check_stacks_tx as (select *
+                                   from indexer.submitted_tx st
+                                   where st.id in (select id from qualified_txs_with_proof))
 
-      select *
-      from check_stacks_tx
-    `);
+          select *
+          from check_stacks_tx
+        `);
+      }
+    })();
 
     console.log(`processing: ${txs.length} txs`);
 
@@ -121,6 +161,24 @@ export default class Check extends Command {
       console.log(`deleted ${deleted.length} txs`);
     } else {
       console.log(`skipping delete`);
+    }
+  }
+
+  async run(): Promise<void> {
+    const {
+      flags: { confirm, 'long-live': longLive },
+    } = await this.parse(Check);
+    if (confirm) {
+      console.log(`confirming delete`);
+    }
+
+    if (longLive) {
+      for (;;) {
+        await this.check(true, true);
+        await sleep(5 * 60e3);
+      }
+    } else {
+      await this.check(confirm, false);
     }
   }
 }
